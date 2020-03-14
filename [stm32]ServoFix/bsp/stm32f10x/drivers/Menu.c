@@ -177,7 +177,7 @@ void ShowList(u8 min,u8 max)
 */
 void ShowPage( struct PAGE *pPage)
 {
-    s8 i;
+//    s8 i;
     char data[] = ">";
     Lcd_Clr_Scr();
     if(pPage->pItem==0)
@@ -188,42 +188,68 @@ void ShowPage( struct PAGE *pPage)
 
     if(pPage->DisplayMode==DISPLAY_MODE_1_COLUMN) //一列显示
     {
-        ShowList(0,1);  //
+        ShowList(0, 1);  //
         SelItemOfList(0, data);
         pPage->Function(KEY_Special);
     }
-    else if(pPage->DisplayMode==DISPLAY_MODE_2_COLUMN) //两列显示
-    {
-        ///取出page中的Item并显示
-        for (i=0;i<pPage->ItemNum;i++)
-        {
-            if (i<2)
-            {
-                LCD_Write_Str(i,1,pPage->pItem[i].pText);
-            }
-            else
-            {
-                LCD_Write_Str(i-2,5,pPage->pItem[i].pText);
-            }
+//    else if(pPage->DisplayMode==DISPLAY_MODE_2_COLUMN) //两列显示
+//    {
+//        ///取出page中的Item并显示
+//        for (i=0;i<pPage->ItemNum;i++)
+//        {
+//            if (i<2)
+//            {
+//                LCD_Write_Str(i,1,pPage->pItem[i].pText);
+//            }
+//            else
+//            {
+//                LCD_Write_Str(i-2,5,pPage->pItem[i].pText);
+//            }
 
-        }
-        SelPageItem(0);//<选中Item 0
+//        }
+//        SelPageItem(0);//<选中Item 0
+//        pPage->Function(KEY_Special);
+//    }
+}
+void ShowPage_Num( struct PAGE *pPage, uint8_t num)
+{
+//    s8 i;
+    char data[] = ">";
+    Lcd_Clr_Scr();
+    if(pPage->pItem==0)
+    {
         pPage->Function(KEY_Special);
+        return; //<如果没有Item项则不显示Item，直接返回
     }
 
+    if(pPage->DisplayMode==DISPLAY_MODE_1_COLUMN) //一列显示
+    {
+        ShowList(num, num+1);  //
+        SelItemOfList(num, data);
+        pPage->Function(KEY_Special);
+    }
 }
-
 /**
 显示父页(ParentPage)
 */
 void ShowParentPage(void)
 {
     int i;
-    for(i=0; i<pPage->ItemNum; i++){
+    for(i =0; i< pPage->ItemNum; i++){
         pPage->pItem[i].state =0;
     }
-    pPage=pPage->pParent;
+    pPage =pPage->pParent;
     ShowPage(pPage);
+}
+
+void ShowParentPage_Num(uint16_t num)
+{
+    int i;
+    for(i =0; i< pPage->ItemNum; i++){
+        pPage->pItem[i].state =0;
+    }
+    pPage =pPage->pParent;
+    ShowPage_Num(pPage, num);
 }
 
 /**

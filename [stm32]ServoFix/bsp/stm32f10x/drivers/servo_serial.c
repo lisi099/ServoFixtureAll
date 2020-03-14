@@ -89,6 +89,24 @@ void uart_send_clear_command(void)
 	memset(uart_write_datas, 0, sizeof(uart_write_datas));
 }
 
+void uart_send_common_command(void)
+{
+    uart_write_datas[0]		= 0xfa;
+    uart_write_datas[1] 	= 0x10;
+    uart_write_datas[2] 	= 0x12;
+    uart_write_datas[3] 	= 0x01;
+    uart_write_datas[4] 	= 0x00;
+    uart_write_datas[5] 	= 0x00;
+    uart_write_datas[6]  	= 0x00;
+    uart_write_datas[7] 	= 0x00;
+    uart_write_datas[8] 	= 0x00;
+    uart_write_datas[9] 	= 0x00;
+    uart_write_datas[10] 	= 0x13;
+    uart_write_datas[11] 	= 0xfe;
+    usart2_send_buff(uart_write_datas, sizeof(uart_write_datas));
+    memset(uart_write_datas, 0, sizeof(uart_write_datas));
+}
+
 void uart_send_p_command(void)
 {
 	uart_write_datas[0]		= 0xfa;
@@ -181,7 +199,9 @@ void menu_combine_prom_work_parm(void)
 	memcpy(&servo_data, &servoDataStru, sizeof(servo_data));
 	
 	uart_send_clear_command();
-	rt_thread_delay(SERVO_DELAY_TIME);
+    rt_thread_delay(SERVO_DELAY_TIME);
+    uart_send_common_command();
+
 	////////////////////////////////////////////////////////////////////////////////////////
 	for(i=0; i<32; i++){
 		rt_thread_delay(SERVO_DELAY_TIME);
@@ -417,6 +437,8 @@ void menu_combine_prom_work_parm(void)
 	}
 	rt_thread_delay(SERVO_DELAY_TIME);
 	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
+    rt_thread_delay(50);
+    uart_send_p_command();
 	rt_thread_delay(500);
 }
 
@@ -428,8 +450,9 @@ void menu_combine_prom_work_clear_parm(void)
 	struct Servo_Data_Stru_ servo_data;
 	memcpy(&servo_data, &servoDataStru, sizeof(servo_data));
 	
-	uart_send_clear_command();
-	rt_thread_delay(SERVO_DELAY_TIME);
+    uart_send_clear_command();
+    rt_thread_delay(SERVO_DELAY_TIME);
+    uart_send_common_command();
 	////////////////////////////////////////////////////////////////////////////////////////
 	for(i=0; i<32; i++){
 		rt_thread_delay(SERVO_DELAY_TIME);
@@ -665,6 +688,8 @@ void menu_combine_prom_work_clear_parm(void)
 	}
 	rt_thread_delay(SERVO_DELAY_TIME);
 	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
+    rt_thread_delay(50);
+    uart_send_p_command();
 	rt_thread_delay(500);
 }
 
@@ -676,8 +701,9 @@ uint8_t menu_combine_fb_work_parm(void)
 	uint8_t chech_sum;
 	struct Servo_Data_Stru_ servo_data;
 	
-	uart_send_clear_command();
-	rt_thread_delay(SERVO_DELAY_TIME);
+    uart_send_clear_command();
+    rt_thread_delay(SERVO_DELAY_TIME);
+    uart_send_common_command();
 	////////////////////////////////////////////////////////////////////////////////////////
 	for(i=0; i<43; i++){
 		receive_uart_data_flag =0;
@@ -1012,7 +1038,6 @@ uint8_t menu_combine_fb_work_parm(void)
 			case 42:
 				servo_data.debug_p10 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
 				break;
-			
 			default:
 				break;
 		}
@@ -1022,4 +1047,368 @@ uint8_t menu_combine_fb_work_parm(void)
 	return 1;
 }
 
+
+uint8_t menu_combine_verify_work_parm(void)
+{
+	uint8_t i =0;
+	uint16_t j=0;
+	uint8_t *buff1, *buff2;
+	uint8_t time_count;
+	int16_t temp_param;
+	uint8_t chech_sum;
+	struct Servo_Data_Stru_ servo_data;
+	
+    uart_send_clear_command();
+    rt_thread_delay(SERVO_DELAY_TIME);
+    uart_send_common_command();
+	////////////////////////////////////////////////////////////////////////////////////////
+	for(i=0; i<43; i++){
+		receive_uart_data_flag =0;
+		rt_thread_delay(SERVO_DELAY_TIME);
+		switch(i){
+			//work param
+			case 0:
+				temp_param = MENU_FB_SERVO_WORK_PARM0;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM0, 0, 0, 0);
+				break;
+			case 1:
+				temp_param = MENU_FB_SERVO_WORK_PARM1;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM1, 0, 0, 0);
+				break;
+			case 2:
+				temp_param = MENU_FB_SERVO_WORK_PARM2;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM2, 0, 0, 0);
+				break;
+			case 3:
+				temp_param = MENU_FB_SERVO_WORK_PARM3;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM3, 0, 0, 0);
+				break;
+			case 4:
+				temp_param = MENU_FB_SERVO_WORK_PARM4;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM4, 0, 0, 0);
+				break;
+			case 5:
+				temp_param = MENU_FB_SERVO_WORK_PARM5;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM5, 0, 0, 0);
+				break;
+			case 6:
+				temp_param = MENU_FB_SERVO_WORK_PARM6;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM6, 0, 0, 0);
+				break;
+			case 7:
+				temp_param = MENU_FB_SERVO_WORK_PARM7;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM7, 0, 0, 0);
+				break;
+			case 8:
+				temp_param = MENU_FB_SERVO_WORK_PARM8;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM8, 0, 0, 0);
+				break;
+			case 9:
+				temp_param = MENU_FB_SERVO_WORK_PARM9;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM9, 0, 0, 0);
+				break;
+			case 10:
+				temp_param = MENU_FB_SERVO_WORK_PARM10;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM10, 0, 0, 0);
+				break;
+			case 11:
+				temp_param = MENU_FB_SERVO_WORK_PARM11;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM11, 0, 0, 0);
+				break;
+			case 12:
+				temp_param = MENU_FB_SERVO_WORK_PARM12;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM12, 0, 0, 0);
+				break;
+			case 13:
+				temp_param = MENU_FB_SERVO_WORK_PARM13;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM13, 0, 0, 0);
+				break;
+			case 14:
+				temp_param = MENU_FB_SERVO_WORK_PARM14;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM14, 0, 0, 0);
+				break;
+			case 15:
+				temp_param = MENU_FB_SERVO_WORK_PARM15;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, MENU_FB_SERVO_WORK_PARM15, 0, 0, 0);
+				break;
+			//setup param
+			case 16:
+				temp_param = MENU_FB_SERVO_SETUP_PARM0;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 17:
+				temp_param = MENU_FB_SERVO_SETUP_PARM1;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 18:
+				temp_param = MENU_FB_SERVO_SETUP_PARM2;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 19:
+				temp_param = MENU_FB_SERVO_SETUP_PARM3;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 20:
+				temp_param = MENU_FB_SERVO_SETUP_PARM4;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 21:
+				temp_param = MENU_FB_SERVO_SETUP_PARM5;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 22:
+				temp_param = MENU_FB_SERVO_SETUP_PARM6;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 23:
+				temp_param = MENU_FB_SERVO_SETUP_PARM7;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 24:
+				temp_param = MENU_FB_SERVO_SETUP_PARM8;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 25:
+				temp_param = MENU_FB_SERVO_SETUP_PARM9;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 26:
+				temp_param = MENU_FB_SERVO_SETUP_PARM10;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 27:
+				temp_param = MENU_FB_SERVO_SETUP_PARM11;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 28:
+				temp_param = MENU_FB_SERVO_SETUP_PARM12;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 29:
+				temp_param = MENU_FB_SERVO_SETUP_PARM13;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 30:
+				temp_param = MENU_FB_SERVO_SETUP_PARM14;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 31:
+				temp_param = MENU_FB_SERVO_SETUP_PARM15;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 32:
+				temp_param = MENU_FB_SERVO_DEBUG_PARM0;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 33:
+				temp_param = MENU_FB_SERVO_DEBUG_PARM1;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 34:
+				temp_param = MENU_FB_SERVO_DEBUG_PARM2;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 35:
+				temp_param = MENU_FB_SERVO_DEBUG_PARM3;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 36:
+				temp_param = MENU_FB_SERVO_DEBUG_PARM4;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 37:
+				temp_param = MENU_FB_SERVO_DEBUG_PARM5;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 38:
+				temp_param = MENU_FB_SERVO_DEBUG_PARM6;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 39:
+				temp_param = MENU_FB_SERVO_CONFIG_PARM0;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 40:
+				temp_param = MENU_FB_SERVO_CONFIG_PARM1;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 41:
+				temp_param = MENU_FB_SERVO_CONFIG_PARM2;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			case 42:
+				temp_param = MENU_FB_SERVO_CONFIG_PARM3;
+				uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
+				break;
+			default:
+				break;
+		}
+		//wait for feedback datas
+		time_count = 0;
+		while(receive_uart_data_flag == 0)
+		{
+			time_count++;
+			if(time_count >200){ //200ms
+				return 0; //erro
+			}
+			rt_thread_delay(1); //0.001 s
+		}
+		//process datas
+		receive_uart_data_flag =0;
+		chech_sum = uart_read_datas[2] + uart_read_datas[3] + uart_read_datas[4];
+		if(chech_sum != uart_read_datas[10]){
+			return 0;
+		}
+		if(uart_read_datas[3] != SERVO_STATE_FB){
+			return 0;
+		}
+		if(uart_read_datas[4] != temp_param){
+			return 0;
+		}
+		switch(i){
+			case 0:
+				servo_data.work_p0 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 1:
+				servo_data.work_p1 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 2:
+				servo_data.work_p2 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 3:
+				servo_data.work_p3 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 4:
+				servo_data.work_p4 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 5:
+				servo_data.work_p5 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 6:
+				servo_data.work_p6 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 7:
+				servo_data.work_p7 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 8:
+				servo_data.work_p8 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 9:
+				servo_data.work_p9 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 10:
+				servo_data.work_p10 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 11:
+				servo_data.work_p11 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 12:
+				servo_data.work_p12 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 13:
+				servo_data.work_p13 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 14:
+				servo_data.work_p14 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 15:
+				servo_data.work_p15 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 16:
+				servo_data.set_p0 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 17:
+				servo_data.set_p1 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 18:
+				servo_data.set_p2 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 19:
+				servo_data.set_p3 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 20:
+				servo_data.set_p4 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 21:
+				servo_data.set_p5 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 22:
+				servo_data.set_p6 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 23:
+				servo_data.set_p7 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 24:
+				servo_data.set_p8 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 25:
+				servo_data.set_p9 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 26:
+				servo_data.set_p10 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 27:
+				servo_data.set_p11 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 28:
+				servo_data.set_p12 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 29:
+				servo_data.set_p13 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 30:
+				servo_data.set_p14 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 31:
+				servo_data.set_p15 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 32:
+				servo_data.debug_p0 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 33:
+				servo_data.debug_p1 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 34:
+				servo_data.debug_p2 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 35:
+				servo_data.debug_p3 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 36:
+				servo_data.debug_p4 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 37:
+				servo_data.debug_p5 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 38:
+				servo_data.debug_p6 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 39:
+				servo_data.debug_p7 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 40:
+				servo_data.debug_p8 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 41:
+				servo_data.debug_p9 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			case 42:
+				servo_data.debug_p10 =  (uart_read_datas[9] | (uart_read_datas[8]<<8));
+				break;
+			default:
+				break;
+		}
+	}
+	buff1 = (uint8_t *)(&servo_data);
+	buff2 = (uint8_t *)(&servoDataStru);
+	for(j=0; j<sizeof(servo_data); j++){
+		if(buff1[j] != buff2[j]){
+			return 0;
+		}
+	}
+    rt_thread_delay(50);
+    uart_send_p_command();
+	rt_thread_delay(500);
+	return 1;
+}
 /******************************************************/
