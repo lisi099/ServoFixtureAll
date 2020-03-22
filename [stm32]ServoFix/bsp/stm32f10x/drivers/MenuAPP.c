@@ -454,7 +454,7 @@ void usb_program_CallBack(u8 key)
 void info_CallBack(u8 key)
 {
     LCD_Write_Str(0,0,(char*)"-Information-");
-    LCD_Write_Str(1,0,(char*)"-Version: V2.8");
+    LCD_Write_Str(1,0,(char*)"-Version: V2.9");
     if (key ==KEY_Return){
         Lcd_Clr_Scr();
         ShowParentPage_Num(5);
