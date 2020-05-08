@@ -439,7 +439,7 @@ void menu_combine_prom_work_parm(void)
 	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
     rt_thread_delay(50);
     uart_send_p_command();
-	rt_thread_delay(500);
+	rt_thread_delay(5);
 }
 
 void menu_combine_prom_work_clear_parm(void)
@@ -690,7 +690,7 @@ void menu_combine_prom_work_clear_parm(void)
 	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
     rt_thread_delay(50);
     uart_send_p_command();
-	rt_thread_delay(500);
+	rt_thread_delay(5);
 }
 
 uint8_t menu_combine_fb_work_parm(void)
@@ -1043,7 +1043,7 @@ uint8_t menu_combine_fb_work_parm(void)
 		}
 	}
 	memcpy(&servoDataStru, &servo_data, sizeof(servo_data));
-	rt_thread_delay(1000);
+	rt_thread_delay(5);
 	return 1;
 }
 
@@ -1408,7 +1408,7 @@ uint8_t menu_combine_verify_work_parm(void)
 	}
     rt_thread_delay(50);
     uart_send_p_command();
-	rt_thread_delay(500);
+	rt_thread_delay(5);
 	return 1;
 }
 /******************************************************/
