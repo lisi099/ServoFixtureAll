@@ -374,7 +374,7 @@ void menu_combine_prom_work_parm(void)
 	}
 	rt_thread_delay(SERVO_DELAY_TIME);
 	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_WORK_PARM, 0, 0, 0);
-	rt_thread_delay(500);
+	rt_thread_delay(50);
 	for(i=0; i<11; i++){
 		rt_thread_delay(SERVO_DELAY_TIME);
 		switch(i){
@@ -439,7 +439,11 @@ void menu_combine_prom_work_parm(void)
 	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
     rt_thread_delay(50);
     uart_send_p_command();
+<<<<<<< HEAD
 	rt_thread_delay(5);
+=======
+	rt_thread_delay(50);
+>>>>>>> 80f77013d51ad09df9d4c2ed564d13d0bfa39b8f
 }
 
 void menu_combine_prom_work_clear_parm(void)
@@ -625,7 +629,7 @@ void menu_combine_prom_work_clear_parm(void)
 	}
 	rt_thread_delay(SERVO_DELAY_TIME);
 	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_WORK_PARM, 0, 0, 0);
-	rt_thread_delay(500);
+	rt_thread_delay(50);
 	for(i=0; i<11; i++){
 		rt_thread_delay(SERVO_DELAY_TIME);
 		switch(i){
@@ -690,7 +694,11 @@ void menu_combine_prom_work_clear_parm(void)
 	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
     rt_thread_delay(50);
     uart_send_p_command();
+<<<<<<< HEAD
 	rt_thread_delay(5);
+=======
+	rt_thread_delay(50);
+>>>>>>> 80f77013d51ad09df9d4c2ed564d13d0bfa39b8f
 }
 
 uint8_t menu_combine_fb_work_parm(void)
@@ -1043,7 +1051,11 @@ uint8_t menu_combine_fb_work_parm(void)
 		}
 	}
 	memcpy(&servoDataStru, &servo_data, sizeof(servo_data));
+<<<<<<< HEAD
 	rt_thread_delay(5);
+=======
+	rt_thread_delay(50);
+>>>>>>> 80f77013d51ad09df9d4c2ed564d13d0bfa39b8f
 	return 1;
 }
 
@@ -1408,7 +1420,11 @@ uint8_t menu_combine_verify_work_parm(void)
 	}
     rt_thread_delay(50);
     uart_send_p_command();
+<<<<<<< HEAD
 	rt_thread_delay(5);
+=======
+	rt_thread_delay(50);
+>>>>>>> 80f77013d51ad09df9d4c2ed564d13d0bfa39b8f
 	return 1;
 }
 /******************************************************/
