@@ -19,12 +19,12 @@ void SelItemOfList(u8 index, char *s);
 
 void LCD_Write_Str(u8 x, u8 y, char *data)
 {
-	Lcd_Puts(y, x, data);
+//	Lcd_Puts(y, x, data);
 }
 
 void Lcd_Clr_Scr(void)
 {
-	Lcd_Write_Command( 0x01,1);       //显示清屏
+//	Lcd_Write_Command( 0x01,1);       //显示清屏
 }
 
 
