@@ -2,27 +2,6 @@
 
 unsigned char vop=0X78;
 
-void delay_about_ms(uint16_t nms);
-void writeVop();
-void hold();
-void flash();
-void start();
-void stop();
-void wait();
-void writecommand(unsigned char dat);
-
-void IIC_Init(void)
-{					     
-	GPIO_InitTypeDef GPIO_InitStructure;
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);	
-	   
-	GPIO_InitStructure.GPIO_Pin = I2C_SCL | I2C_SDA;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD ;       //推挽输出
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOB,&GPIO_InitStructure);
-	GPIO_SetBits(GPIOB,I2C_SCL | I2C_SDA); 
-}
-
 unsigned char cgram[56]={ 0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,//全显
                                0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,//不显
                                0x1F,0x00,0x1F,0x00,0x1F,0x00,0x1F,0x00,//横线
@@ -63,7 +42,20 @@ unsigned char da_font8[32]={0xA0,0xA1,0xA2,0xA3,0xA4,0xA5,0xA6,0xA7,0xA8,0xA9,0x
 		                        };//字库	   
 
 //-------------------------------------写对比度函数--------------------------------------------------
-void writeVop()
+								
+void iic_init(void)
+{					     
+	GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);	
+	   
+	GPIO_InitStructure.GPIO_Pin = I2C_SCL | I2C_SDA;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD ;       //推挽输出
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(GPIOB,&GPIO_InitStructure);
+	GPIO_SetBits(GPIOB,I2C_SCL | I2C_SDA); 
+}								
+								
+void writeVop(void)
 {
 	start();
 	writecommand(0x7A);//set address
@@ -87,16 +79,14 @@ void delay(unsigned int t)
    }
 }
 
-void flash()
+void flash(void)
 { 
 	unsigned char t1=4;
 	while(t1>0)t1--;
 }
 
-#define  	scl    	PBout(14)   
-#define  	sda    	PBout(15)
-#define 	res		PBout(13)
-void start()
+
+void start(void)
 { 
 	sda=1; 
 	flash();
@@ -108,7 +98,7 @@ void start()
 	flash();
 }
 
-void stop()
+void stop(void)
 { 
 	scl=0; 
 	flash();
@@ -122,26 +112,29 @@ void stop()
 
 void writecommand(unsigned char dat)
 {
-	unsigned char k,i=200;
+	unsigned char k;
 	for(k=0; k<8; k++)
 	{  
-		dat=dat<<1;  
-		sda=CY; 
-		flash(); 
-		scl=1; 
+		if((dat&0x80) >> 7)
+			sda =1; 
+		else
+			sda =0; 
 		flash();
-		scl=0; 
+		scl =1; 
 		flash();
+		scl =0; 
+		flash();
+		dat <<= 1;
 	}
 	sda=1;
 	flash();  
-	scl=1;
+	scl=1; //ack
 	flash();
-	while(i--){} 
 	scl=0;
+	flash();
 }
 
-void init()
+void lcd_init(void)
 {
 	res=1;
 	delay(100);
@@ -155,12 +148,14 @@ void init()
 	writecommand(0x01);//clear display
 	delay(100);
 	writecommand(0x28);//FUNCTION SET 
-	writecommand(0x0C);//set Display ON/OFF  
+	writecommand(0x0C);//set Display ON/OFF 
+	
 	writecommand(0x06);//set Entry Mode 
 	writecommand(0x29);//FUNCTION SET 
 	delay(1);
 	writecommand(0x40);//set icon address
 	writecommand(0x59);//icon and booster control:icon on c5,c4=0,0
+	
 	writecommand(0x7A);//contrast set  VOP=5.2V
 	writecommand(0x64);//follower control
 	stop();
@@ -242,10 +237,11 @@ void displaychar(unsigned char *p)
 
 //--------------------------------------
 
-void main1()
+void test_lcd(void)
 {
+	iic_init();
 	delay(1000);
-	init();
+	lcd_init();
 	setcgrom(cgram);
 	while(1)
 	{  

@@ -6,9 +6,7 @@
 #include "stm32f10x.h"
 #include "system_tick.h"
 #include <string.h>
-//#include "1602_iic_sw.h"
-//#include "At24cXX.h"
-#include "At24c128.h"
+#include "1602_iic_sw.h"
 /*************************************************************
   Function   :
   Description:
@@ -28,21 +26,19 @@ void delay_about_ms(uint16_t nms)
   Input      : 
   return     : 
 *************************************************************/
-u8 text_write[20] 	= "AAAAAAAAAAAAAAAAAA";
-u8 text_read[20] 	= "000000000";
-u8  check = 100;
+//u8 text_write[20] 	= "AAAAAAAAAAAAAAAAAA";
+//u8 text_read[20] 	= "000000000";
+//u8  check = 100;
+
 int main(void)
 {
 	delay_about_ms(100);
 	set_board_systick();
 	delay_about_ms(50);
 //	init_1602();
-
-	
-	
+	test_lcd();
 	while(1)
 	{
-
 		delay_about_ms(500);
 	}
 

@@ -51,5 +51,16 @@
 #define  	IIC_SDA    PBout(15)
 #define  	READ_SDA   PBin(15)
 
+#define  	scl    	PBout(14)   
+#define  	sda    	PBout(15)
+#define 	res		PBout(13)
+
+void iic_init(void);
+void lcd_init(void);
+void start(void);
+void stop(void);
+void flash(void);
+void writecommand(unsigned char dat);
+void test_lcd(void);
 
 #endif
