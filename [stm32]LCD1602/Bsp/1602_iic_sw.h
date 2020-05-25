@@ -45,15 +45,15 @@
 #define PGout(n)   BIT_ADDR(GPIOG_ODR_Addr,n) 
 #define PGin(n)    BIT_ADDR(GPIOG_IDR_Addr,n) 
 
-#define 	I2C_SCL                   GPIO_Pin_14
-#define 	I2C_SDA                   GPIO_Pin_15
-#define  	IIC_SCL    PBout(14)   
-#define  	IIC_SDA    PBout(15)
-#define  	READ_SDA   PBin(15)
+#define 	I2C_SCL                   GPIO_Pin_6
+#define 	I2C_SDA                   GPIO_Pin_7
+#define  	IIC_SCL    PBout(6)   
+#define  	IIC_SDA    PBout(7)
+#define  	READ_SDA   PBin(7)
 
-#define  	scl    	PBout(14)   
-#define  	sda    	PBout(15)
-#define 	res		PBout(13)
+#define  	scl    	PBout(6)   
+#define  	sda    	PBout(7)
+#define 	res		PBout(5)
 
 void iic_init(void);
 void lcd_init(void);

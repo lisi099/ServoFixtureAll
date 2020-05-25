@@ -7,7 +7,7 @@ documentation/html
 *.map
 *.dblite
 *.elf
-
+*.crf
 *.hex
 *.axf
 *.exe

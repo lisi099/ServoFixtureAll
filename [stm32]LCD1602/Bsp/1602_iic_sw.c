@@ -42,17 +42,19 @@ unsigned char da_font8[32]={0xA0,0xA1,0xA2,0xA3,0xA4,0xA5,0xA6,0xA7,0xA8,0xA9,0x
 		                        };//字库	   
 
 //-------------------------------------写对比度函数--------------------------------------------------
+
+extern void delay_about_ms(uint16_t nms);
 								
 void iic_init(void)
 {					     
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);	
 	   
-	GPIO_InitStructure.GPIO_Pin = I2C_SCL | I2C_SDA;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD ;       //推挽输出
+	GPIO_InitStructure.GPIO_Pin = I2C_SCL | I2C_SDA | GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;       //推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOB,&GPIO_InitStructure);
-	GPIO_SetBits(GPIOB,I2C_SCL | I2C_SDA); 
+	GPIO_SetBits(GPIOB,I2C_SCL | I2C_SDA | GPIO_Pin_5); 
 }								
 								
 void writeVop(void)
@@ -73,7 +75,7 @@ void delay(unsigned int t)
    unsigned char tt;
    while (t>0)
    { 
-	tt=6;
+	tt=60;
 	while(--tt){}
 	--t; 
    }
@@ -81,7 +83,7 @@ void delay(unsigned int t)
 
 void flash(void)
 { 
-	unsigned char t1=4;
+	unsigned char t1=200;
 	while(t1>0)t1--;
 }
 
@@ -113,6 +115,7 @@ void stop(void)
 void writecommand(unsigned char dat)
 {
 	unsigned char k;
+//	dat = dat | 0x01;
 	for(k=0; k<8; k++)
 	{  
 		if((dat&0x80) >> 7)
@@ -156,7 +159,7 @@ void lcd_init(void)
 	writecommand(0x40);//set icon address
 	writecommand(0x59);//icon and booster control:icon on c5,c4=0,0
 	
-	writecommand(0x7A);//contrast set  VOP=5.2V
+	writecommand(0x48);//contrast set  VOP=5.2V
 	writecommand(0x64);//follower control
 	stop();
 }
@@ -245,21 +248,34 @@ void test_lcd(void)
 	setcgrom(cgram);
 	while(1)
 	{  
-		displaychar(da_font1);
-		//wait();
-		displaychar(da_font2);
-		//wait();
-		displaychar(da_font3);
-		//wait();
-		displaychar(da_font4);
-		//wait();
-		displaychar(da_font5);
-		//wait();
-		displaychar(da_font6);
-		//wait();
+// 		displaychar(da_font1);
 		displaychar(da_font7);
+		delay_about_ms(500);
+//		start();
+//		writecommand(0x01);
+//		stop();
+		delay_about_ms(500);
 		//wait();
-		displaychar(da_font8);
+//		displaychar(da_font2);
+//		delay_about_ms(1000);
+//		//wait();
+//		displaychar(da_font3);
+//		delay_about_ms(1000);
+//		//wait();
+//		displaychar(da_font4);
+//		delay_about_ms(1000);
+//		//wait();
+//		displaychar(da_font5);
+//		delay_about_ms(1000);
+//		//wait();
+//		displaychar(da_font6);
+//		delay_about_ms(1000);
+//		//wait();
+//		displaychar(da_font7);
+//		delay_about_ms(1000);
+//		//wait();
+//		displaychar(da_font8);
+//		delay_about_ms(1000);
 	 }
 
 }
