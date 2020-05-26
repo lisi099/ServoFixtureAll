@@ -115,7 +115,6 @@ void stop(void)
 void writecommand(unsigned char dat)
 {
 	unsigned char k;
-//	dat = dat | 0x01;
 	for(k=0; k<8; k++)
 	{  
 		if((dat&0x80) >> 7)
@@ -245,14 +244,11 @@ void test_lcd(void)
 	delay(1000);
 	lcd_init();
 	setcgrom(cgram);
+	unsigned char tata_show[32] ={'A', 'B', 'C'};
 	while(1)
 	{  
 // 		displaychar(da_font1);
-		displaychar(da_font7);
-		delay_about_ms(500);
-//		start();
-//		writecommand(0x01);
-//		stop();
+		displaychar(tata_show);
 		delay_about_ms(500);
 		//wait();
 //		displaychar(da_font2);

@@ -122,20 +122,20 @@ void test2(char fillchar){
 		_nop_();
 	}
 }
-void SetCGRAM( unsigned char *puts )
-{
-	unsigned char i;
-	wcom_i2c(0x38);	//Function set:8bit,2-line,IS=0
-	delay(1);
-	wcom_i2c(0x40);		//CGRAM start Address
-	delay(10);
-	for(i=0;i<64;i++)
-	{
-		wdata_i2c( puts[i] );
-		_nop_();
-		_nop_();
-	}
-}
+//void SetCGRAM( unsigned char *puts )
+//{
+//	unsigned char i;
+//	wcom_i2c(0x38);	//Function set:8bit,2-line,IS=0
+//	delay(1);
+//	wcom_i2c(0x40);		//CGRAM start Address
+//	delay(10);
+//	for(i=0;i<64;i++)
+//	{
+//		wdata_i2c( puts[i] );
+//		_nop_();
+//		_nop_();
+//	}
+//}
 //-----------------------------
 void init_st7032(void)
 {
@@ -167,7 +167,7 @@ void init_st7032(void)
 	wcom_i2c(0x06);   //
 	delay(1);
 
-	SetCGRAM(CUSTOM);
+//	SetCGRAM(CUSTOM);
 }
 //--------------------------
 void lcd1_test(void)

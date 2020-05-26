@@ -10,13 +10,12 @@
       <TargetName>STM32</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
-      <uAC6>0</uAC6>
+      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F103C8</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F1xx_DFP.2.2.0</PackID>
+          <PackID>Keil.STM32F1xx_DFP.2.1.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x5000) IROM(0x08000000,0x10000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -421,11 +420,6 @@
               <FilePath>..\Bsp\1602_iic_sw.h</FilePath>
             </File>
             <File>
-              <FileName>1602_iic_sw1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Bsp\1602_iic_sw1.c</FilePath>
-            </File>
-            <File>
               <FileName>1602_iic_sw2.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Bsp\1602_iic_sw2.c</FilePath>
@@ -630,11 +624,5 @@
       </Groups>
     </Target>
   </Targets>
-
-  <RTE>
-    <apis/>
-    <components/>
-    <files/>
-  </RTE>
 
 </Project>
