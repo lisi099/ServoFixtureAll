@@ -47,6 +47,8 @@
 
 #define 	I2C_SCL                   GPIO_Pin_6
 #define 	I2C_SDA                   GPIO_Pin_7
+#define 	I2C_RST                   GPIO_Pin_5
+
 #define  	IIC_SCL    PBout(6)   
 #define  	IIC_SDA    PBout(7)
 #define  	READ_SDA   PBin(7)

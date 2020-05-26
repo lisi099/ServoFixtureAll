@@ -50,11 +50,11 @@ void iic_init(void)
 	GPIO_InitTypeDef GPIO_InitStructure;
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);	
 	   
-	GPIO_InitStructure.GPIO_Pin = I2C_SCL | I2C_SDA | GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Pin = I2C_SCL | I2C_SDA | I2C_RST;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;       //推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOB,&GPIO_InitStructure);
-	GPIO_SetBits(GPIOB,I2C_SCL | I2C_SDA | GPIO_Pin_5); 
+	GPIO_SetBits(GPIOB,I2C_SCL | I2C_SDA | I2C_RST); 
 }								
 								
 void writeVop(void)
@@ -152,10 +152,9 @@ void lcd_init(void)
 	delay(100);
 	writecommand(0x28);//FUNCTION SET 
 	writecommand(0x0C);//set Display ON/OFF 
-	
 	writecommand(0x06);//set Entry Mode 
+	
 	writecommand(0x29);//FUNCTION SET 
-	delay(1);
 	writecommand(0x40);//set icon address
 	writecommand(0x59);//icon and booster control:icon on c5,c4=0,0
 	
