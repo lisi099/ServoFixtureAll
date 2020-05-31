@@ -420,9 +420,14 @@
               <FilePath>..\Bsp\1602_iic_sw.h</FilePath>
             </File>
             <File>
-              <FileName>1602_iic_sw2.c</FileName>
+              <FileName>ServoAdc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Bsp\1602_iic_sw2.c</FilePath>
+              <FilePath>..\Bsp\ServoAdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>ServoAdc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Bsp\ServoAdc.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -3,7 +3,7 @@
 ".\objects\system_tick.o"
 ".\objects\at24c128.o"
 ".\objects\1602_iic_sw.o"
-".\objects\1602_iic_sw2.o"
+".\objects\servoadc.o"
 ".\objects\core_cm3.o"
 ".\objects\system_stm32f10x.o"
 ".\objects\startup_stm32f10x_md.o"

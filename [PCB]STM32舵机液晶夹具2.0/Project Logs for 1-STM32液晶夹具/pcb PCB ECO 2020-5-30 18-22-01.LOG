@@ -1,0 +1,5 @@
+Added Component: Designator=CZ1(DC-005(N))
+Added Pin To Net: NetName=VCC5.0-8.4 Pin=CZ1-1
+Added Pin To Net: NetName=GND Pin=CZ1-2
+Added Pin To Net: NetName=GND Pin=CZ1-3
+Added Member To Class: ClassName=sch Member=Component CZ1 DC 5.0N
