@@ -35,7 +35,7 @@ void SDA_IN(void)
 void delay_nop(void)
 {
 	unsigned int i;
-	for(i=0;i<50;i++)
+	for(i=0;i<100;i++)
 		__nop();
 }
 

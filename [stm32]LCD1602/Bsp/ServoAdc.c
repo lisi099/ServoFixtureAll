@@ -5,8 +5,18 @@
 
 #define  ADC1_DR_Address    ((u32)0x4001244C)
 
-volatile uint16_t  Adc_Convert_Value[NUM_FILTER][NUM_INFRARED];     //ÓÃÀ´´æ·ÅADC×ª»»½á¹û£¬Ò²ÊÇDMAµÄÄ¿±êµØÖ·
+volatile uint16_t  Adc_Convert_Value[2]; 
 
+
+uint8_t get_servo_state(void )
+{
+	if(Adc_Convert_Value[0] >= 3500){
+		return 0;
+	}
+	else{
+		return 1;
+	}
+}
 
 void adc_gpio_init(void)
 {
@@ -33,14 +43,14 @@ void adc_init(void)
     ADC_InitStructure.ADC_ContinuousConvMode 	= ENABLE;
     ADC_InitStructure.ADC_ExternalTrigConv 	= ADC_ExternalTrigConv_None;
     ADC_InitStructure.ADC_DataAlign 		= ADC_DataAlign_Right;
-    ADC_InitStructure.ADC_NbrOfChannel 		= NUM_INFRARED;
+    ADC_InitStructure.ADC_NbrOfChannel 		= 2;
     ADC_Init(ADC1, &ADC_InitStructure);       
 
     DMA_DeInit(DMA1_Channel1);
     DMA_InitStructure.DMA_PeripheralBaseAddr =  (u32)&ADC1->DR;
     DMA_InitStructure.DMA_MemoryBaseAddr = 	(u32)Adc_Convert_Value;
     DMA_InitStructure.DMA_DIR = 		DMA_DIR_PeripheralSRC;          
-    DMA_InitStructure.DMA_BufferSize = 		NUM_FILTER * NUM_INFRARED;     
+    DMA_InitStructure.DMA_BufferSize = 		2;     
     DMA_InitStructure.DMA_PeripheralInc = 	DMA_PeripheralInc_Disable;  
     DMA_InitStructure.DMA_MemoryInc = 		DMA_MemoryInc_Enable;        
     DMA_InitStructure.DMA_PeripheralDataSize = 	DMA_PeripheralDataSize_HalfWord;
@@ -57,11 +67,11 @@ void adc_init(void)
     ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 2, ADC_SampleTime_239Cycles5 );
 
     ADC_Cmd(ADC1, ENABLE);
-    ADC_DMACmd(ADC1, ENABLE);           	        //Ê¹ÄÜÖ¸¶¨µÄADC1
-    ADC_ResetCalibration(ADC1);          	        //¸´Î»Ö¸¶¨µÄADC1µÄÐ£×¼¼Ä´æÆ÷
-    while(ADC_GetResetCalibrationStatus(ADC1));         //»ñÈ¡ADC1¸´Î»Ð£×¼¼Ä´æÆ÷µÄ×´Ì¬,ÉèÖÃ×´Ì¬ÔòµÈ´ý
-    ADC_StartCalibration(ADC1);                	        //¿ªÊ¼Ö¸¶¨ADC1µÄÐ£×¼×´Ì¬
-    while(ADC_GetCalibrationStatus(ADC1));              //»ñÈ¡Ö¸¶¨ADC1µÄÐ£×¼³ÌÐò,ÉèÖÃ×´Ì¬ÔòµÈ´ý
+    ADC_DMACmd(ADC1, ENABLE);           	        
+    ADC_ResetCalibration(ADC1);          	        
+    while(ADC_GetResetCalibrationStatus(ADC1));        
+    ADC_StartCalibration(ADC1);                	       
+    while(ADC_GetCalibrationStatus(ADC1)); 
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }
 

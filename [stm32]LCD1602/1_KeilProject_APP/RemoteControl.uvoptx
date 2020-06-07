@@ -178,7 +178,7 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>text_read</ItemText>
+          <ItemText>Adc_Convert_Value,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
@@ -188,12 +188,7 @@
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>check,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Adc_Convert_Value,0x0A</ItemText>
+          <ItemText>text_read</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>

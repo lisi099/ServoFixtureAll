@@ -6,12 +6,7 @@
 
 #include "stm32f10x.h"
 
-
-#define  NUM_FILTER    1               //number of distance filter
-#define  NUM_INFRARED  2               //number of infrared sensor
-
-
 void adc_configration(void);
-
+uint8_t get_servo_state(void );
 
 #endif

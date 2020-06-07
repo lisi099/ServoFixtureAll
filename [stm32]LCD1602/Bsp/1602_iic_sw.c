@@ -1,5 +1,9 @@
-#include "1602_iic_sw.h"
+/******************** (C) COPYRIGHT 2016 ********************
 
+***************************************************************/
+#include "1602_iic_sw.h"
+#include "ServoAdc.h"
+#include "string.h"
 //unsigned char vop=0X78;
 
 //unsigned char cgram[56]={ 0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,//全显
@@ -52,7 +56,14 @@ void iic_init(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;       //推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOB,&GPIO_InitStructure);
-	GPIO_SetBits(GPIOB,I2C_SCL | I2C_SDA | I2C_RST); 
+	GPIO_SetBits(GPIOB,I2C_SCL | I2C_SDA | I2C_RST);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;       //推挽输出
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(GPIOB,&GPIO_InitStructure);
+	GPIO_SetBits(GPIOB,GPIO_Pin_9);
+	GPIO_ResetBits(GPIOB,GPIO_Pin_8); 	 	
 }								
 							
 void delay(unsigned int t)
@@ -192,7 +203,6 @@ void displayAddress0()
 	 writecommand(0x7C);//set address
 //	 writecommand(0x80);
 //	 writecommand(0x14);//function set
-	
 	 writecommand(0x80);
 	 writecommand(0x80);//SET DDRAM ADRESS 
 	 writecommand(0x40);
@@ -203,7 +213,6 @@ void displayAddress1()
 	 writecommand(0x7C);//set address
 //	 writecommand(0x80);
 //	 writecommand(0x14);//function set
-	
 	 writecommand(0x80);
 	 writecommand(0xC0);//SET DDRAM ADRESS 
 	 writecommand(0x40);
@@ -237,18 +246,21 @@ void displaychar(unsigned char *p)
 		writecommand(*p++); 
 	}
 	stop();
-//	delay(100);
-//	start();
-//	displayAddressICON();      //ICON的地址
-//	for (row=0;row<16;row++)
-//	{ 
-//		writecommand(*p++); 
-//	}
-//	stop();
 }
 
-void put_chars(unsigned char row, unsigned char *p)
+void put_chars(unsigned char row, char *p)
 {
+	unsigned char show_data[16];
+	uint8_t i;
+	for(i=0; i<16; i++){
+		show_data[i] = ' ';
+	}
+	if(strlen(p) >16){
+		memcpy(show_data, p, 16);
+	}
+	else{
+		memcpy(show_data, p, strlen(p));
+	}
 	start();
 	if(row == 0){
 		displayAddress0();
@@ -256,14 +268,10 @@ void put_chars(unsigned char row, unsigned char *p)
 	else{
 		displayAddress1();
 	}
-	for (row=0;row<16;row++){
-		writecommand(*p++); 
-		if(*p == '\0'){
-			break;
-		}
+	for (i=0;i<16;i++){
+		writecommand(show_data[i]); 
 	}
 	stop();
-	
 }
 //--------------------------------------
 
@@ -272,17 +280,10 @@ void test_lcd(void)
 	iic_init();
 	delay(1000);
 	lcd_init();
-//	setcgrom(cgram);
-	unsigned char tata_show[32] ={'a', 'B', 'C', ' '};
 	while(1)
 	{  
-//		writeVop();
-// 		displaychar(da_font1);
-		tata_show[16] = 'D';
-		displaychar(tata_show);
-		delay_about_ms(500);
-		tata_show[16] = 'H';
-		displaychar(tata_show);
+		put_chars(0, "FIRST LINE");
+		put_chars(1, "SECOND LINE");
 		delay_about_ms(500);
 	 }
 }
