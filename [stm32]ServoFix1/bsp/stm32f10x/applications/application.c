@@ -13,7 +13,7 @@
 #include <rtthread.h>
 
 #include "led.h"
-#include "Lcd1602.h"
+#include "1602_iic_sw.h"
 #include "menu.h"
 #include "MenuAPP.h"
 
@@ -78,46 +78,45 @@ static void lcd_thread_entry(void* parameter)
 	uint8_t tempKey = KEY_NONE;
 	
 	copy_data_to_write_menu();
-	LcdInit();
+	lcd_init();
 	
-//	SetMainPage(&mainPage);
-//    ShowPage(pPage);
+	SetMainPage(&mainPage);
+    ShowPage(pPage);
     while (1)
     {
-//		tempKey = KEY_NONE;
-//		if(rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO)== RT_EOK){
-//			switch (rec_buff[0]){
-//				case 0:
-//					if(rec_buff[1] == 0){
-//						tempKey = KEY_UP;
-//					}
-//					else{
-//						tempKey = KEY_UP_L;
-//					}
-//					break;
-//				case 1:
-//					if(rec_buff[1] == 0){
-//						tempKey = KEY_Down;
-//					}
-//					else{
-//						tempKey = KEY_Down_L;
-//					}
-//					break;
-//				case 3:
-//					tempKey = KEY_Ok;
-//					break;
-//				case 2:
-//					tempKey = KEY_Return;
-//					break;
-//				
-//				default:
-//					break;
-//			}
-//			if(tempKey !=KEY_NONE){
-//				pPage->Function(tempKey);
-//			}
-//		}
-		PutStr("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		tempKey = KEY_NONE;
+		if(rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO)== RT_EOK){
+			switch (rec_buff[0]){
+				case 0:
+					if(rec_buff[1] == 0){
+						tempKey = KEY_UP;
+					}
+					else{
+						tempKey = KEY_UP_L;
+					}
+					break;
+				case 1:
+					if(rec_buff[1] == 0){
+						tempKey = KEY_Down;
+					}
+					else{
+						tempKey = KEY_Down_L;
+					}
+					break;
+				case 3:
+					tempKey = KEY_Ok;
+					break;
+				case 2:
+					tempKey = KEY_Return;
+					break;
+				
+				default:
+					break;
+			}
+			if(tempKey !=KEY_NONE){
+				pPage->Function(tempKey);
+			}
+		}
 		rt_thread_delay(RT_TICK_PER_SECOND/50);
     }
 }
@@ -242,15 +241,15 @@ int rt_application_init(void)
         rt_thread_startup(&lcd_thread);
     }
 	
-//	result = rt_thread_init(&usart_thread, "usart", usart_thread_entry, RT_NULL, (rt_uint8_t*)&usart_stack[0], sizeof(usart_stack), 17, 10);
-//    if (result == RT_EOK){
-//        rt_thread_startup(&usart_thread);
-//    }
-//	
-//	result = rt_thread_init(&usart_sw_thread, "usart_sw", usart_sw_thread_entry, RT_NULL, (rt_uint8_t*)&usart_sw_stack[0], sizeof(usart_sw_stack), 16, 10);
-//    if (result == RT_EOK){
-//        rt_thread_startup(&usart_sw_thread);
-//    }
+	result = rt_thread_init(&usart_thread, "usart", usart_thread_entry, RT_NULL, (rt_uint8_t*)&usart_stack[0], sizeof(usart_stack), 17, 10);
+    if (result == RT_EOK){
+        rt_thread_startup(&usart_thread);
+    }
+	
+	result = rt_thread_init(&usart_sw_thread, "usart_sw", usart_sw_thread_entry, RT_NULL, (rt_uint8_t*)&usart_sw_stack[0], sizeof(usart_sw_stack), 16, 10);
+    if (result == RT_EOK){
+        rt_thread_startup(&usart_sw_thread);
+    }
 	
 	
     return 0;

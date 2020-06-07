@@ -1,93 +1,334 @@
+/******************** (C) COPYRIGHT 2016 ********************
+
+***************************************************************/
 #include "1602_iic_sw.h"
-#include <rtthread.h>
+#include "ServoAdc.h"
+#include "string.h"
+//unsigned char vop=0X78;
 
-#define DelayMS(x) rt_thread_delay(x)
+//unsigned char cgram[56]={ 0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F,//全显
+//                               0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,//不显
+//                               0x1F,0x00,0x1F,0x00,0x1F,0x00,0x1F,0x00,//横线
+//                               0x15,0x15,0x15,0x15,0x15,0x15,0x15,0x15,//竖线
+//	 	                       0x1F,0x11,0x11,0x11,0x11,0x11,0x11,0x1F,//方框
+//		                     };
 
+//unsigned char da_font1[32]={0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+//                                 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00                                  
+//                                };//全显
 
+//unsigned char da_font2[32]={0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,
+//                                 0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01                                 
+//                                };//不显
 
-//           SPLC792A 模拟I2C测试程序
-//***************************************************************************
-//连线表:  CPU=STC11L60XE       Fosc=22.1184Mhz                             *
-//***************************************************************************
-//         SCL  SDA 须接4.7K上拉电阻                                        *
-//***************************************************************************
+//unsigned char da_font3[32]={0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,
+//                                 0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02                                 
+//                                };//横线
 
-//写指令函数
-void WriteCommand(unsigned char CommandByte)
+//unsigned char da_font4[32]={0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,
+//                                 0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03                                  
+//                                };//竖线
+
+//unsigned char da_font5[32]={0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,
+//                                 0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04,0x04                                 
+//                                };//方框
+//                                                   
+//unsigned char da_font6[32]={0x08,0x09,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x29,0x2A,0x2B,0x2C,0x2D,0x2E,0x2F,
+//		                         0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x3A,0x3B,0x3C,0x3D,0x3E,0x3F	
+//                                };//字库
+
+//unsigned char da_font7[32]={0x40,0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,
+//		                         0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,0x5B,0x5C,0x5D,0x5E,0x5F                               
+//                                };//字库
+
+//unsigned char da_font8[32]={0xA0,0xA1,0xA2,0xA3,0xA4,0xA5,0xA6,0xA7,0xA8,0xA9,0xAA,0xAB,0xAC,0xAD,0xAE,0xAF,
+//		                         0xB0,0xB1,0xB2,0xB3,0xB4,0xB5,0xB6,0xB7,0xB8,0xB9,0xBA,0xBB,0xBC,0xBD,0xBE,0xB9	                              
+//		                        };//字库	   
+
+extern void delay_about_ms(uint16_t nms);
+								
+void iic_init(void)
+{					     
+	GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);	
+	   
+	GPIO_InitStructure.GPIO_Pin = I2C_SCL | I2C_SDA | I2C_RST;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;       //推挽输出
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(GPIOB,&GPIO_InitStructure);
+	GPIO_SetBits(GPIOB,I2C_SCL | I2C_SDA | I2C_RST);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;       //推挽输出
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(GPIOB,&GPIO_InitStructure);
+	GPIO_SetBits(GPIOB,GPIO_Pin_9);
+	GPIO_ResetBits(GPIOB,GPIO_Pin_8); 	 	
+}								
+							
+void delay(unsigned int t)
 {
-	unsigned char ControlByte=0x00;		//Control Byte,(Co)(A0)000000(A) Co=0 A0=0=后面的I2C数据是显示指令
-										//Co=0是表示这是最后一个Control Byte(此处的指令意思为I2C总线控制命令,非显示指令)
-										//后面的I2C数据是显示指令
-	I2C_BufferWrite(&CommandByte, ControlByte, 1);
+   unsigned char tt;
+   while (t>0)
+   { 
+	tt=60;
+	while(--tt){}
+	--t; 
+   }
 }
 
-//写数据函数
-void WriteData(unsigned char *pDAT,unsigned char length)
+void flash(void)
+{ 
+	unsigned char t1=200;
+	while(t1>0)t1--;
+}
+
+void start(void)
+{ 
+	sda=1; 
+	flash();
+	scl=1;
+	flash(); 
+	sda=0; 
+	flash(); 
+	scl=0;
+	flash();
+}
+
+void stop(void)
+{ 
+	scl=0; 
+	flash();
+	sda=0;
+	flash(); 
+	scl=1; 
+	flash(); 
+	sda=1; 
+	flash(); 
+}
+
+void writecommand(unsigned char dat)
 {
-	unsigned char ControlByte=0x40;		//Control Byte,(Co)(A0)000000(A) Co=0 A0=1=后面的I2C数据是显示数据
-										//Co=0是表示这是最后一个Control Byte(此处的指令意思为I2C总线控制命令,非显示指令)						
-	I2C_BufferWrite(pDAT, ControlByte, length);
+	unsigned char k;
+	for(k=0; k<8; k++)
+	{  
+		if((dat&0x80) >> 7)
+			sda =1; 
+		else
+			sda =0; 
+		flash();
+		scl =1; 
+		flash();
+		scl =0; 
+		flash();
+		dat <<= 1;
+	}
+	sda=1;
+	flash();  
+	scl=1; //ack
+	flash();
+	scl=0;
+	flash();
+}
+
+void writeVop(unsigned char vop)
+{
+	start();
+	writecommand(0x7A);//
+	writecommand(0x80);//
+	writecommand(0x31);//
+	writecommand(0x80);//
+	writecommand(vop); //set VOP
+	stop();
+}
+
+void lcd_init(void)
+{
+	#define CONTRAST 20
+	iic_init();
+	res=1;
+	delay(100);
+	res=0;
+	delay(100);
+	res=1;
+	delay(100);
+	start();
+	writecommand(0x7C);//set address
+	delay(100);
+	writecommand(0x01);//clear display
+	delay(100);
+//	writecommand(0x02);//clear display
+//	delay(100);
+	
+	writecommand(0x28);//FUNCTION SET 
+	delay(100);
+	writecommand(0x0C);//set Display ON/OFF
+	delay(100);
+	writecommand(0x06);//set Entry Mode
+	delay(100);	
+	writecommand(0x14);
+	delay(100);	
+	
+//	writecommand(0x29);//FUNCTION SET
+//	delay(100);
+//	writecommand(0x40);//set icon address
+//	delay(100);
+//	writecommand(0x59);//icon and booster control:icon on c5,c4=0,0
+//	
+//	writecommand(0x7A);//contrast set  VOP=5.2V
+//	delay(100);
+//	writecommand(0x64);//follower control
+//	delay(100);
+	stop();
 }
 
 
-//初始化
-void LcdInit(void)
+void setcgrom(unsigned char *q)
 {
-	IIC_Init();
-	DelayMS(50);
-//	#define CONTRAST 20
-//	WriteCommand(0x38);	//Function set:8bit,2-line,IS=0
-//	DelayMS(1);
-//	WriteCommand(0x39);	//Function set:8bit,2-line,IS=1
-//	DelayMS(1);
-//	WriteCommand(0x50+(CONTRAST>>4));	//ICON OFF,bit[1:0]=Contrast bit[5:4]
-//	DelayMS(1);
-//	WriteCommand(0x70+(CONTRAST&0x0F));	//Contrast = 101000b
-//	DelayMS(1);
-//	WriteCommand(0x6B);	//Follower control ON,Rab=011b,即使是外供VLCD电压,此处V0还是受限于Rab这个曲线图
-//	DelayMS(100);
-//	WriteCommand(0x0C);	//Display ON,Cursor off,Blink off
-//	DelayMS(1);
-//	WriteCommand(0x01);	//Clear Display
-//	DelayMS(2);
-//	WriteCommand(0x06);	//Entry Mode Set
-//	DelayMS(1);
-	WriteCommand(0x38); /*function select*/ 
-	WriteCommand(0x01); /*clear screen*/ 
-	DelayMS(5); 
-	WriteCommand(0x06); /*setdisplay mode*/ 
-	DelayMS(5); 
-	WriteCommand(0x0c); /*turn on display*/ 
-	DelayMS(5); 
-	WriteCommand(0x39); /*extension instruction*/ 
-	WriteCommand(0x1c); // 
-	DelayMS(5); 
-	WriteCommand(0x6d); // 
-	DelayMS(5); 
-	WriteCommand(0x55); //粗调对比度,范围 0x54-0x57 
-	DelayMS(5); 
-	WriteCommand(0x7a); //微调对比度,范围 0x70-0x7f 
-	DelayMS(5);
+	char  i;
+	start();
+	writecommand(0x7C);//set address
+	writecommand(0x80);//c=1:write command
+	writecommand(0x28);//select H=0
+	writecommand(0x80);//c=1:write command
+	writecommand(0x40);
+	writecommand(0x40);
+	for(i=0;i<56;i++){
+		writecommand(*q++);
+	}
+	stop();
 }
 
-void SetCGRAM( unsigned char *puts )
+void displayAddress0()
 {
-	WriteCommand(0x38);	//Function set:8bit,2-line,IS=0
-	DelayMS(1);
-	WriteCommand(0x40);		//CGRAM start Address
-	DelayMS(10);
-	WriteData(puts,64);
+	 writecommand(0x7C);//set address
+//	 writecommand(0x80);
+//	 writecommand(0x14);//function set
+	 writecommand(0x80);
+	 writecommand(0x80);//SET DDRAM ADRESS 
+	 writecommand(0x40);
 }
 
-void PutStr(unsigned char *puts)
+void displayAddress1()
 {
-	WriteCommand(0x80);	//AC=00H
-	DelayMS(1);
-	WriteData(puts,16);
-	WriteCommand(0xC0);	//AC=40H
-	DelayMS(1);
-	WriteData(puts,16);
+	 writecommand(0x7C);//set address
+//	 writecommand(0x80);
+//	 writecommand(0x14);//function set
+	 writecommand(0x80);
+	 writecommand(0xC0);//SET DDRAM ADRESS 
+	 writecommand(0x40);
 }
 
 
+void displayAddressICON()
+{
+	writecommand(0x7C);//set address
+	writecommand(0x00);
+	writecommand(0x40);//SET ICONRAM ADRESS 
+	writecommand(0x40);
+}
+
+void displaychar(unsigned char *p)
+{
+	unsigned char row;
+	start();
+	displayAddress0();          //第一行的地址
+	for (row=0;row<16;row++)
+	{
+		writecommand(*p++); 
+	}
+	stop();
+	delay(100);
+	start();
+	displayAddress1();        //第二行的地址
+	for (row=0;row<16;row++)
+	{ 
+		writecommand(*p++); 
+	}
+	stop();
+}
+
+static unsigned char show_data0_[16];
+static unsigned char show_data1_[16];
+void lcd_clear(void)
+{
+	unsigned char row, i;
+	start();
+	displayAddress0();          //第一行的地址
+	for (row=0;row<16;row++)
+	{
+		writecommand(' '); 
+	}
+	stop();
+	delay(100);
+	start();
+	displayAddress1();        //第二行的地址
+	for (row=0;row<16;row++)
+	{ 
+		writecommand(' '); 
+	}
+	stop();
+	for(i=0; i<16; i++){
+		show_data0_[i] = ' ';
+		show_data1_[i] = ' ';
+	}
+}
+
+void put_chars(unsigned char row, unsigned char col, char *p)
+{
+	static uint8_t first_in =1; 
+	uint8_t i;
+	if(first_in){
+		for(i=0; i<16; i++){
+			show_data0_[i] = ' ';
+			show_data1_[i] = ' ';
+		}
+		first_in = 0;
+	}
+	
+	if(strlen(p) >(16-col)){
+		if(row == 0){
+			memcpy(&show_data0_[col], p, 16-col);
+		}
+		else{
+			memcpy(&show_data1_[col], p, 16-col);
+		}
+	}
+	else{
+		if(row == 0){
+			memcpy(&show_data0_[col], p, strlen(p));
+		}
+		else{
+			memcpy(&show_data1_[col], p, strlen(p));
+		}
+	}
+	
+	start();
+	if(row == 0){
+		displayAddress0();
+		for (i=0;i<16;i++){
+			writecommand(show_data0_[i]); 
+		}
+	}
+	else{
+		displayAddress1();
+		for (i=0;i<16;i++){
+			writecommand(show_data1_[i]); 
+		}
+	}
+	stop();
+}
+//--------------------------------------
+
+void test_lcd(void)
+{
+	iic_init();
+	delay(1000);
+	lcd_init();
+	while(1)
+	{  
+		put_chars(0, 0, "FIRST LINE");
+		put_chars(1, 0, "SECOND LINE");
+	 }
+}
 

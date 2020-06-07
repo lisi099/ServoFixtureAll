@@ -248,28 +248,73 @@ void displaychar(unsigned char *p)
 	stop();
 }
 
-void put_chars(unsigned char row, char *p)
+static unsigned char show_data0_[16];
+static unsigned char show_data1_[16];
+void lcd_clear(void)
 {
-	unsigned char show_data[16];
-	uint8_t i;
-	for(i=0; i<16; i++){
-		show_data[i] = ' ';
+	unsigned char row, i;
+	start();
+	displayAddress0();          //第一行的地址
+	for (row=0;row<16;row++)
+	{
+		writecommand(' '); 
 	}
-	if(strlen(p) >16){
-		memcpy(show_data, p, 16);
+	stop();
+	delay(100);
+	start();
+	displayAddress1();        //第二行的地址
+	for (row=0;row<16;row++)
+	{ 
+		writecommand(' '); 
+	}
+	stop();
+	for(i=0; i<16; i++){
+		show_data0_[i] = ' ';
+		show_data1_[i] = ' ';
+	}
+}
+
+void put_chars(unsigned char row, unsigned char col, char *p)
+{
+	static uint8_t first_in =1; 
+	uint8_t i;
+	if(first_in){
+		for(i=0; i<16; i++){
+			show_data0_[i] = ' ';
+			show_data1_[i] = ' ';
+		}
+		first_in = 0;
+	}
+	
+	if(strlen(p) >(16-col)){
+		if(row == 0){
+			memcpy(&show_data0_[col], p, 16-col);
+		}
+		else{
+			memcpy(&show_data1_[col], p, 16-col);
+		}
 	}
 	else{
-		memcpy(show_data, p, strlen(p));
+		if(row == 0){
+			memcpy(&show_data0_[col], p, strlen(p));
+		}
+		else{
+			memcpy(&show_data1_[col], p, strlen(p));
+		}
 	}
+	
 	start();
 	if(row == 0){
 		displayAddress0();
+		for (i=0;i<16;i++){
+			writecommand(show_data0_[i]); 
+		}
 	}
 	else{
 		displayAddress1();
-	}
-	for (i=0;i<16;i++){
-		writecommand(show_data[i]); 
+		for (i=0;i<16;i++){
+			writecommand(show_data1_[i]); 
+		}
 	}
 	stop();
 }
@@ -282,9 +327,11 @@ void test_lcd(void)
 	lcd_init();
 	while(1)
 	{  
-		put_chars(0, "FIRST LINE");
-		put_chars(1, "SECOND LINE");
-		delay_about_ms(500);
+		put_chars(0, 3, "FIRST LINE");
+		put_chars(1, 2, "SECOND LINE");
+		delay_about_ms(1000);
+		lcd_clear();
+		delay_about_ms(1000);
 	 }
 }
 

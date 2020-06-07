@@ -724,16 +724,6 @@
               <FileType>5</FileType>
               <FilePath>.\drivers\1602_iic_sw.h</FilePath>
             </File>
-            <File>
-              <FileName>MoNiIIC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\MoNiIIC.c</FilePath>
-            </File>
-            <File>
-              <FileName>MoNiIIC.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\drivers\MoNiIIC.h</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -748,6 +738,16 @@
               <FileName>servo_serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\drivers\servo_serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>ServoAdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\ServoAdc.c</FilePath>
+            </File>
+            <File>
+              <FileName>ServoAdc.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\ServoAdc.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -828,6 +828,21 @@
               <FileName>usart1_package.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\drivers\Iap\usart1_package.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Eeprom</GroupName>
+          <Files>
+            <File>
+              <FileName>At24c128.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\At24c128.c</FilePath>
+            </File>
+            <File>
+              <FileName>At24c128.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\At24c128.h</FilePath>
             </File>
           </Files>
         </Group>

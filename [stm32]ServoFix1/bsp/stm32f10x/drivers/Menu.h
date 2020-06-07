@@ -6,7 +6,7 @@
 #define _Menu_H_BAB
 
 #include "stm32f10x.h"
-#include "Lcd1602.h"
+#include "1602_iic_sw.h"
 #include "key.h"
 
 #define KEY_Special 	255	///<这个保留用于特别事件

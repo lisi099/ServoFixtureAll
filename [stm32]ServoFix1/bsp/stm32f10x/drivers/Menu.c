@@ -3,7 +3,7 @@
 
 ***************************************************************/
 #include "Menu.h"
-#include "Lcd1602.h"
+#include "1602_iic_sw.h"
 
 #define LOW_BYTE_NUM   8
 #define LOW_4BYTE_MAX  0xFF
@@ -19,12 +19,12 @@ void SelItemOfList(u8 index, char *s);
 
 void LCD_Write_Str(u8 x, u8 y, char *data)
 {
-//	Lcd_Puts(y, x, data);
+	put_chars(x, y, data);
 }
 
 void Lcd_Clr_Scr(void)
 {
-//	Lcd_Write_Command( 0x01,1);       //œ‘ æ«Â∆¡
+	lcd_clear();
 }
 
 
