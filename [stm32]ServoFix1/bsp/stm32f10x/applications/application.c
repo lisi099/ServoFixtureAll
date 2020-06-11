@@ -8,14 +8,13 @@
  * 2009-01-05     Bernard      the first version
  * 2013-07-12     aozima       update for auto initial.
  */
-
 #include <board.h>
 #include <rtthread.h>
 
 #include "led.h"
 #include "1602_iic_sw.h"
 #include "menu.h"
-#include "MenuAPP.h"
+#include "menu_app.h"
 
 #include "usart1.h"
 #include "usart2.h"
@@ -37,9 +36,9 @@ static char usart1_r_msg_pool[120];
 struct rt_messagequeue usart2_r_mq;
 static char usart2_r_msg_pool[120];
 
-//-----------------------------------------------
+//-----------------------按键处理线程-----------------------
 ALIGN(RT_ALIGN_SIZE)
-static rt_uint8_t key_stack[ 512 ];
+static rt_uint8_t key_stack[512];
 static struct rt_thread key_thread;
 static void key_thread_entry(void* parameter)
 {
@@ -69,8 +68,8 @@ static void key_thread_entry(void* parameter)
 	}
 }
 
-//-----------------------------------------------
-static rt_uint8_t lcd_stack[ 512 ];
+//-----------------------LCD显示线程-----------------------
+static rt_uint8_t lcd_stack[512];
 static struct rt_thread lcd_thread;
 static void lcd_thread_entry(void* parameter)
 {
@@ -121,13 +120,11 @@ static void lcd_thread_entry(void* parameter)
     }
 }
 
-//-----------------------------------------------
-static rt_uint8_t usart_stack[ 2048 ];
+//-----------------------串口通讯线程-----------------------
+static rt_uint8_t usart_stack[2048] ;
 static struct rt_thread usart_thread;
 static void usart_thread_entry(void* parameter)
 {
-//	uint8_t test[12]={0xFA,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0x55,0xFE};
-//	uint8_t test1[12]={0xFA,0x10,0x09,0x01,0x51,0x00,0x00,0x00,0x00,0x00,0x5B,0xFE};
 	uint8_t data;
 	uint8_t data_send[12];
 	uint8_t size;
@@ -192,17 +189,8 @@ static void usart_thread_entry(void* parameter)
     }
 }
 
-//-----------------------------------------------
-void rt_init_thread_entry(void* parameter)
-{
-#ifdef RT_USING_COMPONENTS_INIT
-    /* initialization RT-Thread Components */
-    rt_components_init();
-#endif
-
-}
-
-static rt_uint8_t usart_sw_stack[ 1024 ];
+//-----------------------串口收发切换线程------------------------
+static rt_uint8_t usart_sw_stack[1024];
 static struct rt_thread usart_sw_thread;
 static void usart_sw_thread_entry(void* parameter)
 {
@@ -217,19 +205,14 @@ static void usart_sw_thread_entry(void* parameter)
 	}
 }
 
+//------------------------初始化线程-----------------------
 int rt_application_init(void)
 {
-    rt_thread_t init_thread;
     rt_err_t result;
 
 	rt_mq_init(&key_mq, "key_mqt", &key_msg_pool[0], 2, sizeof(key_msg_pool), RT_IPC_FLAG_FIFO);
 	rt_mq_init(&usart1_r_mq, "usart1_r_mq", &usart1_r_msg_pool[0], 1, sizeof(usart1_r_msg_pool), RT_IPC_FLAG_FIFO);
 	rt_mq_init(&usart2_r_mq, "usart2_r_mq", &usart2_r_msg_pool[0], 1, sizeof(usart2_r_msg_pool), RT_IPC_FLAG_FIFO);
-	
-    init_thread = rt_thread_create("init", rt_init_thread_entry, RT_NULL,2048, 8, 20);
-    if (init_thread != RT_NULL){
-        rt_thread_startup(init_thread);
-	}
 	
 	result = rt_thread_init(&key_thread, "key", key_thread_entry, RT_NULL, (rt_uint8_t*)&key_stack[0], sizeof(key_stack), 19, 5);
     if (result == RT_EOK){
@@ -250,7 +233,6 @@ int rt_application_init(void)
     if (result == RT_EOK){
         rt_thread_startup(&usart_sw_thread);
     }
-	
 	
     return 0;
 }

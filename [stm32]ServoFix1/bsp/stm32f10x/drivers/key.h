@@ -28,16 +28,7 @@ typedef enum PressState_{
 	L_CLICK =3
 }PressState;
 
-//void key_init(void);
 
-//PressState get_key_state(uint8_t key);
-
-//void up_thread_run(void* parameter);
-//void down_thread_run(void* parameter);
-//void ok_thread_run(void* parameter);
-//void re_thread_run(void* parameter);
-
-PressState key_run(uint8_t key);
 PressState key_run1(uint8_t key);
 void key_new_init(void);
 

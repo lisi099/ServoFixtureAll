@@ -10,12 +10,13 @@
       <TargetName>rtthread-stm32</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
+      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F103C8</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F1xx_DFP.2.1.0</PackID>
+          <PackID>Keil.STM32F1xx_DFP.2.2.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x5000) IROM(0x08000000,0x10000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -474,21 +475,6 @@
               <FileType>1</FileType>
               <FilePath>drivers\stm32f10x_it.c</FilePath>
             </File>
-            <File>
-              <FileName>led.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\led.c</FilePath>
-            </File>
-            <File>
-              <FileName>key.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\drivers\key.h</FilePath>
-            </File>
-            <File>
-              <FileName>key_array.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\key_array.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -665,14 +651,14 @@
               <FilePath>.\drivers\menu.h</FilePath>
             </File>
             <File>
-              <FileName>MenuAPP.c</FileName>
+              <FileName>menu_app.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\drivers\MenuAPP.c</FilePath>
+              <FilePath>.\drivers\menu_app.c</FilePath>
             </File>
             <File>
-              <FileName>MenuAPP.h</FileName>
+              <FileName>menu_app.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\drivers\MenuAPP.h</FilePath>
+              <FilePath>.\drivers\menu_app.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -727,7 +713,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Servo</GroupName>
+          <GroupName>ServoMsg</GroupName>
           <Files>
             <File>
               <FileName>servo_serial.h</FileName>
@@ -740,14 +726,14 @@
               <FilePath>.\drivers\servo_serial.c</FilePath>
             </File>
             <File>
-              <FileName>ServoAdc.c</FileName>
+              <FileName>servo_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\drivers\ServoAdc.c</FilePath>
+              <FilePath>.\drivers\servo_adc.c</FilePath>
             </File>
             <File>
-              <FileName>ServoAdc.h</FileName>
+              <FileName>servo_adc.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\drivers\ServoAdc.h</FilePath>
+              <FilePath>.\drivers\servo_adc.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -787,7 +773,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Iap</GroupName>
+          <GroupName>Upgrade</GroupName>
           <Files>
             <File>
               <FileName>flash.c</FileName>
@@ -835,19 +821,40 @@
           <GroupName>Eeprom</GroupName>
           <Files>
             <File>
-              <FileName>At24c128.c</FileName>
+              <FileName>at24c128.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\drivers\At24c128.c</FilePath>
+              <FilePath>.\drivers\at24c128.c</FilePath>
             </File>
             <File>
-              <FileName>At24c128.h</FileName>
+              <FileName>at24c128.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\drivers\At24c128.h</FilePath>
+              <FilePath>.\drivers\at24c128.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Button</GroupName>
+          <Files>
+            <File>
+              <FileName>key.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\key.h</FilePath>
+            </File>
+            <File>
+              <FileName>key_array.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\key_array.c</FilePath>
             </File>
           </Files>
         </Group>
       </Groups>
     </Target>
   </Targets>
+
+  <RTE>
+    <apis/>
+    <components/>
+    <files/>
+  </RTE>
 
 </Project>

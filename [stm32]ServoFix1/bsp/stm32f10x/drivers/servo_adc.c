@@ -1,7 +1,7 @@
 /******************** (C) COPYRIGHT 2016 ********************
 
 ***************************************************************/
-#include "ServoAdc.h"
+#include "servo_adc.h"
 
 #define  ADC1_DR_Address    ((u32)0x4001244C)
 
@@ -23,7 +23,6 @@ void adc_gpio_init(void)
   GPIO_InitTypeDef GPIO_InitStructure;
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  //infrared for  wall distance
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
