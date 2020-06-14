@@ -76,17 +76,23 @@ void start_page(void)
 {
 	put_chars(0, 0, "     POWEHO     ");
 	rt_thread_delay(RT_TICK_PER_SECOND*2);
-	
 	while(1)
 	{
 		if(get_servo_state()){
 			put_chars(0, 0, "  CONNECT OK!   ");
-			rt_thread_delay(RT_TICK_PER_SECOND);
+			rt_thread_delay(RT_TICK_PER_SECOND/2);
+			put_chars(0, 0, "  READDING....  ");
+			if(menu_combine_fb_work_parm()){
+				put_chars(0, 0, " READ PARAM OK! ");
+			}
+			else{
+				put_chars(0, 0, "READ PARAM FAIL!");
+			}
+			rt_thread_delay(RT_TICK_PER_SECOND*2);
 			break;
 		}
 		else{
 			put_chars(0, 0, "PLS CONNECT SERV");
-			
 		}
 		rt_thread_delay(RT_TICK_PER_SECOND/2);
 	}
@@ -96,8 +102,8 @@ static void menu_process_thread(void* parameter)
 {
 	uint8_t rec_buff[2];
 	uint8_t tempKey = KEY_NONE;
-	
-	copy_data_to_write_menu();
+//	
+//	copy_data_to_write_menu();
 	adc_configration();
 	lcd_init();
 	

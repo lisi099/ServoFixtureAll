@@ -39,8 +39,6 @@ u8 Menu_GetSelItem(void)
     return SelItem;
 }
 
-extern  struct PAGE Save_Page;
-
 void ShowList(u8 min,u8 max)
 {
     char str[10] ={ 0 };
@@ -61,18 +59,18 @@ void ShowList(u8 min,u8 max)
 					break;
 				case SHOW_U8:
 					u8_data = (uint8_t)pPage->pItem[index].data;
-					if(pPage == &Save_Page){
-						if(u8_data >9){
-							sprintf(str, "%d", u8_data);
-						}
-						else{
-							str[0]='0';
-							sprintf(&str[1], "%d", u8_data);
-						}
-					}
-					else{
-						sprintf(str, "%d", u8_data);
-					}
+//					if(pPage == &Save_Page){
+//						if(u8_data >9){
+//							sprintf(str, "%d", u8_data);
+//						}
+//						else{
+//							str[0]='0';
+//							sprintf(&str[1], "%d", u8_data);
+//						}
+//					}
+//					else{
+//						sprintf(str, "%d", u8_data);
+//					}
 //					if(u8_data >99){
 //						sprintf(&str[2], "%d", u8_data);
 //					}
