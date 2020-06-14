@@ -10,23 +10,19 @@
  */
 #include <board.h>
 #include <rtthread.h>
-
-#include "led.h"
 #include "1602_iic_sw.h"
 #include "menu.h"
 #include "menu_app.h"
 
 #include "usart1.h"
 #include "usart2.h"
-#include "usart3.h"
 
 #include "servo_serial.h"
 #include "usart1_package.h"
 #include "usart1_fifo.h"
+#include "servo_adc.h"
 
-#include "1602_iic_sw.h"
-
-//----------------------gloabal variable-------------------------
+//----------------------消息定义-------------------------
 static struct rt_messagequeue key_mq;
 static char key_msg_pool[50];
 
@@ -36,11 +32,18 @@ static char usart1_r_msg_pool[120];
 struct rt_messagequeue usart2_r_mq;
 static char usart2_r_msg_pool[120];
 
-//-----------------------按键处理线程-----------------------
+//-----------------------分配空间-----------------------
 ALIGN(RT_ALIGN_SIZE)
 static rt_uint8_t key_stack[512];
 static struct rt_thread key_thread;
-static void key_thread_entry(void* parameter)
+static rt_uint8_t lcd_stack[512];
+static struct rt_thread lcd_thread;
+static rt_uint8_t usart_stack[2048] ;
+static struct rt_thread usart_thread;
+static rt_uint8_t usart_sw_stack[1024];
+static struct rt_thread usart_sw_thread;
+//-----------------------按键处理线程-----------------------
+static void key_scan_thread(void* parameter)
 {
 	uint8_t key;
 	PressState key_state;
@@ -68,17 +71,37 @@ static void key_thread_entry(void* parameter)
 	}
 }
 
-//-----------------------LCD显示线程-----------------------
-static rt_uint8_t lcd_stack[512];
-static struct rt_thread lcd_thread;
-static void lcd_thread_entry(void* parameter)
+//-----------------------菜单处理-----------------------
+void start_page(void)
+{
+	put_chars(0, 0, "     POWEHO     ");
+	rt_thread_delay(RT_TICK_PER_SECOND*2);
+	
+	while(1)
+	{
+		if(get_servo_state()){
+			put_chars(0, 0, "  CONNECT OK!   ");
+			rt_thread_delay(RT_TICK_PER_SECOND);
+			break;
+		}
+		else{
+			put_chars(0, 0, "PLS CONNECT SERV");
+			
+		}
+		rt_thread_delay(RT_TICK_PER_SECOND/2);
+	}
+}
+
+static void menu_process_thread(void* parameter)
 {
 	uint8_t rec_buff[2];
 	uint8_t tempKey = KEY_NONE;
 	
 	copy_data_to_write_menu();
+	adc_configration();
 	lcd_init();
 	
+	start_page();
 	SetMainPage(&mainPage);
     ShowPage(pPage);
     while (1)
@@ -108,7 +131,6 @@ static void lcd_thread_entry(void* parameter)
 				case 2:
 					tempKey = KEY_Return;
 					break;
-				
 				default:
 					break;
 			}
@@ -121,9 +143,7 @@ static void lcd_thread_entry(void* parameter)
 }
 
 //-----------------------串口通讯线程-----------------------
-static rt_uint8_t usart_stack[2048] ;
-static struct rt_thread usart_thread;
-static void usart_thread_entry(void* parameter)
+static void usb_usart_thread(void* parameter)
 {
 	uint8_t data;
 	uint8_t data_send[12];
@@ -132,7 +152,6 @@ static void usart_thread_entry(void* parameter)
 	usart1_fifo_rx_init();
 	usart1_init(9600);
 	usart2_init_rx(9600);
-	usart3_init();
 	rt_thread_delay(RT_TICK_PER_SECOND);
     while (1)
     {
@@ -190,8 +209,6 @@ static void usart_thread_entry(void* parameter)
 }
 
 //-----------------------串口收发切换线程------------------------
-static rt_uint8_t usart_sw_stack[1024];
-static struct rt_thread usart_sw_thread;
 static void usart_sw_thread_entry(void* parameter)
 {
 	rt_thread_delay(RT_TICK_PER_SECOND);
@@ -214,17 +231,17 @@ int rt_application_init(void)
 	rt_mq_init(&usart1_r_mq, "usart1_r_mq", &usart1_r_msg_pool[0], 1, sizeof(usart1_r_msg_pool), RT_IPC_FLAG_FIFO);
 	rt_mq_init(&usart2_r_mq, "usart2_r_mq", &usart2_r_msg_pool[0], 1, sizeof(usart2_r_msg_pool), RT_IPC_FLAG_FIFO);
 	
-	result = rt_thread_init(&key_thread, "key", key_thread_entry, RT_NULL, (rt_uint8_t*)&key_stack[0], sizeof(key_stack), 19, 5);
+	result = rt_thread_init(&key_thread, "key_scan", key_scan_thread, RT_NULL, (rt_uint8_t*)&key_stack[0], sizeof(key_stack), 19, 5);
     if (result == RT_EOK){
         rt_thread_startup(&key_thread);
     }
 	
-	result = rt_thread_init(&lcd_thread, "lcd", lcd_thread_entry, RT_NULL, (rt_uint8_t*)&lcd_stack[0], sizeof(lcd_stack), 20, 5);
+	result = rt_thread_init(&lcd_thread, "menu_process", menu_process_thread, RT_NULL, (rt_uint8_t*)&lcd_stack[0], sizeof(lcd_stack), 20, 5);
     if (result == RT_EOK){
         rt_thread_startup(&lcd_thread);
     }
 	
-	result = rt_thread_init(&usart_thread, "usart", usart_thread_entry, RT_NULL, (rt_uint8_t*)&usart_stack[0], sizeof(usart_stack), 17, 10);
+	result = rt_thread_init(&usart_thread, "usb_usart", usb_usart_thread, RT_NULL, (rt_uint8_t*)&usart_stack[0], sizeof(usart_stack), 17, 10);
     if (result == RT_EOK){
         rt_thread_startup(&usart_thread);
     }

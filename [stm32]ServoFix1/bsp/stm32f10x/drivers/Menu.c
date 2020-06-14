@@ -11,9 +11,7 @@
 //保存选中的菜单项变量
 static u8 SelItem =0;
 static u16 ListShow=0x00;
-
 struct PAGE *pPage;
-
 void SelItemOfList(u8 index, char *s);
 
 

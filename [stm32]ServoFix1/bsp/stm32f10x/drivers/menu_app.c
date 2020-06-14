@@ -34,7 +34,6 @@ extern  struct PAGE Para2000;
 extern  struct PAGE Para2500;
 
 extern  struct PAGE Read_Page;
-extern  struct PAGE Edit_Page;
 extern  struct PAGE Load_Page;
 extern  struct PAGE Save_Page;
 extern  struct PAGE Clear_Page;
@@ -54,124 +53,33 @@ uint8_t Item_Num_[2] ={0, 0};
 /************************************************MAIN******************************************************/
 //----1
  struct Item Main_item[]={
-                                    (char*)"01.ServoSetting",       &Setting_Page,  0, 0,   0, SHOW_BOOL,
-                                    (char*)"02.USB",                &USB_Page,      0, 0,   0, SHOW_BOOL,
-                                    (char*)"03.Bluetooth",			&Ble_Page,      0, 0,   0, SHOW_BOOL,
-                                    (char*)"04.SpecialLoad",        &Special_Page,  0, 0,   0, SHOW_BOOL,
-									(char*)"05.SendPosition",		&Position_Page,     0, 0,   0, SHOW_BOOL,
-                                    (char*)"06.Infomation",			&Info_Page,     0, 0,   0, SHOW_BOOL,
-                                    (char*)"----------------",      &None_Page,     0, 0,   0, SHOW_BOOL,
+                                    (char*)"01.SERVOSETTING",       &Setting_Page,  	0, 0,   0, SHOW_BOOL,
+									(char*)"02.SENDPOSITION",		&Position_Page,     0, 0,   0, SHOW_BOOL,
+									(char*)"03.INFORMATION",		&Info_Page,     	0, 0,   0, SHOW_BOOL,
+                                    (char*)"04.LCDSETTINGS",        &Special_Page,  	0, 0,   0, SHOW_BOOL,
 };
  struct PAGE mainPage={0, mainPageCallBack, Main_item, sizeof(Main_item)/sizeof(struct Item), DISPLAY_MODE_1_COLUMN};
 /************************************************SET*********************************************************/
  //----2
- struct Item Setting_item[]={           (char*)"01.Program",		&Program_Page,  0,  0,  1, SHOW_BOOL,
-										(char*)"02.Read",			&Read_Page,  0,  0,  1, SHOW_BOOL,
-                                        (char*)"03.Edit",			&Edit_Page,  0,  0,  2, SHOW_BOOL,
-										(char*)"04.Download",		&Download_Page,  0,  0,  2, SHOW_BOOL,	
-										(char*)"05.Verify",			&Verify_Page,  0,  0,  2, SHOW_BOOL,	
-                                        (char*)"06.Open",			&Load_Page,  0,  0,  3, SHOW_BOOL,
-										(char*)"07.Save",			&Save_Page,  0,  0,  3, SHOW_BOOL,
-										(char*)"08.Clear",			&Clear_Page,  0,  0,  3, SHOW_BOOL,
-                                        (char*)"----------------",  &None_Page,     0, 0,   0, SHOW_BOOL,
+ struct Item Setting_item[]={           (char*)"01.MAXPOW",						0,  0,  0,  1, SHOW_U16,
+										(char*)"02.BOOST",						0,  0,  0,  1, SHOW_U16,
+                                        (char*)"03.DBAND",						0,  0,  0,  2, SHOW_U16,
+										(char*)"04.FORCE",						0,  0,  0,  2, SHOW_U16,	
+										(char*)"05.STERETC",					0,  0,  0,  2, SHOW_U16,	
+                                        (char*)"06.BRAKE",						0,  0,  0,  3, SHOW_U16,
+										(char*)"07.SFTSTA",						0,  0,  0,  3, SHOW_U16,
+										(char*)"08.SET DAT SAVE",				&Save_Page,  0,  0,  3, SHOW_BOOL,
+										(char*)"09.SET DAT READ",				&Read_Page,  0,  0,  3, SHOW_BOOL,
+										(char*)"10.RES DAT READ",				&Clear_Page,  0,  0,  3, SHOW_BOOL,
                                     };
 
  struct PAGE Setting_Page={&mainPage,Setting_CallBack,Setting_item,sizeof(Setting_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
  //----3
  struct Item Read_item[]={           	(char*)"01.Ver",				0,  0,  11,  1, SHOW_U16,
 										(char*)"02.DB",					0,  0,  11,  2, SHOW_U8,
-										(char*)"03.Maxdty",				0,  0,  11,  3, SHOW_16,
-										(char*)"04.Boost",				0,  0,  11,  3, SHOW_16,
-										(char*)"05.PMIN",				0,  0,  11,  3, SHOW_U16,
-										(char*)"06.PMAX",				0,  0,  11,  3, SHOW_U16,
-										(char*)"07.AngLft",				0,  0,  11,  3, SHOW_U16,
-										(char*)"08.AngMid",				0,  0,  11,  3, SHOW_U16,
-										(char*)"09.AngRht",				0,  0,  11,  3, SHOW_U16,
-										(char*)"10.SftSta",				0,  0,  11,  3, SHOW_BOOL,
-										(char*)"11.LPPMLk",				0,  0,  11,  3, SHOW_BOOL,
-										(char*)"12.Invert",				0,  0,  11,  3, SHOW_BOOL,
-										(char*)"13.DrivF1",				0,  0,  11,  3, SHOW_16,
-										(char*)"14.DrivF2",				0,  0,  11,  3, SHOW_U16,
-										(char*)"15.PlugPr",				0,  0,  11,  3, SHOW_U8,
-										(char*)"16.ProTim",				0,  0,  11,  3, SHOW_U16,
-										(char*)"17.ProDty",				0,  0,  11,  3, SHOW_16,
-										(char*)"18.PT",					0,  0,  11,  3, SHOW_16,
-										(char*)"19.PB",					0,  0,  11,  3, SHOW_16,
-										(char*)"20.PP",					0,  0,  11,  3, SHOW_16,
-										(char*)"-----end-------",		0,  0,  0,  0, SHOW_BOOL,
                                     };
-// struct PAGE Read_Page={&Setting_Page,read_CallBack,Read_item,sizeof(Read_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
  struct PAGE Read_Page={&Setting_Page,read_CallBack,0,0,DISPLAY_MODE_1_COLUMN};
- //----3
- struct Item Edit_item[]={           	(char*)"01.Ver",				0,  0,  11,  1, SHOW_U16,
-										(char*)"02.DB",					0,  0,  11,  2, SHOW_U8,
-										(char*)"03.Maxdty",				0,  0,  11,  3, SHOW_16,
-										(char*)"04.Boost",				0,  0,  11,  3, SHOW_16,
-										(char*)"05.PMIN",				0,  0,  11,  3, SHOW_U16,
-										(char*)"06.PMAX",				0,  0,  11,  3, SHOW_U16,
-										(char*)"07.AngLft",				0,  0,  11,  3, SHOW_U16,
-										(char*)"08.AngMid",				0,  0,  11,  3, SHOW_U16,
-										(char*)"09.AngRht",				0,  0,  11,  3, SHOW_U16,
-										(char*)"10.SftSta",				0,  0,  11,  3, SHOW_BOOL,
-										(char*)"11.LPPMLk",				0,  0,  11,  3, SHOW_BOOL,
-										(char*)"12.Invert",				0,  0,  11,  3, SHOW_BOOL,
-										(char*)"13.DrivF1",				0,  0,  11,  3, SHOW_16,
-										(char*)"14.DrivF2",				0,  0,  11,  3, SHOW_U16,
-										(char*)"15.PlugPr",				0,  0,  11,  3, SHOW_U8,
-										(char*)"16.ProTim",				0,  0,  11,  3, SHOW_U16,
-										(char*)"17.ProDty",				0,  0,  11,  3, SHOW_16,
-										(char*)"18.PT",					0,  0,  11,  3, SHOW_16,
-										(char*)"19.PB",					0,  0,  11,  3, SHOW_16,
-										(char*)"20.PP",					0,  0,  11,  3, SHOW_16,
-//										(char*)"21.WriteInServo",		0,  0,  0,  0,  SHOW_BOOL,
-										(char*)"-----end-------",		0,  0,  0,  0,  SHOW_BOOL,
-                                    };
- struct PAGE Edit_Page={&Setting_Page,Edit_CallBack,Edit_item,sizeof(Edit_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
- //----3
- struct Item Load_item[]={           	(char*)"01.AZHD1501000",		&Edit_Page,  0,  0,  1,SHOW_BOOL,
-										(char*)"02.AZHD1501001",		&Edit_Page,  0,  0,  2,SHOW_BOOL,
-										(char*)"03.AZHD1501002",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"04.AZHD1501003",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"05.AZHD1501004",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"06.AZHD1501005",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"07.AZHD1501006",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"08.AZHD1501007",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"09.AZHD1501008",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"10.AZHD1501009",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"11.AZHD1501010",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"12.AZHD1501011",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"13.AZHD1501012",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"14.AZHD1501013",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"15.AZHD1501014",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"16.AZHD1501015",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"17.AZHD1501016",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"18.AZHD1501017",		&Edit_Page,  0,  0,  0,SHOW_BOOL,
-										(char*)"19.AZHD1501018",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"20.AZHD1501019",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"21.AZHD1501020",		&Edit_Page,  0,  0,  1,SHOW_BOOL,
-										(char*)"22.AZHD1501021",		&Edit_Page,  0,  0,  2,SHOW_BOOL,
-										(char*)"23.AZHD1501022",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"24.AZHD1501023",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"25.AZHD1501024",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"26.AZHD1501025",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"27.AZHD1501026",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"28.AZHD1501027",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"29.AZHD1501028",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"30.AZHD1501029",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"31.AZHD1501030",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"32.AZHD1501031",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"33.AZHD1501032",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"34.AZHD1501033",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"35.AZHD1501034",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"36.AZHD1501035",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"37.AZHD1501036",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"38.AZHD1501037",		&Edit_Page,  0,  0,  0,SHOW_BOOL,
-										(char*)"39.AZHD1501038",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"40.AZHD1501039",		&Edit_Page,  0,  0,  3,SHOW_BOOL,
-										(char*)"-----end-------",		0,  0,  0,  0,
-                                    };
- struct PAGE Load_Page={&Setting_Page,Load_CallBack,Load_item,sizeof(Load_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
- 
+
  //----3
  struct Item Save_item[]={           	(char*)"01.AZHD1501000",		0,  0,  13,  0, SHOW_U8,
 										(char*)"02.SaveInFlash",		0,  0,  0,   0, SHOW_BOOL,
@@ -535,10 +443,6 @@ void download_CallBack(u8 key)
 	LCD_Write_Str(1,0,(char*)"-----------------");
 	rt_thread_delay(1500);
 	ShowParentPage_Num(3);
-//	ShowParentPage();
-//	pPage = &Edit_Page;
-//	ShowPage(pPage);
-	//lcd back
 }
 void verify_CallBack(u8 key)
 {
@@ -644,7 +548,7 @@ void Common_CallBack_rmb(u8 key)
 
 void Load_CallBack(u8 key)
 {
-    uint8_t i ;
+//    uint8_t i ;
     switch (key)
     {
         case KEY_UP:
@@ -658,9 +562,9 @@ void Load_CallBack(u8 key)
             ShowParentPage_Num(Item_Num_[1]);
             break;
         case KEY_Ok:
-            for(i=0; i<sizeof(Edit_item)/sizeof(struct Item); i++){
-                Edit_item[i].state = 0;
-            }
+//            for(i=0; i<sizeof(Edit_item)/sizeof(struct Item); i++){
+//                Edit_item[i].state = 0;
+//            }
             Load_servo_parameter(Menu_GetSelItem());
             break;
     }
@@ -768,77 +672,77 @@ void Save_CallBack(u8 key)
 //------------------------- datas to menu
 void copy_data_to_read_menu(void)
 {
-	Read_item[0].data = servoDataStru.work_p12;
-	Read_item[1].data = servoDataStru.work_p6;
-	Read_item[2].data = servoDataStru.set_p11;
-	Read_item[3].data = servoDataStru.set_p15;
-	Read_item[4].data = servoDataStru.work_p2;
-	Read_item[5].data = servoDataStru.work_p0;
-	Read_item[6].data = servoDataStru.work_p5;
-	Read_item[7].data = servoDataStru.work_p4;
-	Read_item[8].data = servoDataStru.work_p3;
-	Read_item[9].data = servoDataStru.set_p0;
-	Read_item[10].data = servoDataStru.work_p8;
-	Read_item[11].data = servoDataStru.work_p9;
-	Read_item[12].data = servoDataStru.set_p12;
-	Read_item[13].data = servoDataStru.set_p13;
-	Read_item[14].data = servoDataStru.set_p6;
-	Read_item[15].data = servoDataStru.set_p8;
-	Read_item[16].data = servoDataStru.set_p10;
-	Read_item[17].data = servoDataStru.debug_p0;
-	Read_item[18].data = servoDataStru.debug_p2;
-	Read_item[19].data = servoDataStru.debug_p5;
+//	Read_item[0].data = servoDataStru.work_p12;
+//	Read_item[1].data = servoDataStru.work_p6;
+//	Read_item[2].data = servoDataStru.set_p11;
+//	Read_item[3].data = servoDataStru.set_p15;
+//	Read_item[4].data = servoDataStru.work_p2;
+//	Read_item[5].data = servoDataStru.work_p0;
+//	Read_item[6].data = servoDataStru.work_p5;
+//	Read_item[7].data = servoDataStru.work_p4;
+//	Read_item[8].data = servoDataStru.work_p3;
+//	Read_item[9].data = servoDataStru.set_p0;
+//	Read_item[10].data = servoDataStru.work_p8;
+//	Read_item[11].data = servoDataStru.work_p9;
+//	Read_item[12].data = servoDataStru.set_p12;
+//	Read_item[13].data = servoDataStru.set_p13;
+//	Read_item[14].data = servoDataStru.set_p6;
+//	Read_item[15].data = servoDataStru.set_p8;
+//	Read_item[16].data = servoDataStru.set_p10;
+//	Read_item[17].data = servoDataStru.debug_p0;
+//	Read_item[18].data = servoDataStru.debug_p2;
+//	Read_item[19].data = servoDataStru.debug_p5;
 	
 }
 
 void copy_data_to_write_menu(void)
 {
-    Edit_item[0].data = servoDataStru.work_p12;
-    Edit_item[1].data = servoDataStru.work_p6;
-    Edit_item[2].data = servoDataStru.set_p11;
-    Edit_item[3].data = servoDataStru.set_p15;
-    Edit_item[4].data = servoDataStru.work_p2;
-    Edit_item[5].data = servoDataStru.work_p0;
-    Edit_item[6].data = servoDataStru.work_p5;
-    Edit_item[7].data = servoDataStru.work_p4;
-    Edit_item[8].data = servoDataStru.work_p3;
-    Edit_item[9].data = servoDataStru.set_p0;
-    Edit_item[10].data = servoDataStru.work_p8;
-    Edit_item[11].data = servoDataStru.work_p9;
-    Edit_item[12].data = servoDataStru.set_p12;
-    Edit_item[13].data = servoDataStru.set_p13;
-    Edit_item[14].data = servoDataStru.set_p6;
-    Edit_item[15].data = servoDataStru.set_p8;
-    Edit_item[16].data = servoDataStru.set_p10;
-    Edit_item[17].data = servoDataStru.debug_p0;
-    Edit_item[18].data = servoDataStru.debug_p2;
-    Edit_item[19].data = servoDataStru.debug_p5;
+//    Edit_item[0].data = servoDataStru.work_p12;
+//    Edit_item[1].data = servoDataStru.work_p6;
+//    Edit_item[2].data = servoDataStru.set_p11;
+//    Edit_item[3].data = servoDataStru.set_p15;
+//    Edit_item[4].data = servoDataStru.work_p2;
+//    Edit_item[5].data = servoDataStru.work_p0;
+//    Edit_item[6].data = servoDataStru.work_p5;
+//    Edit_item[7].data = servoDataStru.work_p4;
+//    Edit_item[8].data = servoDataStru.work_p3;
+//    Edit_item[9].data = servoDataStru.set_p0;
+//    Edit_item[10].data = servoDataStru.work_p8;
+//    Edit_item[11].data = servoDataStru.work_p9;
+//    Edit_item[12].data = servoDataStru.set_p12;
+//    Edit_item[13].data = servoDataStru.set_p13;
+//    Edit_item[14].data = servoDataStru.set_p6;
+//    Edit_item[15].data = servoDataStru.set_p8;
+//    Edit_item[16].data = servoDataStru.set_p10;
+//    Edit_item[17].data = servoDataStru.debug_p0;
+//    Edit_item[18].data = servoDataStru.debug_p2;
+//    Edit_item[19].data = servoDataStru.debug_p5;
 }
 
 // datas to menu
 void copy_data_to_stru(void)
 {
-    servoDataStru.work_p12 = Edit_item[0].data;
-    servoDataStru.work_p6 = Edit_item[1].data;
-    servoDataStru.set_p11 = Edit_item[2].data;
-    servoDataStru.set_p15 = Edit_item[3].data;
-    servoDataStru.work_p2 = Edit_item[4].data;
-	
-    servoDataStru.work_p0 = Edit_item[5].data;
-    servoDataStru.work_p5 = Edit_item[6].data;
-    servoDataStru.work_p4 = Edit_item[7].data;
-    servoDataStru.work_p3 = Edit_item[8].data;
-    servoDataStru.set_p0 = Edit_item[9].data;
-    servoDataStru.work_p8 = Edit_item[10].data;
-    servoDataStru.work_p9 = Edit_item[11].data;
-    servoDataStru.set_p12 = Edit_item[12].data;
-    servoDataStru.set_p13 = Edit_item[13].data;
-    servoDataStru.set_p6 = Edit_item[14].data;
-    servoDataStru.set_p8 = Edit_item[15].data;
-    servoDataStru.set_p10 = Edit_item[16].data;
-    servoDataStru.debug_p0 = Edit_item[17].data;
-    servoDataStru.debug_p2 = Edit_item[18].data;
-    servoDataStru.debug_p5 = Edit_item[19].data;
+//    servoDataStru.work_p12 = Edit_item[0].data;
+//    servoDataStru.work_p6 = Edit_item[1].data;
+//    servoDataStru.set_p11 = Edit_item[2].data;
+//    servoDataStru.set_p15 = Edit_item[3].data;
+//    servoDataStru.work_p2 = Edit_item[4].data;
+//	
+//    servoDataStru.work_p0 = Edit_item[5].data;
+//    servoDataStru.work_p5 = Edit_item[6].data;
+//    servoDataStru.work_p4 = Edit_item[7].data;
+//    servoDataStru.work_p3 = Edit_item[8].data;
+//    servoDataStru.set_p0 = Edit_item[9].data;
+//    servoDataStru.work_p8 = Edit_item[10].data;
+//    servoDataStru.work_p9 = Edit_item[11].data;
+//    servoDataStru.set_p12 = Edit_item[12].data;
+//    servoDataStru.set_p13 = Edit_item[13].data;
+//    servoDataStru.set_p6 = Edit_item[14].data;
+//    servoDataStru.set_p8 = Edit_item[15].data;
+//    servoDataStru.set_p10 = Edit_item[16].data;
+//    servoDataStru.debug_p0 = Edit_item[17].data;
+//    servoDataStru.debug_p2 = Edit_item[18].data;
+//    servoDataStru.debug_p5 = Edit_item[19].data;
 }
 
 //load servo parameter
@@ -851,8 +755,8 @@ void Load_servo_parameter(uint8_t data)
 	read_servo_data_in_flash(data, &servo_load_data);
 	memcpy(&servoDataStru, &servo_load_data, sizeof(servoDataStru));
 	copy_data_to_write_menu();
-	pPage = &Edit_Page;
-	ShowPage(pPage);
+//	pPage = &Edit_Page;
+//	ShowPage(pPage);
 	//lcd back
 }
 //-------------------------------------end line----------------------------------------

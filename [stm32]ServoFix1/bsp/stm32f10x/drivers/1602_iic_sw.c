@@ -267,13 +267,13 @@ void put_chars(unsigned char row, unsigned char col, char *p)
 	start();
 	if(row == 0){
 		displayAddress0();
-		for (i=0;i<16;i++){
+		for (i=0; i<16; i++){
 			writecommand(show_data0_[i]); 
 		}
 	}
 	else{
 		displayAddress1();
-		for (i=0;i<16;i++){
+		for (i=0; i<16; i++){
 			writecommand(show_data1_[i]); 
 		}
 	}
