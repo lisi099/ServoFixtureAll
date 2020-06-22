@@ -28,18 +28,33 @@ void delay_about_ms(uint16_t nms)
   Input      : 
   return     : 
 *************************************************************/
-u8 text_write[20] 	= "AAAAAAAAAAAAAAAAAA";
-u8 text_read[20] 	= "000000000";
+u8 text_write[64] 	= "0";
+u8 text_read[64] 	= "0";
+
+uint32_t address_ = 100;
+uint8_t	 crc = 1;
 int main(void)
 {
+	uint8_t i;
 	delay_about_ms(100);
 	set_board_systick();
 	delay_about_ms(50);
 	adc_configration();
+	
+	for(i=0; i<64; i++){
+		text_write[i] = 'A';
+	}
 	IIC_EEInit();
-	AT24CXX_Write(0, text_write, 20);
+	AT24CXX_Write(address_, text_write, 64);
 	delay_about_ms(1000);
-	AT24CXX_Read(0, text_read, 20);
+	AT24CXX_Read(address_, text_read, 64);
+	for(i=0; i<64; i++){
+		if(text_read[i] != text_write[i]){
+			crc = 0;
+			break;
+		}
+	}
+	
 	test_lcd();
 	
 	while(1)
