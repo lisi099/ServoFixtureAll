@@ -8,12 +8,11 @@
 #define LOW_BYTE_NUM   8
 #define LOW_4BYTE_MAX  0xFF
 
-//保存选中的菜单项变量
-static u8 SelItem =0;
-static u16 ListShow=0x00;
-struct PAGE *pPage;
 void SelItemOfList(u8 index, char *s);
 
+struct PAGE *pPage;
+static u8 SelItem =0;
+static u16 ListShow=0x00;
 
 void LCD_Write_Str(u8 x, u8 y, char *data)
 {
@@ -25,15 +24,11 @@ void Lcd_Clr_Scr(void)
 	lcd_clear();
 }
 
-
 void SetMainPage(struct PAGE *pMainPage)
 {
     pPage =pMainPage;
 }
-/**
-获得当前选中的菜单项
-@return 返回菜单序号
-*/
+
 u8 Menu_GetSelItem(void)
 {
     return SelItem;
@@ -59,101 +54,18 @@ void ShowList(u8 min,u8 max)
 					break;
 				case SHOW_U8:
 					u8_data = (uint8_t)pPage->pItem[index].data;
-//					if(pPage == &Save_Page){
-//						if(u8_data >9){
-//							sprintf(str, "%d", u8_data);
-//						}
-//						else{
-//							str[0]='0';
-//							sprintf(&str[1], "%d", u8_data);
-//						}
-//					}
-//					else{
-//						sprintf(str, "%d", u8_data);
-//					}
-//					if(u8_data >99){
-//						sprintf(&str[2], "%d", u8_data);
-//					}
-//					else if (u8_data >9){
-//						sprintf(&str[3], "%d", u8_data);
-//					}
-//					else{
-//						sprintf(&str[4], "%d", u8_data);
-//					}
 					break;
 				case SHOW_8:
 					i8_data = (int8_t)pPage->pItem[index].data;
 					sprintf(str, "%d", i8_data);
-//					if(i8_data >=0){
-//						if(i8_data >99){
-//							sprintf(&str[2], "%d", i8_data);
-//						}
-//						else if (i8_data >9){
-//							sprintf(&str[3], "%d", i8_data);
-//						}
-//						else{
-//							sprintf(&str[4], "%d", i8_data);
-//						}
-//					}
-//					else{
-//						if(i8_data <-99){
-//							sprintf(&str[1], "%d", i8_data);
-//						}
-//						else if (i8_data <-9){
-//							sprintf(&str[2], "%d", i8_data);
-//						}
-//						else{
-//							sprintf(&str[3], "%d", i8_data);
-//						}
-//					}
 					break;
 				case SHOW_U16:
 					u16_data = (uint16_t)pPage->pItem[index].data;
 					sprintf(str, "%d", u16_data);
-//					if(u16_data >999){
-//						sprintf(&str[1], "%d", u16_data);
-//					}
-//					else if(u16_data >99){
-//						sprintf(&str[2], "%d", u16_data);
-//					}
-//					else if (u16_data >9){
-//						sprintf(&str[3], "%d", u16_data);
-//					}
-//					else{
-//						sprintf(&str[4], "%d", u16_data);
-//					}
 					break;
 				case SHOW_16:
 					i16_data = (int16_t)pPage->pItem[index].data;
 					sprintf(str, "%d", i16_data);
-//					if(i16_data >=0){
-//						if(i16_data >999){
-//							sprintf(&str[1], "%d", i16_data);
-//						}
-//						else if(i16_data >99){
-//							sprintf(&str[2], "%d", i16_data);
-//						}
-//						else if (i16_data >9){
-//							sprintf(&str[3], "%d", i16_data);
-//						}
-//						else{
-//							sprintf(&str[4], "%d", i16_data);
-//						}
-//					}
-//					else{
-//						if(i16_data <-999){
-//							sprintf(&str[0], "%d", i16_data);
-//						}
-//						else if(i16_data <-99){
-//							sprintf(&str[1], "%d", i16_data);
-//						}
-//						else if (i16_data <-9){
-//							sprintf(&str[2], "%d", i16_data);
-//						}
-//						else{
-//							sprintf(&str[3], "%d", i16_data);
-//						}
-//					}
 					break;
 				default:
 					break;
@@ -171,9 +83,8 @@ void ShowList(u8 min,u8 max)
 2.没有时:会调用该Page的回调函数并传入KEY_Special 参数	\n
 @param pPage 指向一个page
 */
-void ShowPage( struct PAGE *pPage)
+void ShowPage(struct PAGE *pPage)
 {
-//    s8 i;
     char data[] = ">";
     Lcd_Clr_Scr();
     if(pPage->pItem==0)
@@ -188,28 +99,10 @@ void ShowPage( struct PAGE *pPage)
         SelItemOfList(0, data);
         pPage->Function(KEY_Special);
     }
-//    else if(pPage->DisplayMode==DISPLAY_MODE_2_COLUMN) //两列显示
-//    {
-//        ///取出page中的Item并显示
-//        for (i=0;i<pPage->ItemNum;i++)
-//        {
-//            if (i<2)
-//            {
-//                LCD_Write_Str(i,1,pPage->pItem[i].pText);
-//            }
-//            else
-//            {
-//                LCD_Write_Str(i-2,5,pPage->pItem[i].pText);
-//            }
-
-//        }
-//        SelPageItem(0);//<选中Item 0
-//        pPage->Function(KEY_Special);
-//    }
 }
+
 void ShowPage_Num( struct PAGE *pPage, uint8_t num)
 {
-//    s8 i;
     char data[] = ">";
     Lcd_Clr_Scr();
     if(pPage->pItem==0)
@@ -225,17 +118,17 @@ void ShowPage_Num( struct PAGE *pPage, uint8_t num)
         pPage->Function(KEY_Special);
     }
 }
-/**
-显示父页(ParentPage)
-*/
+
 void ShowParentPage(void)
 {
     int i;
-    for(i =0; i< pPage->ItemNum; i++){
-        pPage->pItem[i].state =0;
-    }
-    pPage =pPage->pParent;
-    ShowPage(pPage);
+	if(pPage->pParent !=0){
+		for(i =0; i< pPage->ItemNum; i++){
+			pPage->pItem[i].state =0;
+		}
+		pPage =pPage->pParent;
+		ShowPage(pPage);
+	}
 }
 
 void ShowParentPage_Num(uint16_t num)
@@ -248,9 +141,6 @@ void ShowParentPage_Num(uint16_t num)
     ShowPage_Num(pPage, num);
 }
 
-/**
-显示项目(Item)下对应的页(Page)
-*/
 void ShowItemPage(void)
 {
     char data[] ="+";
@@ -278,10 +168,7 @@ void ShowItemPage(void)
     ShowPage(pPage);
 }
 
-/**
-选择page中的Item项
-@param ItemIndex page中Item的索引号 0~7
-*/
+
 void SelPageItem(u8 ItemIndex)
 {
 	///检查是否有错误调用
@@ -634,4 +521,4 @@ void KeySelItem(u8 key)
             break;
     }
 }
-
+//------------------------end----------------------------------------------

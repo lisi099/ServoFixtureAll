@@ -9,4 +9,6 @@
 
 extern struct PAGE mainPage;
 
+void Common_CallBack(u8 key);
+
 #endif

@@ -1,13 +1,7 @@
 /*
  * Copyright (c) 2006-2018, RT-Thread Development Team
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2009-01-05     Bernard      the first version
- * 2013-07-12     aozima       update for auto initial.
  */
+ 
 #include <board.h>
 #include <rtthread.h>
 #include "1602_iic_sw.h"
@@ -32,16 +26,6 @@ static char usart1_r_msg_pool[120];
 struct rt_messagequeue usart2_r_mq;
 static char usart2_r_msg_pool[120];
 
-//-----------------------分配空间-----------------------
-ALIGN(RT_ALIGN_SIZE)
-static rt_uint8_t key_stack[512];
-static struct rt_thread key_thread;
-static rt_uint8_t lcd_stack[512];
-static struct rt_thread lcd_thread;
-static rt_uint8_t usart_stack[2048] ;
-static struct rt_thread usart_thread;
-static rt_uint8_t usart_sw_stack[1024];
-static struct rt_thread usart_sw_thread;
 //-----------------------按键处理线程-----------------------
 static void key_scan_thread(void* parameter)
 {
@@ -67,7 +51,7 @@ static void key_scan_thread(void* parameter)
 				rt_mq_send(&key_mq, msg_key, 2);
 			}
 		}
-		rt_thread_delay( RT_TICK_PER_SECOND/50);
+		rt_thread_delay(RT_TICK_PER_SECOND/50);
 	}
 }
 
@@ -102,8 +86,6 @@ static void menu_process_thread(void* parameter)
 {
 	uint8_t rec_buff[2];
 	uint8_t tempKey = KEY_NONE;
-//	
-//	copy_data_to_write_menu();
 	adc_configration();
 	lcd_init();
 	
@@ -148,7 +130,7 @@ static void menu_process_thread(void* parameter)
     }
 }
 
-//-----------------------串口通讯线程-----------------------
+//-----------------------USB与舵机通讯线程----------------------
 static void usb_usart_thread(void* parameter)
 {
 	uint8_t data;
@@ -231,31 +213,23 @@ static void usart_sw_thread_entry(void* parameter)
 //------------------------初始化线程-----------------------
 int rt_application_init(void)
 {
-    rt_err_t result;
-
 	rt_mq_init(&key_mq, "key_mqt", &key_msg_pool[0], 2, sizeof(key_msg_pool), RT_IPC_FLAG_FIFO);
 	rt_mq_init(&usart1_r_mq, "usart1_r_mq", &usart1_r_msg_pool[0], 1, sizeof(usart1_r_msg_pool), RT_IPC_FLAG_FIFO);
 	rt_mq_init(&usart2_r_mq, "usart2_r_mq", &usart2_r_msg_pool[0], 1, sizeof(usart2_r_msg_pool), RT_IPC_FLAG_FIFO);
 	
-	result = rt_thread_init(&key_thread, "key_scan", key_scan_thread, RT_NULL, (rt_uint8_t*)&key_stack[0], sizeof(key_stack), 19, 5);
-    if (result == RT_EOK){
-        rt_thread_startup(&key_thread);
-    }
+	rt_thread_t tid1 = RT_NULL;
 	
-	result = rt_thread_init(&lcd_thread, "menu_process", menu_process_thread, RT_NULL, (rt_uint8_t*)&lcd_stack[0], sizeof(lcd_stack), 20, 5);
-    if (result == RT_EOK){
-        rt_thread_startup(&lcd_thread);
-    }
+	tid1 = rt_thread_create("key_scan", key_scan_thread, RT_NULL, 512, 19, 5);
+	if (tid1 != RT_NULL) rt_thread_startup(tid1);
 	
-	result = rt_thread_init(&usart_thread, "usb_usart", usb_usart_thread, RT_NULL, (rt_uint8_t*)&usart_stack[0], sizeof(usart_stack), 17, 10);
-    if (result == RT_EOK){
-        rt_thread_startup(&usart_thread);
-    }
+	tid1 = rt_thread_create("menu_process", menu_process_thread, RT_NULL, 512, 20, 5);
+	if (tid1 != RT_NULL) rt_thread_startup(tid1);
 	
-	result = rt_thread_init(&usart_sw_thread, "usart_sw", usart_sw_thread_entry, RT_NULL, (rt_uint8_t*)&usart_sw_stack[0], sizeof(usart_sw_stack), 16, 10);
-    if (result == RT_EOK){
-        rt_thread_startup(&usart_sw_thread);
-    }
+	tid1 = rt_thread_create("usb_usart", usb_usart_thread, RT_NULL, 2048, 17, 10);
+	if (tid1 != RT_NULL) rt_thread_startup(tid1);
+	
+	tid1 = rt_thread_create("usart_sw", usart_sw_thread_entry, RT_NULL, 1024, 16, 10);
+	if (tid1 != RT_NULL) rt_thread_startup(tid1);
 	
     return 0;
 }

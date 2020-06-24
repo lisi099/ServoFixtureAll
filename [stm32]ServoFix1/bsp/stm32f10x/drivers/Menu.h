@@ -9,13 +9,8 @@
 #include "1602_iic_sw.h"
 #include "key.h"
 
-#define KEY_Special 	255	///<这个保留用于特别事件
-
-void Menu_Show(void);
-
-#define DISPLAY_MODE_2_COLUMN   (2) //2列显示
-#define DISPLAY_MODE_0_COLUMN   (0) //全屏显示
-#define DISPLAY_MODE_1_COLUMN   (1) //1列显示
+#define KEY_Special 			255		//-这个保留用于特别事件
+#define DISPLAY_MODE_1_COLUMN   (1) 	//-1列显示
 
 struct PAGE
 {
@@ -32,7 +27,6 @@ typedef enum ShowType_{
 	SHOW_8,
 	SHOW_U16,
 	SHOW_16,
-	
 }ShowType;
 
 struct Item
@@ -45,28 +39,24 @@ struct Item
 	ShowType type;
 };
 
-
 extern struct PAGE *pPage;
 
+void Lcd_Clr_Scr(void);
+void LCD_Write_Str(u8 x, u8 y, char *data);
+
 void SetMainPage(struct PAGE *pMainPage);
-void ShowMenu( struct PAGE *pPage);
+u8 Menu_GetSelItem(void);
+
 void ShowPage( struct PAGE *pPage);
 void ShowPage_Num( struct PAGE *pPage, uint8_t num);
 void ShowParentPage(void);
 void ShowParentPage_Num(uint16_t num);
 void ShowItemPage(void);
 void SelPageItem(u8 ItemIndex);
-u8 Menu_GetSelItem(void);
-
-void GetShowLst(u8 *pOutMin,u8 *pOutMax);
 
 void KeySelItem(u8 key);
 void SelItemOfListPara(u8 index, char *s);
 void SelItemOfList(u8 index, char *s);
-
-void LCD_Write_Str(u8 x, u8 y, char *data);
-void Lcd_Clr_Scr(void);
-
 
 
 #endif 
