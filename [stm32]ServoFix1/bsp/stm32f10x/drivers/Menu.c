@@ -54,6 +54,7 @@ void ShowList(u8 min,u8 max)
 					break;
 				case SHOW_U8:
 					u8_data = (uint8_t)pPage->pItem[index].data;
+					sprintf(str, "%d", u8_data);
 					break;
 				case SHOW_8:
 					i8_data = (int8_t)pPage->pItem[index].data;
@@ -247,9 +248,7 @@ void SelItemOfList(u8 index, char *s)
 
     if (index>max) //<超出最大当前显示的序号
     {
-
         LCD_Write_Str(Menu_GetSelItem()-min,0,(char*)" ");
-
         min+=1;
         max+=1;
         ShowList(min,max);
@@ -270,7 +269,6 @@ void SelItemOfList(u8 index, char *s)
         max-=1;
         ShowList(min,max);
         ListShow=(max<<LOW_BYTE_NUM)|min;
-
         LCD_Write_Str(index-min,0,(char*)s);
     }
     SelItem=index;

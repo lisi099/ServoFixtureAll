@@ -42,13 +42,13 @@ struct PAGE mainPage={0, Common_CallBack, Main_item, sizeof(Main_item)/sizeof(st
 /************************************************SET*********************************************************/
 //----2
 struct Item Setting_item[]={            (char*)"00.SERVO VERSION",				&Servo_Version_Page,  0,  0,  1, SHOW_U16,
-										(char*)"01.MAXPOW",						0,  0,  0,  1, SHOW_U16,
-										(char*)"02.BOOST",						0,  0,  0,  1, SHOW_U16,
-                                        (char*)"03.DBAND",						0,  0,  0,  2, SHOW_U16,
-										(char*)"04.FORCE",						0,  0,  0,  2, SHOW_U16,	
-										(char*)"05.STERETC",					0,  0,  0,  2, SHOW_U16,	
-                                        (char*)"06.BRAKE",						0,  0,  0,  3, SHOW_U16,
-										(char*)"07.SFTSTA",						0,  0,  0,  3, SHOW_U16,
+										(char*)"01.MAXPOW",						0,  0,  11,  1, SHOW_U16,
+										(char*)"02.BOOST",						0,  0,  11,  1, SHOW_U8,
+                                        (char*)"03.DBAND",						0,  0,  11,  2, SHOW_U8,
+										(char*)"04.FORCE",						0,  0,  11,  2, SHOW_U8,	
+										(char*)"05.STERETC",					0,  0,  12,  2, SHOW_U8,	
+                                        (char*)"06.BRAKE",						0,  0,  11,  3, SHOW_U8,
+										(char*)"07.SFTSTA",						0,  0,  11,  3, SHOW_BOOL,
 										(char*)"08.SET DAT SAVE",				&Data_Save_Page,  0,  0,  3, SHOW_BOOL,
 										(char*)"09.SET DAT READ",				&Data_Read_Page,  0,  0,  3, SHOW_BOOL,
 										(char*)"10.RES DAT READ",				0,  0,  0,  3, SHOW_BOOL,
@@ -134,7 +134,59 @@ void Common_CallBack(u8 key)
 
 void Servo_Version_Page_CallBack(u8 key)
 {
+	char buf[5] ={'0', '0', '0', '0', '0'};
+	char buf_show[16];
+	uint8_t i;
+	for(i=0; i<16; i++){
+		buf_show[i] = ' ';
+	}
 	
+	Lcd_Clr_Scr();
+	LCD_Write_Str(0,0,(char*)" Servo Version ");
+	if(servoDataStru.work_p12 >9999){
+		buf[0] += servoDataStru.work_p12 / 10000 %10;
+		buf[1] += servoDataStru.work_p12 / 1000 %10;
+		buf[2] += servoDataStru.work_p12 / 100 %10;
+		buf[3] += servoDataStru.work_p12 / 10 %10;
+		buf[4] += servoDataStru.work_p12 / 1 %10;
+	}
+	else if(servoDataStru.work_p12 >999){
+		buf[0] += servoDataStru.work_p12 / 1000 %10;
+		if(servoDataStru.work_p12 %100 >10){
+			buf[2] += servoDataStru.work_p12 / 100 %10;
+			buf[3] += servoDataStru.work_p12 / 10 %10;
+			buf[4] += servoDataStru.work_p12 / 1 %10;
+		}
+		else{
+			buf[1] += servoDataStru.work_p12 / 100 %10;
+			buf[2] += servoDataStru.work_p12 / 10 %10;
+			buf[4] += servoDataStru.work_p12 / 1 %10;
+		}
+	}
+	else if(servoDataStru.work_p12 >99){
+		buf[0] += servoDataStru.work_p12 / 100 %10;
+		buf[2] += servoDataStru.work_p12 / 10 %10;
+		buf[4] += servoDataStru.work_p12 / 1 %10;
+	}
+	for(i=0; i<5; i++){
+		buf_show[i+5] = buf[i];
+	}
+	LCD_Write_Str(1,0,buf_show);
 	
+	if (key == KEY_Return){
+        ShowParentPage();
+    }
 }
+
+void Copy_Data_To_Show(void)
+{
+	Setting_item[1].data = servoDataStru.set_p11;
+	Setting_item[2].data = servoDataStru.set_p15;
+	Setting_item[3].data = servoDataStru.work_p6;
+	Setting_item[4].data = servoDataStru.debug_p0;
+	Setting_item[5].data = servoDataStru.debug_p5;
+	Setting_item[6].data = servoDataStru.debug_p2;
+	Setting_item[7].data = servoDataStru.work_p14;
+}
+
 //-------------------------------------end line----------------------------------------

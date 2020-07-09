@@ -58,8 +58,12 @@ static void key_scan_thread(void* parameter)
 //-----------------------≤Àµ•¥¶¿Ì-----------------------
 void start_page(void)
 {
+	uint8_t rec_buff[2];
+	
 	put_chars(0, 0, "     POWEHO     ");
+	put_chars(1, 0, "WELCOM TO POWEHD");
 	rt_thread_delay(RT_TICK_PER_SECOND*2);
+	put_chars(1, 0, "                ");
 	while(1)
 	{
 		if(get_servo_state()){
@@ -71,12 +75,22 @@ void start_page(void)
 			}
 			else{
 				put_chars(0, 0, "READ PARAM FAIL!");
+				continue;
 			}
 			rt_thread_delay(RT_TICK_PER_SECOND*2);
+			SetMainPage(&Setting_Page);
+			ShowPage(pPage);
 			break;
 		}
 		else{
 			put_chars(0, 0, "PLS CONNECT SERV");
+			if(rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO)== RT_EOK){
+				if(rec_buff[0] ==2){
+					SetMainPage(&mainPage);
+					ShowPage(pPage);
+					break;
+				}
+			}
 		}
 		rt_thread_delay(RT_TICK_PER_SECOND/2);
 	}
@@ -90,8 +104,6 @@ static void menu_process_thread(void* parameter)
 	lcd_init();
 	
 	start_page();
-	SetMainPage(&mainPage);
-    ShowPage(pPage);
     while (1)
     {
 		tempKey = KEY_NONE;

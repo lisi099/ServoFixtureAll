@@ -8,6 +8,7 @@
 #include "string.h"
 #include "flash.h"
 #include "board_info.h"
+#include "menu_app.h"
 
 uint8_t uart_write_datas[12];
 uint8_t uart_read_datas[12];
@@ -475,6 +476,7 @@ uint8_t menu_combine_fb_work_parm(void)
 		}
 	}
 	memcpy(&servoDataStru, &servo_data, sizeof(servo_data));
+	Copy_Data_To_Show();
 	rt_thread_delay(5);
 	return 1;
 }
