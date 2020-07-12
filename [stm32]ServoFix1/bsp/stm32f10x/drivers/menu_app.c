@@ -30,6 +30,8 @@ extern struct PAGE Host_Bd_Set_Page;
 extern struct PAGE Reset_Data_Read_Page;
 extern struct PAGE Servo_Version_Page1;
 extern struct PAGE Lcd_Version_Page;
+extern struct PAGE Broadband_servo_Page;
+extern struct PAGE Narrowband_servo_Page;
 
 //--4
 extern struct PAGE Servo_Write_Memory_Page;
@@ -67,8 +69,8 @@ struct Item Setting_item[]={            (char*)"00.SERVO VERSION",				&Servo_Ver
 struct PAGE Setting_Page={&mainPage,Menu_Two_CallBack,Setting_item,sizeof(Setting_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
  
 //----2
-struct Item Position_item[]={           (char*)"1.BROADBANDSERVO",						0,  0,  0,  1, SHOW_U16,
-										(char*)"2.NARROWBANDSERVO",						0,  0,  0,  1, SHOW_U16,
+struct Item Position_item[]={           (char*)"1.BROADBANDSERVO",						&Broadband_servo_Page,  0,  0,  1, SHOW_U16,
+										(char*)"2.NARROWBANDSERVO",						&Narrowband_servo_Page,  0,  0,  1, SHOW_U16,
                                     };
 struct PAGE Position_Page={&mainPage,Menu_Two_CallBack,Position_item,sizeof(Position_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
  
@@ -116,6 +118,8 @@ struct PAGE Host_Bd_Set_Page={&Setting_Page, Menu_Three_CallBack, Host_Bd_Set_it
 //----3
 struct PAGE Servo_Version_Page1 ={&Info_Page, Servo_Version_Page_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
 struct PAGE Lcd_Version_Page ={&Info_Page, Lcd_Version_Page_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
+struct PAGE Broadband_servo_Page ={&Position_Page, Narrowband_Page_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
+struct PAGE Narrowband_servo_Page ={&Position_Page, Broadband_Page_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
 //----4
 struct PAGE Servo_Write_Memory_Page ={&Data_Save_Page, Servo_Write_Memory_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
 //----4
@@ -386,6 +390,106 @@ void Lcd_Version_Page_CallBack(u8 key)
         ShowParentPage();
     }
 }
+
+void Broadband_Page_CallBack(u8 key)
+{
+	char buf1[] ={"High"};
+	char buf2[] ={"Middle"};
+	char buf3[] ={"Low"};
+	char buf_show[16];
+	uint8_t i;
+	static uint8_t seq = 0;
+	
+	for(i=0; i<16; i++){
+		buf_show[i] = ' ';
+	}
+	
+	switch (key)
+	{
+		case KEY_UP:
+			seq ++;
+			if(seq >= 3){
+				seq = 0;
+			}
+			break;
+		case KEY_Down:
+			break;
+		case KEY_Return:
+			ShowParentPage();
+			return;
+	}
+	
+	if(seq == 1){ //middle
+		for(i=0; i<6; i++){
+			buf_show[i+5] = buf2[i];
+		}
+	}
+	else if(seq ==2){ // 
+		for(i=0; i<4; i++){
+			buf_show[i+5] = buf1[i];
+		}
+	}
+	else if(seq ==0){ //
+		for(i=0; i<3; i++){
+			buf_show[i+5] = buf3[i];
+		}
+	}
+	Lcd_Clr_Scr();
+	LCD_Write_Str(0,0,(char*)"Narrowband Servo");
+	LCD_Write_Str(1,0,buf_show);
+}
+
+void Narrowband_Page_CallBack(u8 key)
+{
+	char buf1[] ={"High"};
+	char buf2[] ={"Middle"};
+	char buf3[] ={"Low"};
+	char buf_show[16];
+	uint8_t i;
+	static uint8_t seq = 0;
+	
+	for(i=0; i<16; i++){
+		buf_show[i] = ' ';
+	}
+	
+	switch (key)
+	{
+		case KEY_UP:
+			break;
+		case KEY_Down:
+			seq ++;
+			if(seq >= 3){
+				seq = 0;
+			}
+			break;
+		case KEY_Return:
+			ShowParentPage();
+			return;
+	}
+	
+	if(seq == 1){ //middle
+		for(i=0; i<6; i++){
+			buf_show[i+5] = buf2[i];
+		}
+	}
+	else if(seq ==2){ // 
+		for(i=0; i<4; i++){
+			buf_show[i+5] = buf1[i];
+		}
+	}
+	else if(seq ==0){ //
+		for(i=0; i<3; i++){
+			buf_show[i+5] = buf3[i];
+		}
+	}
+	Lcd_Clr_Scr();
+	LCD_Write_Str(0,0,(char*)"Narrowband Servo");
+	LCD_Write_Str(1,0,buf_show);
+	if (key == KEY_Return){
+        ShowParentPage();
+    }
+}
+
 void Reset_Data_Read_Page_CallBack(u8 key)
 {
 	static uint8_t num = 0;
