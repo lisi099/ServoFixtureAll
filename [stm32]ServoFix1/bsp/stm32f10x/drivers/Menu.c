@@ -172,21 +172,10 @@ void ShowItemPage(void)
 
 void SelPageItem(u8 ItemIndex)
 {
-	///检查是否有错误调用
-#if MENU_DEBUG
-
-	if (ItemIndex>=8)
-	{
-		LCD_Write_Str(0,0,"设置菜单项溢出");
-		return;
-	}
-#endif
-
 ///清除上次选中的
    if (SelItem<LOW_BYTE_NUM)
    {
         LCD_Write_Str(SelItem,0,(char*)" ");
-
    }
    else
    {
