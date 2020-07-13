@@ -32,7 +32,7 @@ volatile uint8_t  Rcv2_Flag;
 volatile uint8_t  Txd2_Flag;
 
 volatile uint8_t  usart2_mode = 0;
-volatile uint32_t bd_set = 9600;
+volatile uint32_t bd_set_ = 9600;
 
 /*************************************************************
   Function   :
@@ -264,7 +264,7 @@ void usart2_init_rx(uint32_t bd)
 	Rcv2_Flag = 0;
 	Txd2_Flag = 0;
 	usart2_mode = 1;
-	bd_set = bd;
+	bd_set_ = bd;
 }
 /*************************************************************
   Function   :
@@ -282,7 +282,7 @@ void usart2_send_buff(uint8_t *pbuffer, uint32_t size)
 //		;
 //	}
 	if(usart2_mode == 1){
-		usart2_init_tx(bd_set);
+		usart2_init_tx(bd_set_);
 	}
 	if(size >= TXD2_BUFFSIZE){
 		size = TXD2_BUFFSIZE;

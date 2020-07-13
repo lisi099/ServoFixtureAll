@@ -24,6 +24,9 @@ void Reset_Data_Read_Page_CallBack(u8 key);
 void Narrowband_Page_CallBack(u8 key);
 void Broadband_Page_CallBack(u8 key);
 	
+void Servo_Bd_Set_CallBack(u8 key);
+void Lcd_Bd_Set_CallBack(u8 key);
+
 void Copy_Data_To_Show(void);
 void Copy_Data_To_Stru(void);
 #endif

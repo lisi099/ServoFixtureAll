@@ -16,7 +16,7 @@ extern volatile uint32_t Rcv2_Counter;
 extern volatile uint8_t  Rcv2_Flag;
 extern volatile uint8_t  Txd2_Flag;
 extern volatile uint8_t  usart2_mode;
-extern volatile uint32_t bd_set;
+extern volatile uint32_t bd_set_;
 
 
 //void usart2_init(uint32_t bd);
