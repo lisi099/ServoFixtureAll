@@ -37,6 +37,8 @@ struct Item
     u8 colum;
     int16_t data;
 	ShowType type;
+	int16_t min;
+	int16_t max;
 };
 
 extern struct PAGE *pPage;

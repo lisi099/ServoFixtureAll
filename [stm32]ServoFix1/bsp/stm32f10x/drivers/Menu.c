@@ -263,7 +263,7 @@ void SelItemOfList(u8 index, char *s)
     SelItem=index;
 }
 
-void data_plus(int16_t *data, ShowType type)
+void data_plus(int16_t *data, ShowType type, int16_t min, int16_t max)
 {
 	uint8_t 	*t8;
 	int8_t 		*it8;
@@ -301,9 +301,15 @@ void data_plus(int16_t *data, ShowType type)
 		default:
 			break;
 	}
+	if(*data >max){
+		*data = max;
+	}
+	else if(*data <min){
+		*data = min;
+	}
 }
 
-void data_minus(int16_t *data, ShowType type)
+void data_minus(int16_t *data, ShowType type, int16_t min, int16_t max)
 {
 	uint8_t 	*t8;
 	int8_t 		*it8;
@@ -341,6 +347,12 @@ void data_minus(int16_t *data, ShowType type)
 		default:
 			break;
 	}
+	if(*data >max){
+		*data = max;
+	}
+	else if(*data <min){
+		*data = min;
+	}
 }
 
 void KeySelItem(u8 key)
@@ -357,7 +369,7 @@ void KeySelItem(u8 key)
 				if(pPage->pItem[Menu_GetSelItem()].state ==1){
 					index=Menu_GetSelItem();
 					for(i=0; i<3; i++){
-						data_plus(&pPage->pItem[index].data, pPage->pItem[index].type);
+						data_plus(&pPage->pItem[index].data, pPage->pItem[index].type, 0, 100);
 					}
 					switch(pPage->pItem[index].type){
 					case SHOW_BOOL:
@@ -391,7 +403,7 @@ void KeySelItem(u8 key)
 				if(pPage->pItem[Menu_GetSelItem()].state ==1){
                     index=Menu_GetSelItem();
 					for(i=0; i<3; i++){
-						data_minus(&pPage->pItem[index].data, pPage->pItem[index].type);
+						data_minus(&pPage->pItem[index].data, pPage->pItem[index].type, 0, 100);
 					}
 					switch(pPage->pItem[index].type){
 					case SHOW_BOOL:
@@ -426,7 +438,7 @@ void KeySelItem(u8 key)
                 //edit
                 if(pPage->pItem[Menu_GetSelItem()].state ==1){
                     index=Menu_GetSelItem();
-					data_plus(&pPage->pItem[index].data, pPage->pItem[index].type);
+					data_plus(&pPage->pItem[index].data, pPage->pItem[index].type, 0, 100);
 					switch(pPage->pItem[index].type){
 					case SHOW_BOOL:
 						sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
@@ -460,7 +472,7 @@ void KeySelItem(u8 key)
                 //edit
                 if(pPage->pItem[Menu_GetSelItem()].state ==1){
                     index=Menu_GetSelItem();
-                    data_minus(&pPage->pItem[index].data, pPage->pItem[index].type);
+                    data_minus(&pPage->pItem[index].data, pPage->pItem[index].type, 0, 100);
 					switch(pPage->pItem[index].type){
 					case SHOW_BOOL:
 						sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);

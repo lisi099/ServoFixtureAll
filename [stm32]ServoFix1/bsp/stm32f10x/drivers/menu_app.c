@@ -45,76 +45,76 @@ extern Usart_State usart_state;
 /************************************************MAIN******************************************************/
 //----1
 struct Item Main_item[]={
-                                    (char*)"1.SERVOSETTING",       	&Setting_Page,  	0, 0,   0, SHOW_BOOL,
-									(char*)"2.SENDPOSITION",		&Position_Page,     0, 0,   0, SHOW_BOOL,
-									(char*)"3.INFORMATION",			&Info_Page,     	0, 0,   0, SHOW_BOOL,
-                                    (char*)"4.LCDSETTINGS",        	&Lcd_Page,  		0, 0,   0, SHOW_BOOL,
-									(char*)"5.**************",      0,  		0, 0,   0, SHOW_BOOL,
+                                    (char*)"1.SERVOSETTING",       	&Setting_Page,  	0, 0,   0, SHOW_BOOL,0,0,
+									(char*)"2.SENDPOSITION",		&Position_Page,     0, 0,   0, SHOW_BOOL,0,0,
+									(char*)"3.INFORMATION",			&Info_Page,     	0, 0,   0, SHOW_BOOL,0,0,
+                                    (char*)"4.LCDSETTINGS",        	&Lcd_Page,  		0, 0,   0, SHOW_BOOL,0,0,
+									(char*)"5.**************",      0,  				0, 0,   0, SHOW_BOOL,0,0,
 };
 struct PAGE mainPage={0, Menu_One_CallBack, Main_item, sizeof(Main_item)/sizeof(struct Item), DISPLAY_MODE_1_COLUMN};
 /************************************************SET*********************************************************/
 //----2
-struct Item Setting_item[]={            (char*)"00.SERVO VERSION",				&Servo_Version_Page,  0,  0,  1, SHOW_U16,
-										(char*)"01.MAXPOW",						0,  0,  11,  1, SHOW_U16,
-										(char*)"02.BOOST",						0,  0,  11,  1, SHOW_U8,
-                                        (char*)"03.DBAND",						0,  0,  11,  2, SHOW_U8,
-										(char*)"04.FORCE",						0,  0,  11,  2, SHOW_U8,	
-										(char*)"05.STERETC",					0,  0,  12,  2, SHOW_U8,	
-                                        (char*)"06.BRAKE",						0,  0,  11,  3, SHOW_U8,
-										(char*)"07.SFTSTA",						0,  0,  11,  3, SHOW_BOOL,
-										(char*)"08.SET DAT SAVE",				&Data_Save_Page,  0,  0,  3, SHOW_BOOL,
-										(char*)"09.SET DAT READ",				&Data_Read_Page,  0,  0,  3, SHOW_BOOL,
-										(char*)"10.RES DAT READ",				&Reset_Data_Read_Page,  0,  0,  3, SHOW_BOOL,
-										(char*)"11.*************",      0,  		0, 0,   0, SHOW_BOOL,
+struct Item Setting_item[]={            (char*)"00.SERVO VERSION",				&Servo_Version_Page,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"01.MAXPOW",						0,  0,  11,  1, SHOW_U16,500,1500,
+										(char*)"02.BOOST",						0,  0,  11,  1, SHOW_U8,0,100,
+                                        (char*)"03.DBAND",						0,  0,  11,  2, SHOW_U8,2,10,
+										(char*)"04.FORCE",						0,  0,  11,  2, SHOW_U8,1,10,	
+										(char*)"05.STERETC",					0,  0,  12,  2, SHOW_U8,1,10,	
+                                        (char*)"06.BRAKE",						0,  0,  11,  3, SHOW_U8,1,100,
+										(char*)"07.SFTSTA",						0,  0,  11,  3, SHOW_BOOL,0,0,
+										(char*)"08.SET DAT SAVE",				&Data_Save_Page,  0,  0,  3, SHOW_BOOL,0,0,
+										(char*)"09.SET DAT READ",				&Data_Read_Page,  0,  0,  3, SHOW_BOOL,0,0,
+										(char*)"10.RES DAT READ",				&Reset_Data_Read_Page,  0,  0,  3, SHOW_BOOL,0,0,
+										(char*)"11.*************",     			 0, 0, 0, 0, SHOW_BOOL,0,0,
                                     };
 
 struct PAGE Setting_Page={&mainPage,Menu_Two_CallBack,Setting_item,sizeof(Setting_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
  
 //----2
-struct Item Position_item[]={           (char*)"1.BROADBANDSERVO",						&Broadband_servo_Page,  0,  0,  1, SHOW_U16,
-										(char*)"2.NARROWBANDSERVO",						&Narrowband_servo_Page,  0,  0,  1, SHOW_U16,
+struct Item Position_item[]={           (char*)"1.BROADBANDSERVO",						&Broadband_servo_Page,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"2.NARROWBANDSERVO",						&Narrowband_servo_Page,  0,  0,  1, SHOW_U16,0,0,
                                     };
 struct PAGE Position_Page={&mainPage,Menu_Two_CallBack,Position_item,sizeof(Position_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
  
 //----2
-struct Item Info_item[]={ 				(char*)"1.LCD VERSION",							&Lcd_Version_Page,  0,  0,  1, SHOW_U16,
-										(char*)"2.SERVO VERSION",						&Servo_Version_Page1,  0,  0,  1, SHOW_U16,
+struct Item Info_item[]={ 				(char*)"1.LCD VERSION",							&Lcd_Version_Page,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"2.SERVO VERSION",						&Servo_Version_Page1,  0,  0,  1, SHOW_U16,0,0,
                                     };
 struct PAGE Info_Page={&mainPage,Menu_Two_CallBack,Info_item,sizeof(Info_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
 
 //----2
- struct Item Lcd_item[]={ 				(char*)"1.SERVO BDRT SET",						&Servo_Bd_Set_Page,  0,  0,  1, SHOW_U16,
-										(char*)"2.HOST BDRT SET",						&Host_Bd_Set_Page,   0,  0,  1, SHOW_U16,
-										(char*)"3.LCD UPGRADE",							&Lcd_Upgrade_Page,  0,  0,  1, SHOW_U16,
+ struct Item Lcd_item[]={ 				(char*)"1.SERVO BDRT SET",						&Servo_Bd_Set_Page,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"2.HOST BDRT SET",						&Host_Bd_Set_Page,   0,  0,  1, SHOW_U16,0,0,
+										(char*)"3.LCD UPGRADE",							&Lcd_Upgrade_Page,  0,  0,  1, SHOW_U16,0,0,
                                     };
 struct PAGE Lcd_Page={&mainPage,Menu_Two_CallBack,Lcd_item,sizeof(Lcd_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
 /*********************************************************************************************************/
 //----3
 struct PAGE Servo_Version_Page ={&Setting_Page, Servo_Version_Page_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
 //----3
-struct Item Data_Save_item[]={ 			(char*)"1.Write Servo",							0,  0,  0,  1, SHOW_U16,
-										(char*)"2.Write Memory",						&Servo_Write_Memory_Page,  0,  0,  1, SHOW_U16,
+struct Item Data_Save_item[]={ 			(char*)"1.Write Servo",							0,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"2.Write Memory",						&Servo_Write_Memory_Page,  0,  0,  1, SHOW_U16,0,0,
                                     };
 struct PAGE Data_Save_Page={&Setting_Page, Menu_Three_CallBack, Data_Save_item,sizeof(Data_Save_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
 //----3
-struct Item Data_Read_item[]={ 			(char*)"1.Read Servo",							0,  0,  0,  1, SHOW_U16,
-										(char*)"2.Read Memory",							&Servo_Read_Memory_Page,  0,  0,  1, SHOW_U16,
+struct Item Data_Read_item[]={ 			(char*)"1.Read Servo",							0,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"2.Read Memory",							&Servo_Read_Memory_Page,  0,  0,  1, SHOW_U16,0,0,
                                     };
 struct PAGE Data_Read_Page={&Setting_Page, Menu_Three_CallBack, Data_Read_item,sizeof(Data_Read_item)/sizeof(struct Item), DISPLAY_MODE_1_COLUMN};
 //----3
 struct PAGE Reset_Data_Read_Page ={&Setting_Page, Reset_Data_Read_Page_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
 //----3
-struct Item Servo_Bd_Set_item[]={ 		(char*)"1.19200",							0,  0,  0,  1, SHOW_U16,
-										(char*)"2.9600",							0,  0,  0,  1, SHOW_U16,
-										(char*)"3.38400",							0,  0,  0,  1, SHOW_U16,
-										(char*)"4.115200",							0,  0,  0,  1, SHOW_U16,
+struct Item Servo_Bd_Set_item[]={ 		(char*)"1.19200",							0,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"2.9600",							0,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"3.38400",							0,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"4.115200",							0,  0,  0,  1, SHOW_U16,0,0,
                                     };
 struct PAGE Servo_Bd_Set_Page={&Setting_Page, Servo_Bd_Set_CallBack, Servo_Bd_Set_item,sizeof(Servo_Bd_Set_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
 //----3
-struct Item Host_Bd_Set_item[]={ 		(char*)"1.19200",							0,  0,  0,  1, SHOW_U16,
-										(char*)"2.9600",							0,  0,  0,  1, SHOW_U16,
-										(char*)"3.38400",							0,  0,  0,  1, SHOW_U16,
-										(char*)"4.115200",							0,  0,  0,  1, SHOW_U16,
+struct Item Host_Bd_Set_item[]={ 		(char*)"1.19200",							0,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"2.9600",							0,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"3.38400",							0,  0,  0,  1, SHOW_U16,0,0,
+										(char*)"4.115200",							0,  0,  0,  1, SHOW_U16,0,0,
                                     };
 struct PAGE Host_Bd_Set_Page={&Setting_Page, Lcd_Bd_Set_CallBack, Host_Bd_Set_item,sizeof(Host_Bd_Set_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
 
@@ -349,7 +349,7 @@ void Servo_Read_Memory_CallBack(u8 key)
 		case KEY_Ok:
 			Lcd_Clr_Scr();
 			LCD_Write_Str(0,0,(char*)"   Read...   ");
-			read_servo_data_in_flash(num);
+			read_servo_data_in_flash(num + USER_OUT_SPACE);
 			LCD_Write_Str(0,0,(char*)"   Read Ok   ");
 			rt_thread_delay(RT_TICK_PER_SECOND);
 			ShowParentPage();
@@ -398,7 +398,7 @@ void Servo_Write_Memory_CallBack(u8 key)
 		case KEY_Ok:
 			Lcd_Clr_Scr();
 			LCD_Write_Str(0,0,(char*)"   Writing...   ");
-			save_servo_data_in_flash(num);
+			save_servo_data_in_flash(num + USER_OUT_SPACE);
 			LCD_Write_Str(0,0,(char*)"   Writing Ok   ");
 			rt_thread_delay(RT_TICK_PER_SECOND);
 			ShowParentPage();
@@ -613,7 +613,7 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 		case KEY_Ok:
 			Lcd_Clr_Scr();
 			LCD_Write_Str(0,0,(char*)"     Reset...   ");
-			read_servo_data_in_flash(num+20);
+			read_servo_data_in_flash(num + CUSTOMER_OUT_SPACE);
 			LCD_Write_Str(0,0,(char*)"     Reset Ok   ");
 			rt_thread_delay(RT_TICK_PER_SECOND);
 			ShowParentPage();

@@ -10,6 +10,9 @@
 #include "board_info.h"
 #include "menu_app.h"
 
+
+
+
 uint8_t uart_write_datas[12];
 uint8_t uart_read_datas[12];
 volatile uint8_t receive_uart_data_flag = 0;
