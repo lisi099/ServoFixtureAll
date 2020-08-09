@@ -21,11 +21,9 @@ struct PAGE
 };
 
 typedef enum ShowType_{
-	SHOW_BOOL =0,
-	SHOW_U8,
-	SHOW_8,
-	SHOW_U16,
-	SHOW_16,
+	SHOW_NUM =0,
+	SHOW_STRING,
+	SHOW_NULL,
 }ShowType;
 
 struct Item

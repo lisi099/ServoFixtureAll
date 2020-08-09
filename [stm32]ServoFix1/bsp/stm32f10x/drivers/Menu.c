@@ -48,33 +48,14 @@ void ShowList(u8 min,u8 max)
     u8 i =0, index =0;
     Lcd_Clr_Scr();
 	uint8_t u8_data;
-	int8_t i8_data;
-	uint16_t u16_data;
-	int16_t i16_data;
     for (index=min;index<=max;index++)
     {
         LCD_Write_Str(i,1,pPage->pItem[index].pText);
         if(pPage->pItem[index].colum !=0){
 			switch(pPage->pItem[index].type){
-				case SHOW_BOOL:
+				case SHOW_NUM:
 					u8_data = (uint8_t)pPage->pItem[index].data;
 					sprintf(str, "%d", u8_data);
-					break;
-				case SHOW_U8:
-					u8_data = (uint8_t)pPage->pItem[index].data;
-					sprintf(str, "%d", u8_data);
-					break;
-				case SHOW_8:
-					i8_data = (int8_t)pPage->pItem[index].data;
-					sprintf(str, "%d", i8_data);
-					break;
-				case SHOW_U16:
-					u16_data = (uint16_t)pPage->pItem[index].data;
-					sprintf(str, "%d", u16_data);
-					break;
-				case SHOW_16:
-					i16_data = (int16_t)pPage->pItem[index].data;
-					sprintf(str, "%d", i16_data);
 					break;
 				default:
 					break;
@@ -278,38 +259,8 @@ void SelItemOfList(u8 index, char *s)
 
 void data_plus(int16_t *data, ShowType type, int16_t min, int16_t max)
 {
-	uint8_t 	*t8;
-	int8_t 		*it8;
-	uint16_t 	*t16;
-	int16_t 	*it16;
 	switch(type){
-		case SHOW_BOOL:
-			if((uint8_t)(*data) == 0){
-				*data = 1;
-			}
-			else{
-				*data = 0;
-			}
-			break;
-		case SHOW_U8:
-			t8 = (uint8_t *)data;
-			*t8 +=1;
-			break;
-		case SHOW_8:
-			it8 = (int8_t *)data;
-			*it8 +=1;
-			break;
-		case SHOW_U16:
-			t16 = (uint16_t *)data;
-			if(*t16 <9999){
-				*t16 +=1;
-			}
-			break;
-		case SHOW_16:
-			it16 = (int16_t *)data;
-			if(*it16 <9999 && *it16 >-9999){
-				*it16 +=1;
-			}
+		case SHOW_NUM:
 			break;
 		default:
 			break;
@@ -324,42 +275,13 @@ void data_plus(int16_t *data, ShowType type, int16_t min, int16_t max)
 
 void data_minus(int16_t *data, ShowType type, int16_t min, int16_t max)
 {
-	uint8_t 	*t8;
-	int8_t 		*it8;
-	uint16_t 	*t16;
-	int16_t 	*it16;
 	switch(type){
-		case SHOW_BOOL:
-			if((uint8_t)(*data) == 0){
-				*data = 1;
-			}
-			else{
-				*data = 0;
-			}
-			break;
-		case SHOW_U8:
-			t8 = (uint8_t *)data;
-			*t8 -=1;
-			break;
-		case SHOW_8:
-			it8 = (int8_t *)data;
-			*it8 -=1;
-			break;
-		case SHOW_U16:
-			t16 = (uint16_t *)data;
-			if(*t16 >0){
-				*t16 -=1;
-			}
-			break;
-		case SHOW_16:
-			it16 = (int16_t *)data;
-			if(*it16 > -9999 ){
-				*it16 -=1;
-			}
+		case SHOW_NUM:
 			break;
 		default:
 			break;
 	}
+	
 	if(*data >max){
 		*data = max;
 	}
@@ -409,20 +331,8 @@ void KeySelItem(u8 key)
 					data_plus(&pPage->pItem[index].data, pPage->pItem[index].type, pPage->pItem[index].min, pPage->pItem[index].max);
 				}
 				switch(pPage->pItem[index].type){
-				case SHOW_BOOL:
+				case SHOW_NUM:
 					sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_U8:
-					sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_8:
-					sprintf(str, "%d", (int8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_U16:
-					sprintf(str, "%d", (uint16_t)pPage->pItem[index].data);
-					break;
-				case SHOW_16:
-					sprintf(str, "%d", (int16_t)pPage->pItem[index].data);
 					break;
 				default:
 					break;
@@ -443,20 +353,8 @@ void KeySelItem(u8 key)
 					data_minus(&pPage->pItem[index].data, pPage->pItem[index].type, pPage->pItem[index].min, pPage->pItem[index].max);
 				}
 				switch(pPage->pItem[index].type){
-				case SHOW_BOOL:
+				case SHOW_NUM:
 					sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_U8:
-					sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_8:
-					sprintf(str, "%d", (int8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_U16:
-					sprintf(str, "%d", (uint16_t)pPage->pItem[index].data);
-					break;
-				case SHOW_16:
-					sprintf(str, "%d", (int16_t)pPage->pItem[index].data);
 					break;
 				default:
 					break;
@@ -477,20 +375,8 @@ void KeySelItem(u8 key)
 				index=Menu_GetSelItem();
 				data_plus(&pPage->pItem[index].data, pPage->pItem[index].type, pPage->pItem[index].min, pPage->pItem[index].max);
 				switch(pPage->pItem[index].type){
-				case SHOW_BOOL:
+				case SHOW_NUM:
 					sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_U8:
-					sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_8:
-					sprintf(str, "%d", (int8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_U16:
-					sprintf(str, "%d", (uint16_t)pPage->pItem[index].data);
-					break;
-				case SHOW_16:
-					sprintf(str, "%d", (int16_t)pPage->pItem[index].data);
 					break;
 				default:
 					break;
@@ -511,20 +397,8 @@ void KeySelItem(u8 key)
 				index=Menu_GetSelItem();
 				data_minus(&pPage->pItem[index].data, pPage->pItem[index].type,pPage->pItem[index].min, pPage->pItem[index].max);
 				switch(pPage->pItem[index].type){
-				case SHOW_BOOL:
+				case SHOW_NUM:
 					sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_U8:
-					sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_8:
-					sprintf(str, "%d", (int8_t)pPage->pItem[index].data);
-					break;
-				case SHOW_U16:
-					sprintf(str, "%d", (uint16_t)pPage->pItem[index].data);
-					break;
-				case SHOW_16:
-					sprintf(str, "%d", (int16_t)pPage->pItem[index].data);
 					break;
 				default:
 					break;
