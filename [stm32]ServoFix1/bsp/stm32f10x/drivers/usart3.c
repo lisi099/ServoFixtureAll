@@ -19,7 +19,7 @@
 #define COM_PORT_SOURCE         GPIOB
 #define COM_PORT_PIN_TX         GPIO_Pin_10
 #define COM_PORT_PIN_RX         GPIO_Pin_11
-#define COM_BAUDRATE            9600
+#define COM_BAUDRATE            19200
 
 
 uint8_t  Txd3_Buffer[TXD3_BUFFSIZE];

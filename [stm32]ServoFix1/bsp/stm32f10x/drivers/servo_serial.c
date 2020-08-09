@@ -26,11 +26,16 @@ uint8_t data_in_flash[PAGE_SIZE] ={0};
 #define SAVE_DATA_SIZE		128
 #define DATA_NUM_OF_PAGE 	(PAGE_SIZE/SAVE_DATA_SIZE)
 
-void save_servo_data_in_flash(uint8_t seq)
+void save_servo_data_in_flash(uint8_t seq, uint16_t version)
 {
 	uint32_t page_start;
 	uint32_t *data;
 	uint32_t i =0;
+	
+	struct Servo_Data_Stru_ servo_data;
+	memcpy(&servo_data, &servoDataStru, sizeof(servo_data));
+	servo_data.work_p12 = version;
+	
 	uint8_t num_page = seq /DATA_NUM_OF_PAGE;
 	uint8_t seq_page = seq %DATA_NUM_OF_PAGE;
 	
@@ -39,8 +44,9 @@ void save_servo_data_in_flash(uint8_t seq)
 	flash_read_n_byte(page_start, data_in_flash, sizeof(data_in_flash));
 	//erase
 	erase_flash_part(page_start, page_start +PAGE_SIZE);
+	
 	//data
-	memcpy(&data_in_flash[seq_page*SAVE_DATA_SIZE], &servoDataStru, sizeof(servoDataStru));
+	memcpy(&data_in_flash[seq_page*SAVE_DATA_SIZE], &servo_data, sizeof(servo_data));
 	//program
 	for(i=0; i< PAGE_SIZE; ){
 		data = (uint32_t *)&data_in_flash[i];

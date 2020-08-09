@@ -21,7 +21,7 @@
 #define COM_PORT_SOURCE         GPIOA
 #define COM_PORT_PIN_TX         GPIO_Pin_2
 #define COM_PORT_PIN_RX         GPIO_Pin_3
-#define COM_BAUDRATE            9600
+#define COM_BAUDRATE            19200
 
 #define USART_TX_HIGH GPIO_SetBits(GPIOA, COM_PORT_PIN_TX);
 
@@ -32,7 +32,7 @@ volatile uint8_t  Rcv2_Flag;
 volatile uint8_t  Txd2_Flag;
 
 volatile uint8_t  usart2_mode = 0;
-volatile uint32_t bd_set_ = 9600;
+volatile uint32_t bd_set_ = COM_BAUDRATE;
 
 /*************************************************************
   Function   :

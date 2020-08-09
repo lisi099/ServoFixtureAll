@@ -1,3 +1,7 @@
+/******************** (C) COPYRIGHT 2016 ********************
+
+
+***************************************************************/
 #ifndef BOARD_INFO_H
 #define	BOARD_INFO_H
 
@@ -20,11 +24,11 @@
 
 
 #define 	HARDWEAR_INFO   	1   
-#define 	SOFTWEAR_INFO   	1
+#define 	SOFTWEAR_INFO   	2
 
 #define 	FLASH_START_ADDR 	0x08000000 // 0K
-#define  	FLASH_IAP_ADDR  	0x08002000 // 8K
-#define  	FLASH_DATA1_ADDR  	0x0800E800 // 58K
+#define  	FLASH_IAP_ADDR  	0x08001800 // 6K
+#define  	FLASH_DATA1_ADDR  	0x0800BC00 // 47K
 #define  	FLASH_INFO_ADDR  	0x0800FC00 // 63K
 #define 	FLASH_END_ADDR 		0x08010000 // 64K
 

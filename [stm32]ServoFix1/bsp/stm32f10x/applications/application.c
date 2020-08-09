@@ -17,8 +17,8 @@
 #include "servo_adc.h"
 
 //----------------------消息定义-------------------------
-static struct rt_messagequeue key_mq;
-static char key_msg_pool[50];
+struct rt_messagequeue key_mq;
+char key_msg_pool[50];
 
 struct rt_messagequeue usart1_r_mq;
 static char usart1_r_msg_pool[120];
@@ -59,22 +59,29 @@ static void key_scan_thread(void* parameter)
 void start_page(void)
 {
 	uint8_t rec_buff[2];
+	uint8_t state = 3;
 	
-	put_chars(0, 0, "     POWEHO     ");
-	put_chars(1, 0, "WELCOM TO POWEHD");
+	Lcd_Clr_Scr();
+	put_chars_middle(0, "WELCOME TO");
+	put_chars_middle(1, "POWER HD");
 	rt_thread_delay(RT_TICK_PER_SECOND*2);
 	put_chars(1, 0, "                ");
 	while(1)
 	{
 		if(get_servo_state()){
-			put_chars(0, 0, "  CONNECT OK!   ");
+			Lcd_Clr_Scr();
+			put_chars_middle(0, "SERVO");
+			put_chars_middle(1, "CONNECT OK?");
 			rt_thread_delay(RT_TICK_PER_SECOND/2);
-			put_chars(0, 0, "  READDING....  ");
+			
+			Lcd_Clr_Scr();
+			put_chars(0,0, "<READING>....");
 			if(menu_combine_fb_work_parm()){
-				put_chars(0, 0, " READ PARAM OK! ");
+				put_chars(1,0, ">SUCCESS");
 			}
 			else{
-				put_chars(0, 0, "READ PARAM FAIL!");
+				put_chars(1,0, ">FAILED");
+				rt_thread_delay(RT_TICK_PER_SECOND);
 				continue;
 			}
 			rt_thread_delay(RT_TICK_PER_SECOND*2);
@@ -83,7 +90,12 @@ void start_page(void)
 			break;
 		}
 		else{
-			put_chars(0, 0, "PLS CONNECT SERV");
+			if(state !=0){
+				state =0;
+				Lcd_Clr_Scr();
+				put_chars(0, 0, "PLEASE CONNECT");
+				put_chars(1, 0, "SERVO");
+			}
 			if(rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO)== RT_EOK){
 				if(rec_buff[0] ==2){
 					SetMainPage(&mainPage);
@@ -150,8 +162,8 @@ static void usb_usart_thread(void* parameter)
 	uint8_t size;
 	
 	usart1_fifo_rx_init();
-	usart1_init(9600);
-	usart2_init_rx(9600);
+	usart1_init(19200);
+	usart2_init_rx(19200);
 	rt_thread_delay(RT_TICK_PER_SECOND);
     while (1)
     {
@@ -202,7 +214,6 @@ static void usb_usart_thread(void* parameter)
 			}
 			usart1_send_buff(data_send, size);
 		}
-		
 		
 		rt_thread_delay(1);
     }

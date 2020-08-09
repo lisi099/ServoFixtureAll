@@ -9,7 +9,7 @@
  */
 
 #include <rthw.h>
-#include <rtthread.h>
+#include <rtthread.h>s
 
 #include "board.h"
 #include "board_info.h"
@@ -97,7 +97,7 @@ void rtthread_startup(void)
 }
 
 int main(void)
- {
+  {
     /* disable interrupt first */
     rt_hw_interrupt_disable();
 

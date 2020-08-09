@@ -69,5 +69,5 @@ void flash(void);
 void writecommand(unsigned char dat);
 void test_lcd(void);
 void put_chars(unsigned char row, unsigned char col, char *p);
-
+void put_chars_middle(unsigned char row, char *p);
 #endif

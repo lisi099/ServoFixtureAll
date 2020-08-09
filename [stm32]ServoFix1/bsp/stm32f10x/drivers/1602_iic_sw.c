@@ -26,7 +26,10 @@ void iic_init(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOB,&GPIO_InitStructure);
 	GPIO_SetBits(GPIOB,GPIO_Pin_9);
-	GPIO_ResetBits(GPIOB,GPIO_Pin_8); 	 	
+	GPIO_ResetBits(GPIOB,GPIO_Pin_8); 	 
+
+	GPIO_ResetBits(GPIOB,GPIO_Pin_9);
+	GPIO_SetBits(GPIOB,GPIO_Pin_8); 		
 }								
 							
 void delay(unsigned int t)
@@ -130,18 +133,20 @@ void lcd_init(void)
 	writecommand(0x06);//set Entry Mode
 	delay(100);	
 	writecommand(0x14);
-	delay(100);	
+	delay(100);
+
+//	writeVop(00);
 	
-//	writecommand(0x29);//FUNCTION SET
-//	delay(100);
-//	writecommand(0x40);//set icon address
-//	delay(100);
-//	writecommand(0x59);//icon and booster control:icon on c5,c4=0,0
-//	
-//	writecommand(0x7A);//contrast set  VOP=5.2V
-//	delay(100);
-//	writecommand(0x64);//follower control
-//	delay(100);
+	writecommand(0x29);//FUNCTION SET
+	delay(100);
+	writecommand(0x40);//set icon address
+	delay(100);
+	writecommand(0x59);//icon and booster control:icon on c5,c4=0,0
+	
+	writecommand(127);//contrast set  VOP=5.2V
+	delay(100);
+	writecommand(0x64);//follower control
+	delay(100);
 	stop();
 }
 
@@ -233,6 +238,17 @@ void lcd_clear(void)
 		show_data0_[i] = ' ';
 		show_data1_[i] = ' ';
 	}
+}
+
+void put_chars_middle(unsigned char row, char *p)
+{
+	uint8_t len = strlen(p);
+	uint8_t col = 0;
+	if(len <16){
+		col = (16- len)/2;
+	}
+	put_chars(row, col, p);
+	
 }
 
 void put_chars(unsigned char row, unsigned char col, char *p)

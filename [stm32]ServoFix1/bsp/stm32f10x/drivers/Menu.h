@@ -48,12 +48,15 @@ void LCD_Write_Str(u8 x, u8 y, char *data);
 
 void SetMainPage(struct PAGE *pMainPage);
 u8 Menu_GetSelItem(void);
+void Menu_SetSelItem(u8 num);
 
 void ShowPage( struct PAGE *pPage);
+
 void ShowPage_Num( struct PAGE *pPage, uint8_t num);
 void ShowParentPage(void);
 void ShowParentPage_Num(uint16_t num);
 void ShowItemPage(void);
+void ShowItemPage_Num(u8 num);
 void SelPageItem(u8 ItemIndex);
 
 void KeySelItem(u8 key);

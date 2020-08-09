@@ -19,7 +19,7 @@
 #define COM_PORT_SOURCE         GPIOA
 #define COM_PORT_PIN_TX         GPIO_Pin_9
 #define COM_PORT_PIN_RX         GPIO_Pin_10
-#define COM_BAUDRATE            9600
+#define COM_BAUDRATE            19200
 
 #define         TXD1_BUFFSIZE           36
 #define         RCV1_BUFFSIZE           36

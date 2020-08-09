@@ -34,6 +34,12 @@ u8 Menu_GetSelItem(void)
     return SelItem;
 }
 
+void Menu_SetSelItem(u8 num)
+{
+    SelItem = num;
+}
+
+
 void ShowList(u8 min,u8 max)
 {
     char str[10] ={ 0 };
@@ -169,6 +175,11 @@ void ShowItemPage(void)
     ShowPage(pPage);
 }
 
+void ShowItemPage_Num(u8 num)
+{
+    pPage = pPage->pItem[Menu_GetSelItem()].pChildrenPage; //获得菜单项(Item)对应的page
+    ShowPage_Num(pPage, num);
+}
 
 void SelPageItem(u8 ItemIndex)
 {
@@ -368,8 +379,8 @@ void KeySelItem(u8 key)
 			case KEY_UP_L:
 				if(pPage->pItem[Menu_GetSelItem()].state ==1){
 					index=Menu_GetSelItem();
-					for(i=0; i<3; i++){
-						data_plus(&pPage->pItem[index].data, pPage->pItem[index].type, 0, 100);
+					for(i=0; i<5; i++){
+						data_plus(&pPage->pItem[index].data, pPage->pItem[index].type, pPage->pItem[index].min, pPage->pItem[index].max);
 					}
 					switch(pPage->pItem[index].type){
 					case SHOW_BOOL:
@@ -402,8 +413,8 @@ void KeySelItem(u8 key)
 			case KEY_Down_L:
 				if(pPage->pItem[Menu_GetSelItem()].state ==1){
                     index=Menu_GetSelItem();
-					for(i=0; i<3; i++){
-						data_minus(&pPage->pItem[index].data, pPage->pItem[index].type, 0, 100);
+					for(i=0; i<5; i++){
+						data_minus(&pPage->pItem[index].data, pPage->pItem[index].type, pPage->pItem[index].min, pPage->pItem[index].max);
 					}
 					switch(pPage->pItem[index].type){
 					case SHOW_BOOL:
@@ -438,7 +449,7 @@ void KeySelItem(u8 key)
                 //edit
                 if(pPage->pItem[Menu_GetSelItem()].state ==1){
                     index=Menu_GetSelItem();
-					data_plus(&pPage->pItem[index].data, pPage->pItem[index].type, 0, 100);
+					data_plus(&pPage->pItem[index].data, pPage->pItem[index].type, pPage->pItem[index].min, pPage->pItem[index].max);
 					switch(pPage->pItem[index].type){
 					case SHOW_BOOL:
 						sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
@@ -472,7 +483,7 @@ void KeySelItem(u8 key)
                 //edit
                 if(pPage->pItem[Menu_GetSelItem()].state ==1){
                     index=Menu_GetSelItem();
-                    data_minus(&pPage->pItem[index].data, pPage->pItem[index].type, 0, 100);
+                    data_minus(&pPage->pItem[index].data, pPage->pItem[index].type,pPage->pItem[index].min, pPage->pItem[index].max);
 					switch(pPage->pItem[index].type){
 					case SHOW_BOOL:
 						sprintf(str, "%d", (uint8_t)pPage->pItem[index].data);
