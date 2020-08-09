@@ -16,7 +16,6 @@ extern struct rt_messagequeue key_mq;
 
 //--0
 extern struct PAGE *pPage;
-
 //--1
 extern struct PAGE mainPage;
 //--2
@@ -36,7 +35,6 @@ extern struct PAGE Servo_Version_Page1;
 extern struct PAGE Broadband_servo_Page;
 extern struct PAGE Narrowband_servo_Page;
 extern struct PAGE Lcd_Upgrade_Page;
-
 //--4
 extern struct PAGE Servo_Write_Memory_Page;
 extern struct PAGE Servo_Read_Memory_Page;
@@ -51,9 +49,8 @@ struct Item Main_item[]={
                                     (char*)"SETTINGS",       		&Setting_Page,  	0, 0,   0, SHOW_BOOL,0,0,
 									(char*)"SERVO TEST",			&Position_Page,     0, 0,   0, SHOW_BOOL,0,0,
 									(char*)"INFORMATION",			&Info_Page,     	0, 0,   0, SHOW_BOOL,0,0,
-									(char*)"             ",      	0,  				0, 0,   0, SHOW_BOOL,0,0,
 };
-struct PAGE mainPage={0, Menu_One_CallBack, Main_item, sizeof(Main_item)/sizeof(struct Item), DISPLAY_MODE_1_COLUMN};
+struct PAGE mainPage={0, Menu_One_CallBack, Main_item, sizeof(Main_item)/sizeof(struct Item)};
 /************************************************SET*********************************************************/
 //----2
 struct Item Setting_item[]={            (char*)"1.VER.",						&Servo_Version_Page,  0,  0,  1, SHOW_U16,0,0,
@@ -64,71 +61,68 @@ struct Item Setting_item[]={            (char*)"1.VER.",						&Servo_Version_Pag
 										(char*)"6.SENSITIVITY",					0,  0,  14,  2, SHOW_U8,1,10,	
                                         (char*)"7.BRAKE",						0,  0,  13,  3, SHOW_U8,1,100,
 										(char*)"8.SOFT START",					0,  0,  14,  3, SHOW_BOOL,0,1,
-										(char*)"WRITE DATA",				&Data_Save_Page,  0,  0,  3, SHOW_BOOL,0,0,
-										(char*)"READ DATA",					&Data_Read_Page,  0,  0,  3, SHOW_BOOL,0,0,
-										(char*)"FACTORY RESET",				&Reset_Data_Read_Page,  0,  0,  3, SHOW_BOOL,0,0,
-										(char*)"             ",     			 0, 0, 0, 0, SHOW_BOOL,0,0,
+										(char*)"9.WRITE DATA",					&Data_Save_Page,  0,  0,  3, SHOW_BOOL,0,0,
+										(char*)"10.READ DATA",					&Data_Read_Page,  0,  0,  3, SHOW_BOOL,0,0,
+										(char*)"11.FACTORY RESET",				&Reset_Data_Read_Page,  0,  0,  3, SHOW_BOOL,0,0,
                                     };
 
-struct PAGE Setting_Page={&mainPage,Menu_Two_CallBack,Setting_item,sizeof(Setting_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
+struct PAGE Setting_Page={&mainPage,Menu_Two_CallBack,Setting_item,sizeof(Setting_item)/sizeof(struct Item)};
  
 //----2
 struct Item Position_item[]={           (char*)"BROAD BAND",							&Broadband_servo_Page,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"NARROW BAND",						&Narrowband_servo_Page,  0,  0,  1, SHOW_U16,0,0,
                                     };
-struct PAGE Position_Page={&mainPage,Menu_Two_CallBack,Position_item,sizeof(Position_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
+struct PAGE Position_Page={&mainPage,Menu_Two_CallBack,Position_item,sizeof(Position_item)/sizeof(struct Item)};
  
 //----2
 struct Item Info_item[]={
 										(char*)"SERVO VERSION",					&Servo_Version_Page1,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"LCD SETTINGS",        			&Lcd_Page,  		0, 0,   0, SHOW_BOOL,0,0,
 //										(char*)"DATA FACTOCY SET",      			&Set_Factory_Page,  0, 0,   0, SHOW_BOOL,0,0,
-										(char*)"             ",      			0,  0, 0,   0, SHOW_BOOL,0,0,
                                     };
-struct PAGE Info_Page={&mainPage,Menu_Two_CallBack,Info_item,sizeof(Info_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
+struct PAGE Info_Page={&mainPage,Menu_Two_CallBack,Info_item,sizeof(Info_item)/sizeof(struct Item)};
 
 //----2
  struct Item Lcd_item[]={ 				(char*)"SERVO BDRT SET",						&Servo_Bd_Set_Page,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"HOST BDRT SET",							&Host_Bd_Set_Page,   0,  0,  1, SHOW_U16,0,0,
 										(char*)"LCD UPGRADE",							&Lcd_Upgrade_Page,  0,  0,  1, SHOW_U16,0,0,
-										(char*)"             ",     			 		0, 0, 0, 0, SHOW_BOOL,0,0,
                                     };
-struct PAGE Lcd_Page={&Info_Page, Menu_Three_CallBack,Lcd_item,sizeof(Lcd_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
+struct PAGE Lcd_Page={&Info_Page, Menu_Three_CallBack,Lcd_item,sizeof(Lcd_item)/sizeof(struct Item)};
 
-struct PAGE Set_Factory_Page ={&Info_Page, Servo_Set_Factory_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
+struct PAGE Set_Factory_Page ={&Info_Page, Servo_Set_Factory_CallBack, 0, 0};
 /*********************************************************************************************************/
 //----3
-struct PAGE Servo_Version_Page ={&Setting_Page, Servo_Version_Page_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
+struct PAGE Servo_Version_Page ={&Setting_Page, Servo_Version_Page_CallBack, 0, 0};
 //----3
 struct Item Data_Save_item[]={ 			(char*)"TO SERVO",							0,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"TO MEMORY",						&Servo_Write_Memory_Page,  0,  0,  1, SHOW_U16,0,0,
                                     };
-struct PAGE Data_Save_Page={&Setting_Page, Menu_Three_CallBack, Data_Save_item,sizeof(Data_Save_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
+struct PAGE Data_Save_Page={&Setting_Page, Menu_Three_CallBack, Data_Save_item,sizeof(Data_Save_item)/sizeof(struct Item)};
 //----3
 struct Item Data_Read_item[]={ 			(char*)"FROM SERVO",							0,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"FROM MEMORY",							&Servo_Read_Memory_Page,  0,  0,  1, SHOW_U16,0,0,
                                     };
-struct PAGE Data_Read_Page={&Setting_Page, Menu_Three_CallBack, Data_Read_item,sizeof(Data_Read_item)/sizeof(struct Item), DISPLAY_MODE_1_COLUMN};
+struct PAGE Data_Read_Page={&Setting_Page, Menu_Three_CallBack, Data_Read_item,sizeof(Data_Read_item)/sizeof(struct Item)};
 //----3
-struct PAGE Reset_Data_Read_Page ={&Setting_Page, Reset_Data_Read_Page_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
+struct PAGE Reset_Data_Read_Page ={&Setting_Page, Reset_Data_Read_Page_CallBack, 0, 0};
 //----3
 struct Item Servo_Bd_Set_item[]={ 		(char*)"19200",							0,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"9600",							0,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"38400",							0,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"115200",							0,  0,  0,  1, SHOW_U16,0,0,
                                     };
-struct PAGE Servo_Bd_Set_Page={&Lcd_Page, Servo_Bd_Set_CallBack, Servo_Bd_Set_item,sizeof(Servo_Bd_Set_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
+struct PAGE Servo_Bd_Set_Page={&Lcd_Page, Servo_Bd_Set_CallBack, Servo_Bd_Set_item,sizeof(Servo_Bd_Set_item)/sizeof(struct Item)};
 //----3
 struct Item Host_Bd_Set_item[]={ 		(char*)"19200",							0,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"9600",							0,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"38400",							0,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"115200",							0,  0,  0,  1, SHOW_U16,0,0,
                                     };
-struct PAGE Host_Bd_Set_Page={&Lcd_Page, Lcd_Bd_Set_CallBack, Host_Bd_Set_item,sizeof(Host_Bd_Set_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
+struct PAGE Host_Bd_Set_Page={&Lcd_Page, Lcd_Bd_Set_CallBack, Host_Bd_Set_item,sizeof(Host_Bd_Set_item)/sizeof(struct Item)};
 
-struct PAGE Lcd_Upgrade_Page={&Lcd_Page, Lcd_Upgrade_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
+struct PAGE Lcd_Upgrade_Page={&Lcd_Page, Lcd_Upgrade_CallBack, 0, 0};
 //----3
-struct PAGE Servo_Version_Page1 ={&Info_Page, Servo_Version_Page_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
+struct PAGE Servo_Version_Page1 ={&Info_Page, Servo_Version_Page_CallBack, 0, 0};
 
 
 struct Item Brodband_item[]={           (char*)"PWM 500US",						&Broadband_servo_Page,  0,  0,  1, SHOW_U16,0,0,
@@ -137,18 +131,18 @@ struct Item Brodband_item[]={           (char*)"PWM 500US",						&Broadband_serv
 										(char*)"PWM 2100US",					&Broadband_servo_Page,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"PWM 2500US",					&Broadband_servo_Page,  0,  0,  1, SHOW_U16,0,0,
                                     };
-struct PAGE Broadband_servo_Page={&Position_Page, Narrowband_Page_CallBack,Brodband_item,sizeof(Brodband_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
+struct PAGE Broadband_servo_Page={&Position_Page, Narrowband_Page_CallBack,Brodband_item,sizeof(Brodband_item)/sizeof(struct Item)};
 
 struct Item Narrowband_item[]={         (char*)"PWM 500US",						&Narrowband_servo_Page,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"PWM 750US",						&Narrowband_servo_Page,  0,  0,  1, SHOW_U16,0,0,
 										(char*)"PWM 1000US",					&Narrowband_servo_Page,  0,  0,  1, SHOW_U16,0,0,
                                     };
-struct PAGE Narrowband_servo_Page ={&Position_Page, Broadband_Page_CallBack, Narrowband_item, sizeof(Narrowband_item)/sizeof(struct Item),DISPLAY_MODE_1_COLUMN};
+struct PAGE Narrowband_servo_Page ={&Position_Page, Broadband_Page_CallBack, Narrowband_item, sizeof(Narrowband_item)/sizeof(struct Item)};
 
 //----4
-struct PAGE Servo_Write_Memory_Page ={&Data_Save_Page, Servo_Write_Memory_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
+struct PAGE Servo_Write_Memory_Page ={&Data_Save_Page, Servo_Write_Memory_CallBack, 0, 0};
 //----4
-struct PAGE Servo_Read_Memory_Page ={&Data_Read_Page, Servo_Read_Memory_CallBack, 0, 0,DISPLAY_MODE_1_COLUMN};
+struct PAGE Servo_Read_Memory_Page ={&Data_Read_Page, Servo_Read_Memory_CallBack, 0, 0};
 /*************************************************FUNCTIONS**************************************************************/
 // struct Servo_Data_Stru_  para_01= {2200,1500,800,3448,2048,648,2,0,0,1,0,1,380,1,16,248,1,1500,10,1,1,10,0,100,0,1020,1020,1500,1500,1500,1,0,3,1,8,16,32,1,1};
 // struct Servo_Data_Stru_  para_02= {2200,1500,800,3448,2048,648,2,0,0,1,0,1,380,1,16,248,1,1500,10,1,1,10,0,100,0,1020,1020,1500,1500,1500,1,0,3,1,8,16,32,1,1};
@@ -164,11 +158,11 @@ uint8_t keep(uint8_t state)
 	uint16_t time = 0;
 	uint8_t sh = 0;
 	
-	if(state == 1){
-		LCD_Write_Str(1,0,(char*)">SUCCESS");
-	}
-	else if (state == 2){
+	if(state == 0){
 		LCD_Write_Str(1,0,(char*)">FAILED!");
+	}
+	else if (state == 1){
+		LCD_Write_Str(1,0,(char*)">SUCCESS");
 	}
 	else{
 		LCD_Write_Str(0,0,(char*)">CONFORM?");
@@ -180,10 +174,10 @@ uint8_t keep(uint8_t state)
 	while(1){
 		if(rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO)== RT_EOK){
 			if(rec_buff[0] == 2){
-				return 2;
+				return 2; //return
 			}
 			else if(rec_buff[0] == 3){
-				return 3;
+				return 3; //ok
 			}
 		}
 		rt_thread_delay(RT_TICK_PER_SECOND/10);
@@ -194,11 +188,11 @@ uint8_t keep(uint8_t state)
 		}
 		if(time <BLINK_TIME/2){
 			if(sh ==1){
-				if(state == 1){
-					LCD_Write_Str(1,0,(char*)">SUCCESS");
-				}
-				else if (state == 2){
+				if(state == 0){
 					LCD_Write_Str(1,0,(char*)">FAILED!");
+				}
+				else if (state == 1){
+					LCD_Write_Str(1,0,(char*)">SUCCESS");
 				}
 				else{
 					LCD_Write_Str(0,0,(char*)">CONFORM?");
@@ -411,60 +405,6 @@ void Lcd_Bd_Set_CallBack(u8 key)
 	}
 }
 
-void Servo_Read_Memory_CallBack(u8 key)
-{
-	static uint8_t num = 0;
-	char buf[] = "  UDATA_XXX00   ";
-	switch (key)
-	{
-		case KEY_UP:
-			num ++;
-			if(num >19){
-				num = 0;
-			}
-			break;
-		case KEY_Down:
-			num --;
-			if(num >19){
-				num = 19;
-			}
-			break;
-		case KEY_UP_L:
-			num ++;
-			if(num >19){
-				num = 0;
-			}
-			break;
-		case KEY_Down_L:
-			num --;
-			if(num >19){
-				num = 19;
-			}
-			break;
-		case KEY_Return:
-			ShowParentPage();
-			return;
-		case KEY_Ok:
-			Lcd_Clr_Scr();
-			LCD_Write_Str(0,0,(char*)"<READDING>...");
-			read_servo_data_in_flash(num + USER_OUT_SPACE);
-			rt_thread_delay(RT_TICK_PER_SECOND);
-			if(keep(1) ==2){
-				ShowParentPage_Num(Item_Num_[1]);
-			}
-			else{
-				SetMainPage(&Setting_Page);
-				ShowPage(pPage);
-			}
-			return;
-	}
-	Lcd_Clr_Scr();
-	buf[11] += num / 10 %10;
-	buf[12] += num / 1 %10;
-	put_chars_middle(0, "READ MEMORY");
-	LCD_Write_Str(1,0,(char*)buf);
-}
-
 void Servo_Write_Memory_CallBack(u8 key)
 {
 	static uint8_t num = 0;
@@ -498,7 +438,7 @@ void Servo_Write_Memory_CallBack(u8 key)
 			}
 			break;
 		case KEY_Return:
-			ShowParentPage();
+			ShowParentPage_Num(1);
 			return;
 		case KEY_Ok:
 			Lcd_Clr_Scr();
@@ -510,7 +450,7 @@ void Servo_Write_Memory_CallBack(u8 key)
 			save_servo_data_in_flash(num + USER_OUT_SPACE, data_version);
 			rt_thread_delay(RT_TICK_PER_SECOND);
 			if(keep(1) ==2){
-				ShowParentPage_Num(Item_Num_[1]);
+				ShowParentPage_Num(1);
 			}
 			else{
 				SetMainPage(&Setting_Page);
@@ -522,6 +462,61 @@ void Servo_Write_Memory_CallBack(u8 key)
 	buf[11] += num / 10 %10;
 	buf[12] += num / 1 %10;
 	put_chars_middle(0,"WRITE MEMORY");
+	LCD_Write_Str(1,0,(char*)buf);
+}
+
+
+void Servo_Read_Memory_CallBack(u8 key)
+{
+	static uint8_t num = 0;
+	char buf[] = "  UDATA_XXX00   ";
+	switch (key)
+	{
+		case KEY_UP:
+			num ++;
+			if(num >19){
+				num = 0;
+			}
+			break;
+		case KEY_Down:
+			num --;
+			if(num >19){
+				num = 19;
+			}
+			break;
+		case KEY_UP_L:
+			num ++;
+			if(num >19){
+				num = 0;
+			}
+			break;
+		case KEY_Down_L:
+			num --;
+			if(num >19){
+				num = 19;
+			}
+			break;
+		case KEY_Return:
+			ShowParentPage_Num(1);
+			return;
+		case KEY_Ok:
+			Lcd_Clr_Scr();
+			LCD_Write_Str(0,0,(char*)"<READDING>...");
+			read_servo_data_in_flash(num + USER_OUT_SPACE);
+			rt_thread_delay(RT_TICK_PER_SECOND);
+			if(keep(1) ==2){
+				ShowParentPage_Num(1);
+			}
+			else{
+				SetMainPage(&Setting_Page);
+				ShowPage(pPage);
+			}
+			return;
+	}
+	Lcd_Clr_Scr();
+	buf[11] += num / 10 %10;
+	buf[12] += num / 1 %10;
+	put_chars_middle(0, "READ MEMORY");
 	LCD_Write_Str(1,0,(char*)buf);
 }
 

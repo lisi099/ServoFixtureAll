@@ -18,7 +18,6 @@ struct PAGE
     void (*Function)(u8 key);
     struct Item *pItem;
     const u8 ItemNum;
-    const u8 DisplayMode;
 };
 
 typedef enum ShowType_{
@@ -47,7 +46,7 @@ void Lcd_Clr_Scr(void);
 void LCD_Write_Str(u8 x, u8 y, char *data);
 
 void SetMainPage(struct PAGE *pMainPage);
-u8 Menu_GetSelItem(void);
+int8_t Menu_GetSelItem(void);
 void Menu_SetSelItem(u8 num);
 
 void ShowPage( struct PAGE *pPage);
