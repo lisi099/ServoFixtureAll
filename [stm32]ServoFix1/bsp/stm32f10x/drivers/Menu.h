@@ -33,10 +33,10 @@ struct Item
     struct PAGE* pChildrenPage;
     u8 state;
     u8 colum;
-    int16_t data;
+    uint16_t data;
     ShowType type;
-    int16_t min;
-    int16_t max;
+    uint16_t min;
+    uint16_t max;
 };
 
 extern struct PAGE* pPage;

@@ -4,14 +4,17 @@
 ***************************************************************/
 #include "Menu.h"
 #include "1602_iic_sw.h"
+#include <rtthread.h>
 
 #define LOW_BYTE_NUM   8
 #define LOW_BYTE_MAX  0xFF
 
-
+extern struct rt_messagequeue key_mq;
 struct PAGE* pPage;
 static uint8_t SelItem = 0;
 static u16 ListShow = 0;
+
+#define BLINK_TIME1 	100
 
 void SelItemOfList(u8 index, char* s);
 
@@ -52,7 +55,8 @@ void ShowList(u8 min, u8 max)
     for(index = min; index <= max; index++)
     {
         LCD_Write_Str(i, 1, pPage->pItem[index].pText);
-        if(pPage->pItem[index].colum != 0) //
+				//显示编辑值
+        if(pPage->pItem[index].colum != 0)
         {
             switch(pPage->pItem[index].type)
             {
@@ -60,6 +64,13 @@ void ShowList(u8 min, u8 max)
                 u8_data = (uint8_t)pPage->pItem[index].data;
                 sprintf(str, "%d", u8_data);
                 break;
+						case SHOW_STRING:
+								if(pPage->pItem[index].data){
+									sprintf(str, "%s", "ON");
+								}
+								else{
+									sprintf(str, "%s", "OFF");
+								}
             default:
                 break;
             }
@@ -104,9 +115,37 @@ void ShowParentPage_Num(uint16_t num)
     ShowPage_Num(pPage, num);
 }
 
-
-void ShowItemPage_Num(u8 num)
+void BlinkEdit(char *str, uint8_t state)
 {
+	uint8_t min;
+	// SHOW_NUM SHOW_STRING 
+	min = ListShow & LOW_BYTE_MAX;
+	if(state){
+		if(Menu_GetSelItem() == min){
+			LCD_Write_Str(0, pPage->pItem[Menu_GetSelItem()].colum, str);
+		}
+		else{
+			LCD_Write_Str(1, pPage->pItem[Menu_GetSelItem()].colum, str);
+		}
+	}
+	else{
+		if(Menu_GetSelItem() == min){
+			LCD_Write_Str(0, pPage->pItem[Menu_GetSelItem()].colum, "        ");
+		}
+		else{
+			LCD_Write_Str(1, pPage->pItem[Menu_GetSelItem()].colum, "        ");
+		}
+	}
+}
+
+void ShowItemPage_Num(u8 num) //编辑参数值首先到这个函数
+{
+		uint16_t data_old;
+    
+		uint8_t rec_buff[2];
+		uint8_t time_count;
+		char str[10]={0};
+
 		if(pPage->pItem[Menu_GetSelItem()].pChildrenPage !=0){
 				pPage = pPage->pItem[Menu_GetSelItem()].pChildrenPage; //获得菜单项(Item)对应的page
 				ShowPage_Num(pPage, num);
@@ -115,21 +154,69 @@ void ShowItemPage_Num(u8 num)
 		if(pPage->pItem[Menu_GetSelItem()].type == SHOW_NULL){
 				return;
 		}
-		// SHOW_NUM SHOW_STRING 
-		
+
+		data_old = pPage->pItem[Menu_GetSelItem()].data;
 		// blink on
 		while(1)
 		{
-			//data plus
-			//data minus
-			
-			
-			break;
-		}
-		//blink off
-		
-		
+				if(rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO) == RT_EOK)
+        {
+            if(rec_buff[0] == 0) //KEY_Up
+            {
+								if(data_old <100){
+									data_old ++;
+								}
+						}
+            else if(rec_buff[0] == 1) //KEY_Down
+						{
+								if(data_old >0){
+									data_old --;
+								}
+						}
+            else if(rec_buff[0] == 3) //ok
+						{
+								pPage->pItem[Menu_GetSelItem()].data = data_old;
+								BlinkEdit(str,1);
+								break;
+						}
+						else if(rec_buff[0] == 4) //KEY_Return
+						{
+								BlinkEdit(str,1);
+								break;
+						}
+						
+						
+						switch(pPage->pItem[Menu_GetSelItem()].type)
+            {
+            case SHOW_NUM:
+                sprintf(str, "%d", data_old);
+                break;
+						case SHOW_STRING:
+								if(pPage->pItem[Menu_GetSelItem()].data){
+									sprintf(str, "%s", "ON");
+								}
+								else{
+									sprintf(str, "%s", "OFF");
+								}
+            default:
+                break;
+            }
+						
+						
 
+				}
+				time_count ++;
+				if(time_count >BLINK_TIME1){
+					time_count = 0;
+				}
+				if(time_count > BLINK_TIME1/2){
+					BlinkEdit(str,1);
+				}
+				else{
+					BlinkEdit(str,0);
+				}
+    }
+		
 }
 
 
@@ -213,42 +300,15 @@ void KeySelItem(u8 key)
     return;
 }
 
-void data_plus(int16_t* data, ShowType type, int16_t min, int16_t max)
+void data_plus(int16_t* data)
 {
-    switch(type)
-    {
-    case SHOW_NUM:
-        break;
-    default:
-        break;
-    }
-    if(*data > max)
-    {
-        *data = max;
-    }
-    else if(*data < min)
-    {
-        *data = min;
-    }
+			if(*data <100)
+				(*data) ++;
 }
 
-void data_minus(int16_t* data, ShowType type, int16_t min, int16_t max)
+void data_minus(int16_t* data)
 {
-    switch(type)
-    {
-    case SHOW_NUM:
-        break;
-    default:
-        break;
-    }
-
-    if(*data > max)
-    {
-        *data = max;
-    }
-    else if(*data < min)
-    {
-        *data = min;
-    }
+		if(*data >0)
+			(*data) --;
 }
 //------------------------end----------------------------------------------

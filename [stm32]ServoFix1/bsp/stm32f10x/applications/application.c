@@ -285,6 +285,8 @@ int rt_application_init(void)
     tid1 = rt_thread_create("usart_sw", usart_sw_thread_entry, RT_NULL, 1024, 16, 10);
     if(tid1 != RT_NULL) rt_thread_startup(tid1);
 
+//		tid1 = rt_thread_create("blink", blink_thread_entry, RT_NULL, 256, 18, 10);
+//    if(tid1 != RT_NULL) rt_thread_startup(tid1);
     return 0;
 }
 

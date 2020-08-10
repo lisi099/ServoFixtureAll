@@ -10,7 +10,7 @@
 #include "servo_serial.h"
 #include "string.h"
 
-#define BLINK_TIME 10
+#define BLINK_TIME 	10
 #define SIZE_OF_ITEM(x) (sizeof(x) / sizeof(struct Item))
 extern struct rt_messagequeue key_mq;
 
@@ -45,12 +45,12 @@ struct Servo_Data_Stru_ servo_load_data;
 uint8_t Item_Num_[2] = {0, 0};
 extern Usart_State usart_state;
 
-
+uint8_t Param_Edit_[8];
 /************************************************1******************************************************/
 //----1
 struct Item Main_item[] =
 {
-    (char*)"SETTINGS",       		&Setting_Page,  	0, 0,   0, SHOW_NULL, 0, 0,
+    (char*)"SETTINGS",       	&Setting_Page,  	0, 0,   0, SHOW_NULL, 0, 0,
     (char*)"SERVO TEST",			&Position_Page,     0, 0,   0, SHOW_NULL, 0, 0,
     (char*)"INFORMATION",			&Info_Page,     	0, 0,   0, SHOW_NULL, 0, 0,
 };
@@ -59,17 +59,17 @@ struct PAGE mainPage = {0, Menu_One_CallBack, Main_item, SIZE_OF_ITEM(Main_item)
 //----2
 struct Item Setting_item[] =
 {
-    (char*)"1.VER.",						&Servo_Version_Page,  0,  0,  1, SHOW_STRING_VER, 0, 0,
+    (char*)"1.VER.",							0,  0,  8,   1, SHOW_NUM, 0, 65535,
     (char*)"2.MAX POWER",					0,  0,  12,  1, SHOW_NUM, 500, 1500,
-    (char*)"3.BOOST",						0,  0,  13,  1, SHOW_NUM, 0, 100,
+    (char*)"3.BOOST",							0,  0,  13,  1, SHOW_NUM, 0, 100,
     (char*)"4.DEAD BAND",					0,  0,  14,  2, SHOW_NUM, 2, 10,
-    (char*)"5.FORCE",						0,  0,  14,  2, SHOW_NUM, 1, 10,
+    (char*)"5.FORCE",							0,  0,  14,  2, SHOW_NUM, 1, 10,
     (char*)"6.SENSITIVITY",					0,  0,  14,  2, SHOW_NUM, 1, 10,
-    (char*)"7.BRAKE",						0,  0,  13,  3, SHOW_NUM, 1, 100,
+    (char*)"7.BRAKE",								0,  0,  13,  3, SHOW_NUM, 1, 100,
     (char*)"8.SOFT START",					0,  0,  14,  3, SHOW_STRING, 0, 1,
     (char*)"9.WRITE DATA",					&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
     (char*)"10.READ DATA",					&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
-    (char*)"11.FACTORY RESET",				&Reset_Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"11.FACTORY RESET",			&Reset_Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
 };
 
 struct PAGE Setting_Page = {&mainPage, Menu_Two_CallBack, Setting_item, SIZE_OF_ITEM(Setting_item)};
@@ -77,7 +77,7 @@ struct PAGE Setting_Page = {&mainPage, Menu_Two_CallBack, Setting_item, SIZE_OF_
 //----2
 struct Item Position_item[] =
 {
-    (char*)"BROAD BAND",							&Broadband_servo_Page,  0,  0,  1, SHOW_NULL, 0, 0,
+    (char*)"BROAD BAND",						&Broadband_servo_Page,  0,  0,  1, SHOW_NULL, 0, 0,
     (char*)"NARROW BAND",						&Narrowband_servo_Page,  0,  0,  1, SHOW_NULL, 0, 0,
 };
 struct PAGE Position_Page = {&mainPage, Menu_Two_CallBack, Position_item, SIZE_OF_ITEM(Position_item)};
@@ -86,7 +86,7 @@ struct PAGE Position_Page = {&mainPage, Menu_Two_CallBack, Position_item, SIZE_O
 struct Item Info_item[] =
 {
     (char*)"SERVO VERSION",					&Servo_Version_Page1,  0,  0,  1, SHOW_NULL, 0, 0,
-    (char*)"LCD SETTINGS",        			&Lcd_Page,  		0, 0,   0, SHOW_NULL, 0, 0,
+    (char*)"LCD SETTINGS",        	&Lcd_Page,  		0, 0,   0, SHOW_NULL, 0, 0,
 //										(char*)"DATA FACTOCY SET",      			&Set_Factory_Page,  0, 0,   0, SHOW_NULL,0,0,
 };
 struct PAGE Info_Page = {&mainPage, Menu_Two_CallBack, Info_item, SIZE_OF_ITEM(Info_item)};
@@ -96,14 +96,14 @@ struct Item Lcd_item[] =
 {
     (char*)"SERVO BDRT SET",						&Servo_Bd_Set_Page,  0,  0,  1, SHOW_NUM, 0, 0,
     (char*)"HOST BDRT SET",							&Host_Bd_Set_Page,   0,  0,  1, SHOW_NUM, 0, 0,
-    (char*)"LCD UPGRADE",							&Lcd_Upgrade_Page,  0,  0,  1, SHOW_NUM, 0, 0,
+    (char*)"LCD UPGRADE",								&Lcd_Upgrade_Page,  0,  0,  1, SHOW_NUM, 0, 0,
 };
 struct PAGE Lcd_Page = {&Info_Page, Menu_Three_CallBack, Lcd_item, SIZE_OF_ITEM(Lcd_item)};
 
 struct PAGE Set_Factory_Page = {&Info_Page, Servo_Set_Factory_CallBack, 0, 0};
 /*******************************************************3**************************************************/
 //----3
-struct PAGE Servo_Version_Page = {&Setting_Page, Servo_Version_Page_CallBack, 0, 0};
+//struct PAGE Servo_Version_Page = {&Setting_Page, Servo_Version_Page_CallBack, 0, 0};
 //----3
 struct Item Data_Save_item[] =
 {
@@ -828,25 +828,28 @@ void Reset_Data_Read_Page_CallBack(u8 key)
     LCD_Write_Str(1, 0, (char*)buf);
 }
 
+
 void Copy_Data_To_Show(void)
 {
-    Setting_item[1].data = servoDataStru.set_p11;
+		Setting_item[0].data = servoDataStru.work_p12;
+    Setting_item[1].data = (servoDataStru.set_p11 -500 /10);
     Setting_item[2].data = servoDataStru.set_p15;
-    Setting_item[3].data = servoDataStru.work_p6;
-    Setting_item[4].data = servoDataStru.debug_p0;
-    Setting_item[5].data = servoDataStru.debug_p5;
+    Setting_item[3].data = servoDataStru.work_p6  *10;
+    Setting_item[4].data = servoDataStru.debug_p0 *10;
+    Setting_item[5].data = servoDataStru.debug_p5 *10;
     Setting_item[6].data = servoDataStru.debug_p2;
     Setting_item[7].data = servoDataStru.set_p14;
 }
 
 void Copy_Data_To_Stru(void)
 {
-    servoDataStru.set_p11 = Setting_item[1].data;
+		servoDataStru.work_p12= Setting_item[0].data;
+    servoDataStru.set_p11 = Setting_item[1].data*10 +500;
     servoDataStru.set_p15 = Setting_item[2].data;
-    servoDataStru.work_p6 = Setting_item[3].data;
-    servoDataStru.debug_p0 = Setting_item[4].data;
-    servoDataStru.debug_p5 = Setting_item[5].data;
-    servoDataStru.debug_p2 = Setting_item[6].data ;
+    servoDataStru.work_p6 = Setting_item[3].data/10;
+    servoDataStru.debug_p0 = Setting_item[4].data/10;
+    servoDataStru.debug_p5 = Setting_item[5].data/10;
+    servoDataStru.debug_p2 = Setting_item[6].data;
     servoDataStru.set_p14 = Setting_item[7].data;
 }
 

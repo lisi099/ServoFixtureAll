@@ -9,9 +9,6 @@
 static unsigned char show_data0_[16];
 static unsigned char show_data1_[16];
 
-volatile struct BlinkPara blink_para_stru;
-
-
 extern void delay_about_ms(uint16_t nms);
 
 void iic_init(void)
@@ -313,58 +310,6 @@ void put_chars(unsigned char row, unsigned char col, char* p)
     }
     stop();
 }
-//--------------------------------------
-
-void blink_on(uint8_t row, uint8_t min, uint8_t max)
-{
-	blink_para_stru.min = min;
-	blink_para_stru.max = max;
-	blink_para_stru.row = row;
-	
-}
-
-
-void blink_off(void)
-{
-	blink_para_stru.row = 2;
-}
-
-
-void blink_thread_entry(void* parameter)
-{
-	char buff[17]={' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','\0'};
-	char show_data[16];
-	
-	uint8_t min, max, row;
-	rt_thread_delay(3000);
-	
-	
-	while(1)
-	{
-		min = blink_para_stru.min;
-		max = blink_para_stru.max;
-		row = blink_para_stru.row;
-		
-		if(row <2){
-			if(row == 0){
-				memcpy(show_data, &show_data0_[min], max - min);
-				show_data[max ] = '\0';
-			}
-			else{
-				memcpy(show_data, show_data1_, 16);
-			}
-			buff[max - min] = '\0';
-			put_chars(row, min, buff);
-			rt_thread_delay(500);
-			put_chars(row, min, show_data);
-			rt_thread_delay(500);
-		}
-		rt_thread_delay(100);
-	}
-	
-}
-
-
 
 void test_lcd(void)
 {

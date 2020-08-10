@@ -60,15 +60,6 @@
 #define  	sda    	PBout(7)
 #define 	res		PBout(5)
 
-struct BlinkPara{
-	
-	uint8_t row;
-	uint8_t min;
-	uint8_t max;
-	
-};
-
-
 void iic_init(void);
 void lcd_clear(void);
 void lcd_init(void);
@@ -79,4 +70,5 @@ void writecommand(unsigned char dat);
 void test_lcd(void);
 void put_chars(unsigned char row, unsigned char col, char *p);
 void put_chars_middle(unsigned char row, char *p);
+
 #endif
