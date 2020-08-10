@@ -7,6 +7,15 @@
 
 #include "Menu.h"
 
+enum{
+	S_FAILED =0,
+	S_SUCCESS = 1,
+	S_CONFORM = 2,
+	F_RETURN = 10,
+	F_OK = 11,
+	
+};
+
 extern struct PAGE mainPage;
 extern struct PAGE Setting_Page;
 
