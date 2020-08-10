@@ -14,7 +14,7 @@ struct PAGE* pPage;
 static uint8_t SelItem = 0;
 static u16 ListShow = 0;
 
-#define BLINK_TIME1 	100
+#define BLINK_TIME1 	50
 
 void SelItemOfList(u8 index, char* s);
 
@@ -52,32 +52,41 @@ void ShowList(u8 min, u8 max)
     u8 i = 0, index = 0;
     Lcd_Clr_Scr();
     uint8_t u8_data;
+
     for(index = min; index <= max; index++)
     {
         LCD_Write_Str(i, 1, pPage->pItem[index].pText);
-				//显示编辑值
+
+        //显示编辑值
         if(pPage->pItem[index].colum != 0)
         {
             switch(pPage->pItem[index].type)
             {
-            case SHOW_NUM:
-                u8_data = (uint8_t)pPage->pItem[index].data;
-                sprintf(str, "%d", u8_data);
-                break;
-						case SHOW_STRING:
-								if(pPage->pItem[index].data){
-									sprintf(str, "%s", "ON");
-								}
-								else{
-									sprintf(str, "%s", "OFF");
-								}
-            default:
-                break;
+                case SHOW_NUM:
+                    u8_data = (uint8_t)pPage->pItem[index].data;
+                    sprintf(str, "%d", u8_data);
+                    break;
+
+                case SHOW_STRING:
+                    if(pPage->pItem[index].data)
+                    {
+                        sprintf(str, "%s", "ON");
+                    }
+                    else
+                    {
+                        sprintf(str, "%s", "OFF");
+                    }
+
+                default:
+                    break;
             }
+
             LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
         }
+
         i++;
     }
+
     ListShow = (max << LOW_BYTE_NUM) | min; //<记录当前显示的Item
 }
 
@@ -86,11 +95,13 @@ void ShowPage_Num(struct PAGE* pPage, uint8_t num)
 {
     char data[] = ">";
     Lcd_Clr_Scr();
+
     if(pPage->pItem == 0)
     {
         pPage->Function(KEY_Special);
         return;
     }
+
     if(num + 1 == pPage->ItemNum)
     {
         ShowList(num - 1, num);
@@ -99,6 +110,7 @@ void ShowPage_Num(struct PAGE* pPage, uint8_t num)
     {
         ShowList(num, num + 1);
     }
+
     SelItemOfList(num, data);
     pPage->Function(KEY_Special);
 }
@@ -106,117 +118,139 @@ void ShowPage_Num(struct PAGE* pPage, uint8_t num)
 
 void ShowParentPage_Num(uint16_t num)
 {
-    int i;
-    for(i = 0; i < pPage->ItemNum; i++)
+    if(pPage->pParent == 0)
     {
-        pPage->pItem[i].state = 0;
+        return;
     }
+
     pPage = pPage->pParent;
     ShowPage_Num(pPage, num);
 }
 
 void BlinkEdit(char *str, uint8_t state)
 {
-	uint8_t min;
-	// SHOW_NUM SHOW_STRING 
-	min = ListShow & LOW_BYTE_MAX;
-	if(state){
-		if(Menu_GetSelItem() == min){
-			LCD_Write_Str(0, pPage->pItem[Menu_GetSelItem()].colum, str);
-		}
-		else{
-			LCD_Write_Str(1, pPage->pItem[Menu_GetSelItem()].colum, str);
-		}
-	}
-	else{
-		if(Menu_GetSelItem() == min){
-			LCD_Write_Str(0, pPage->pItem[Menu_GetSelItem()].colum, "        ");
-		}
-		else{
-			LCD_Write_Str(1, pPage->pItem[Menu_GetSelItem()].colum, "        ");
-		}
+    uint8_t min;
+    // SHOW_NUM SHOW_STRING
+    min = ListShow & LOW_BYTE_MAX;
+
+    if(state)
+    {
+        if(Menu_GetSelItem() == min)
+        {
+            LCD_Write_Str(0, pPage->pItem[Menu_GetSelItem()].colum, str);
+        }
+        else
+        {
+            LCD_Write_Str(1, pPage->pItem[Menu_GetSelItem()].colum, str);
+        }
+    }
+    else
+    {
+        if(Menu_GetSelItem() == min)
+        {
+            LCD_Write_Str(0, pPage->pItem[Menu_GetSelItem()].colum, "        ");
+        }
+        else
+        {
+            LCD_Write_Str(1, pPage->pItem[Menu_GetSelItem()].colum, "        ");
+        }
+    }
+}
+
+void GetShowString(char * str, uint16_t data)
+{
+	switch(pPage->pItem[Menu_GetSelItem()].type)
+	{
+		case SHOW_NUM:
+			sprintf(str, "%d", data);
+			break;
+		case SHOW_STRING:
+			if(data)
+			{
+				sprintf(str, "%s", "ON");
+			}
+			else
+			{
+				sprintf(str, "%s", "OFF");
+			}
+		default:
+			break;
 	}
 }
 
 void ShowItemPage_Num(u8 num) //编辑参数值首先到这个函数
 {
-		uint16_t data_old;
-    
-		uint8_t rec_buff[2];
-		uint8_t time_count;
-		char str[10]={0};
+    uint16_t data_old;
 
-		if(pPage->pItem[Menu_GetSelItem()].pChildrenPage !=0){
-				pPage = pPage->pItem[Menu_GetSelItem()].pChildrenPage; //获得菜单项(Item)对应的page
-				ShowPage_Num(pPage, num);
-				return;
-		}
-		if(pPage->pItem[Menu_GetSelItem()].type == SHOW_NULL){
-				return;
-		}
+    uint8_t rec_buff[2];
+    uint8_t time_count;
+    char str[10] = {0};
 
-		data_old = pPage->pItem[Menu_GetSelItem()].data;
-		// blink on
-		while(1)
-		{
-				if(rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO) == RT_EOK)
-        {
-            if(rec_buff[0] == 0) //KEY_Up
-            {
-								if(data_old <100){
-									data_old ++;
-								}
-						}
-            else if(rec_buff[0] == 1) //KEY_Down
-						{
-								if(data_old >0){
-									data_old --;
-								}
-						}
-            else if(rec_buff[0] == 3) //ok
-						{
-								pPage->pItem[Menu_GetSelItem()].data = data_old;
-								BlinkEdit(str,1);
-								break;
-						}
-						else if(rec_buff[0] == 4) //KEY_Return
-						{
-								BlinkEdit(str,1);
-								break;
-						}
-						
-						
-						switch(pPage->pItem[Menu_GetSelItem()].type)
-            {
-            case SHOW_NUM:
-                sprintf(str, "%d", data_old);
-                break;
-						case SHOW_STRING:
-								if(pPage->pItem[Menu_GetSelItem()].data){
-									sprintf(str, "%s", "ON");
-								}
-								else{
-									sprintf(str, "%s", "OFF");
-								}
-            default:
-                break;
-            }
-						
-						
-
-				}
-				time_count ++;
-				if(time_count >BLINK_TIME1){
-					time_count = 0;
-				}
-				if(time_count > BLINK_TIME1/2){
-					BlinkEdit(str,1);
-				}
-				else{
-					BlinkEdit(str,0);
-				}
+    if(pPage->pItem[Menu_GetSelItem()].pChildrenPage != 0)
+    {
+        pPage = pPage->pItem[Menu_GetSelItem()].pChildrenPage; //获得菜单项(Item)对应的page
+        ShowPage_Num(pPage, num);
+        return;
     }
+
+    if(pPage->pItem[Menu_GetSelItem()].type == SHOW_NULL)
+    {
+        return;
+    }
+
+    data_old = pPage->pItem[Menu_GetSelItem()].data;
+	GetShowString(str, data_old);
+    // blink on
+    while(1)
+    {
+		while(!rt_mq_recv(&key_mq, &rec_buff, 2, 0)){
+			if(rec_buff[0] == 0) //KEY_Up
+			{
+				if(data_old < 100)
+				{
+					data_old ++;
+				}
+				GetShowString(str, data_old);
+			}
+			else if(rec_buff[0] == 1) //KEY_Down
+			{
+				if(data_old > 0)
+				{
+					data_old --;
+				}
+				GetShowString(str, data_old);
+			}
+			else if(rec_buff[0] == 3) //ok
+			{
+				pPage->pItem[Menu_GetSelItem()].data = data_old;
+				GetShowString(str, data_old);
+				BlinkEdit(str, 1);
+				return;
+			}
+			else if(rec_buff[0] == 2) //KEY_Return
+			{
+				GetShowString(str, pPage->pItem[Menu_GetSelItem()].data );
+				BlinkEdit(str, 1);
+				return;
+			}
+		}
 		
+		GetShowString(str, data_old);
+        time_count ++;
+        if(time_count > BLINK_TIME1)
+        {
+            time_count = 0;
+        }
+
+        if(time_count > BLINK_TIME1 / 2)
+        {
+            BlinkEdit(str, 1);
+        }
+        else
+        {
+            BlinkEdit(str, 0);
+        }
+    }
 }
 
 
@@ -259,6 +293,7 @@ void SelItemOfList(u8 index, char* s)
         LCD_Write_Str(0, 0, " ");
         LCD_Write_Str(1, 0, s);
     }
+
     SelItem = index;
 }
 
@@ -270,45 +305,49 @@ void KeySelItem(u8 key)
 
     if(pPage->pItem[Menu_GetSelItem()].state == 1) //edit param state
     {
-		   
-			 return;
+
+        return;
     }
-		if(key == KEY_UP_L || key == KEY_UP)
-		{
-				if(Menu_GetSelItem() == 0)
-				{
-						index = pPage->ItemNum - 1;
-				}
-				else
-				{
-						index = Menu_GetSelItem() - 1;
-				}
-				SelItemOfList(index, data);
-		}
-		else if(key == KEY_Down_L || key == KEY_Down)
-		{
-				index = Menu_GetSelItem() + 1;
-				if(index > (pPage->ItemNum - 1))
-				{
-						ShowPage_Num(pPage, 0);
-				}
-				else
-				{
-						SelItemOfList(index, data);
-				}
-		}
+
+    if(key == KEY_UP_L || key == KEY_UP)
+    {
+        if(Menu_GetSelItem() == 0)
+        {
+            index = pPage->ItemNum - 1;
+        }
+        else
+        {
+            index = Menu_GetSelItem() - 1;
+        }
+
+        SelItemOfList(index, data);
+    }
+    else if(key == KEY_Down_L || key == KEY_Down)
+    {
+        index = Menu_GetSelItem() + 1;
+
+        if(index > (pPage->ItemNum - 1))
+        {
+            ShowPage_Num(pPage, 0);
+        }
+        else
+        {
+            SelItemOfList(index, data);
+        }
+    }
+
     return;
 }
 
 void data_plus(int16_t* data)
 {
-			if(*data <100)
-				(*data) ++;
+    if(*data < 100)
+        (*data) ++;
 }
 
 void data_minus(int16_t* data)
 {
-		if(*data >0)
-			(*data) --;
+    if(*data > 0)
+        (*data) --;
 }
 //------------------------end----------------------------------------------

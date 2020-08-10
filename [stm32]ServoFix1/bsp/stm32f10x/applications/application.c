@@ -64,8 +64,8 @@ void start_page(void)
     uint8_t state = 3;
 
     Lcd_Clr_Scr();
-    put_chars_middle(0, "WELCOME TO");
-    put_chars_middle(1, "POWER HD");
+    put_chars_middle(0, "Welcome to");
+    put_chars_middle(1, "Power HD");
     rt_thread_delay(RT_TICK_PER_SECOND * 2);
     put_chars(1, 0, "                ");
     while(1)
@@ -74,18 +74,18 @@ void start_page(void)
         {
             Lcd_Clr_Scr();
             put_chars_middle(0, "SERVO");
-            put_chars_middle(1, "CONNECT OK?");
+            put_chars_middle(1, "Connect OK?");
             rt_thread_delay(RT_TICK_PER_SECOND / 2);
 
             Lcd_Clr_Scr();
-            put_chars(0, 0, "<READING>....");
+            put_chars(0, 0, "<Reading>....");
             if(menu_combine_fb_work_parm())
             {
-                put_chars(1, 0, ">SUCCESS");
+                put_chars(1, 0, ">Success");
             }
             else
             {
-                put_chars(1, 0, ">FAILED");
+                put_chars(1, 0, ">Failed");
                 rt_thread_delay(RT_TICK_PER_SECOND);
                 continue;
             }
@@ -100,8 +100,8 @@ void start_page(void)
             {
                 state = 0;
                 Lcd_Clr_Scr();
-                put_chars(0, 0, "PLEASE CONNECT");
-                put_chars(1, 0, "SERVO");
+                put_chars(0, 0, "Please Connect");
+                put_chars(1, 0, "Servo");
             }
             if(rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO) == RT_EOK)
             {
