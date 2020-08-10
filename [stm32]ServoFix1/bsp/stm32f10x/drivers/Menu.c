@@ -52,7 +52,7 @@ void ShowList(u8 min, u8 max)
     for(index = min; index <= max; index++)
     {
         LCD_Write_Str(i, 1, pPage->pItem[index].pText);
-        if(pPage->pItem[index].colum != 0)
+        if(pPage->pItem[index].colum != 0) //
         {
             switch(pPage->pItem[index].type)
             {
@@ -107,8 +107,29 @@ void ShowParentPage_Num(uint16_t num)
 
 void ShowItemPage_Num(u8 num)
 {
-    pPage = pPage->pItem[Menu_GetSelItem()].pChildrenPage; //获得菜单项(Item)对应的page
-    ShowPage_Num(pPage, num);
+		if(pPage->pItem[Menu_GetSelItem()].pChildrenPage !=0){
+				pPage = pPage->pItem[Menu_GetSelItem()].pChildrenPage; //获得菜单项(Item)对应的page
+				ShowPage_Num(pPage, num);
+				return;
+		}
+		if(pPage->pItem[Menu_GetSelItem()].type == SHOW_NULL){
+				return;
+		}
+		// SHOW_NUM SHOW_STRING 
+		
+		// blink on
+		while(1)
+		{
+			//data plus
+			//data minus
+			
+			
+			break;
+		}
+		//blink off
+		
+		
+
 }
 
 
@@ -160,37 +181,35 @@ void KeySelItem(u8 key)
     char data[] = ">";
 //    char str[10] = {0};
 
-    if(pPage->pItem[Menu_GetSelItem()].state == 1)
+    if(pPage->pItem[Menu_GetSelItem()].state == 1) //edit param state
     {
-
+		   
+			 return;
     }
-    else
-    {
-        if(key == KEY_UP_L || key == KEY_UP)
-        {
-            if(Menu_GetSelItem() == 0)
-            {
-                index = pPage->ItemNum - 1;
-            }
-            else
-            {
-                index = Menu_GetSelItem() - 1;
-            }
-            SelItemOfList(index, data);
-        }
-        else if(key == KEY_Down_L || key == KEY_Down)
-        {
-            index = Menu_GetSelItem() + 1;
-            if(index > (pPage->ItemNum - 1))
-            {
-                ShowPage_Num(pPage, 0);
-            }
-            else
-            {
-                SelItemOfList(index, data);
-            }
-        }
-    }
+		if(key == KEY_UP_L || key == KEY_UP)
+		{
+				if(Menu_GetSelItem() == 0)
+				{
+						index = pPage->ItemNum - 1;
+				}
+				else
+				{
+						index = Menu_GetSelItem() - 1;
+				}
+				SelItemOfList(index, data);
+		}
+		else if(key == KEY_Down_L || key == KEY_Down)
+		{
+				index = Menu_GetSelItem() + 1;
+				if(index > (pPage->ItemNum - 1))
+				{
+						ShowPage_Num(pPage, 0);
+				}
+				else
+				{
+						SelItemOfList(index, data);
+				}
+		}
     return;
 }
 

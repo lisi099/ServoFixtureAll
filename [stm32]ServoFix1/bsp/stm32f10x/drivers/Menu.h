@@ -23,6 +23,7 @@ typedef enum ShowType_
 {
     SHOW_NUM = 0,
     SHOW_STRING,
+		SHOW_STRING_VER,
     SHOW_NULL,
 } ShowType;
 

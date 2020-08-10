@@ -329,9 +329,9 @@ void menu_combine_prom_work_parm(void);
 void menu_combine_prom_work_clear_parm(void);
 uint8_t menu_combine_verify_work_parm(void);
 
-#define 	FACTORY_OUT_SPACE	0
+#define 	FACTORY_OUT_SPACE		0
 #define 	CUSTOMER_OUT_SPACE	9
-#define 	USER_OUT_SPACE		108
+#define 	USER_OUT_SPACE			108
 
 
 
