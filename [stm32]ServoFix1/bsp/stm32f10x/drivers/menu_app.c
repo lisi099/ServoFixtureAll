@@ -59,16 +59,17 @@ struct PAGE mainPage = {0, Menu_One_CallBack, Main_item, SIZE_OF_ITEM(Main_item)
 struct Item Setting_item[] =
 {
     (char*)"1.Ver.",							0,  0,  8,   1, SHOW_NUM, 0, 65535,
-    (char*)"2.Max Power",					0,  0,  13,  1, SHOW_NUM, 500, 1500,
-    (char*)"3.Boost",							0,  0,  13,  1, SHOW_NUM, 0, 100,
-    (char*)"4.Dead Band",					0,  0,  13,  2, SHOW_NUM, 2, 10,
-    (char*)"5.Force",							0,  0,  13,  2, SHOW_NUM, 1, 10,
-    (char*)"6.Tension",					0,  0,  13,  2, SHOW_NUM, 1, 10,
-    (char*)"7.Brake",								0,  0,  13,  3, SHOW_NUM, 1, 100,
-    (char*)"8.Soft Start",					0,  0,  14,  3, SHOW_STRING, 0, 1,
-    (char*)"9.Write Data",					&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
-    (char*)"10.Read Data",					&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
-    (char*)"11.Default",			&Reset_Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"2.Max Power",						0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"3.Boost",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"4.Dead Band",						0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"5.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"6.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
+    (char*)"7.Brake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+	(char*)"8.Center",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"9.Soft Start",						0,  0,  14,  1, SHOW_STRING, 0, 1,
+    (char*)"10.Write Data",			&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"11.Read Data",			&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"12.Default",			&Reset_Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
 };
 
 struct PAGE Setting_Page = {&mainPage, Menu_Two_CallBack, Setting_item, SIZE_OF_ITEM(Setting_item)};
@@ -940,24 +941,24 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 void Copy_Data_To_Show(void)
 {
     Setting_item[0].data = servoDataStru.work_p12;
-    Setting_item[1].data = (servoDataStru.set_p11 - 500 / 10);
-    Setting_item[2].data = servoDataStru.set_p15;
-    Setting_item[3].data = servoDataStru.work_p6  * 10;
-    Setting_item[4].data = servoDataStru.debug_p0 * 10;
-    Setting_item[5].data = servoDataStru.debug_p5 * 10;
-    Setting_item[6].data = servoDataStru.debug_p2;
-    Setting_item[7].data = servoDataStru.set_p14;
+    Setting_item[1].data = (servoDataStru.set_p11 - 727.7f)/72.2f;
+    Setting_item[2].data = (servoDataStru.set_p15 -4.3f)/5.6f;
+    Setting_item[3].data = servoDataStru.work_p6;
+    Setting_item[4].data = servoDataStru.debug_p0;
+    Setting_item[5].data = servoDataStru.debug_p5;
+    Setting_item[6].data = (servoDataStru.debug_p2 +3.2f)/4.3f;
+    Setting_item[7].data = servoDataStru.set_p14; //
 }
 
 void Copy_Data_To_Stru(void)
 {
-    servoDataStru.work_p12 = Setting_item[0].data;
-    servoDataStru.set_p11 = Setting_item[1].data * 10 + 500;
-    servoDataStru.set_p15 = Setting_item[2].data;
-    servoDataStru.work_p6 = Setting_item[3].data / 10;
-    servoDataStru.debug_p0 = Setting_item[4].data / 10;
-    servoDataStru.debug_p5 = Setting_item[5].data / 10;
-    servoDataStru.debug_p2 = Setting_item[6].data;
-    servoDataStru.set_p14 = Setting_item[7].data;
+    servoDataStru.work_p12 = Setting_item[0].data; //version
+    servoDataStru.set_p11 = Setting_item[1].data*72.2 +727.7f; //servo_max_pwm_set
+    servoDataStru.set_p15 = Setting_item[2].data*5.6f +4.3f;//servo_work_base_voltage
+    servoDataStru.work_p6 = Setting_item[3].data; //servo_zero_zone_set
+    servoDataStru.debug_p0 = Setting_item[4].data; //servo_position_pid_parm_p_set
+    servoDataStru.debug_p5 = Setting_item[5].data; //servo_speed_pid_parm_p_set
+    servoDataStru.debug_p2 = Setting_item[6].data*4.3f -3.2f; //servo_speed_run_sample_k_set
+    servoDataStru.set_p14 = Setting_item[7].data;//servo_init_flag_set
 }
 

@@ -70,11 +70,11 @@ void ShowList(u8 min, u8 max)
                 case SHOW_STRING:
                     if(pPage->pItem[index].data)
                     {
-                        sprintf(str, "%s", "ON");
+                        sprintf(str, "%s", "Y");
                     }
                     else
                     {
-                        sprintf(str, "%s", "OFF");
+                        sprintf(str, "%s", "N");
                     }
 
                 default:
@@ -130,7 +130,6 @@ void ShowParentPage_Num(uint16_t num)
 void BlinkEdit(char *str, uint8_t state)
 {
     uint8_t min;
-    // SHOW_NUM SHOW_STRING
     min = ListShow & LOW_BYTE_MAX;
 
     if(state)
@@ -157,21 +156,22 @@ void BlinkEdit(char *str, uint8_t state)
     }
 }
 
-void GetShowString(char * str, uint16_t data)
+void GetShowString(char * str, uint16_t *data)
 {
 	switch(pPage->pItem[Menu_GetSelItem()].type)
 	{
 		case SHOW_NUM:
-			sprintf(str, "%d", data);
+			sprintf(str, "%d", *data);
 			break;
 		case SHOW_STRING:
-			if(data)
+			if(*data)
 			{
-				sprintf(str, "%s", "ON");
+				*data = 1;
+				sprintf(str, "%s", "Y");
 			}
 			else
 			{
-				sprintf(str, "%s", "OFF");
+				sprintf(str, "%s", "N");
 			}
 		default:
 			break;
@@ -199,43 +199,43 @@ void ShowItemPage_Num(u8 num) //编辑参数值首先到这个函数
     }
 
     data_old = pPage->pItem[Menu_GetSelItem()].data;
-	GetShowString(str, data_old);
+	GetShowString(str, &data_old);
     // blink on
     while(1)
     {
 		while(!rt_mq_recv(&key_mq, &rec_buff, 2, 0)){
 			if(rec_buff[0] == 0) //KEY_Up
 			{
-				if(data_old < 100)
+				if(data_old < pPage->pItem[Menu_GetSelItem()].max)
 				{
 					data_old ++;
 				}
-				GetShowString(str, data_old);
+				GetShowString(str, &data_old);
 			}
 			else if(rec_buff[0] == 1) //KEY_Down
 			{
-				if(data_old > 0)
+				if(data_old > pPage->pItem[Menu_GetSelItem()].min)
 				{
 					data_old --;
 				}
-				GetShowString(str, data_old);
+				GetShowString(str, &data_old);
 			}
 			else if(rec_buff[0] == 3) //ok
 			{
 				pPage->pItem[Menu_GetSelItem()].data = data_old;
-				GetShowString(str, data_old);
+				GetShowString(str, &data_old);
 				BlinkEdit(str, 1);
 				return;
 			}
 			else if(rec_buff[0] == 2) //KEY_Return
 			{
-				GetShowString(str, pPage->pItem[Menu_GetSelItem()].data );
+				GetShowString(str, &pPage->pItem[Menu_GetSelItem()].data );
 				BlinkEdit(str, 1);
 				return;
 			}
 		}
 		
-		GetShowString(str, data_old);
+		GetShowString(str, &data_old);
         time_count ++;
         if(time_count > BLINK_TIME1)
         {
@@ -250,6 +250,7 @@ void ShowItemPage_Num(u8 num) //编辑参数值首先到这个函数
         {
             BlinkEdit(str, 0);
         }
+		
     }
 }
 

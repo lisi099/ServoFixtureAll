@@ -191,7 +191,7 @@
 #define MENU_FB_SERVO_DEBUG_PARM6               126	//signed 		int       servo_speed_pid_parm_p_radio
 #define MENU_FB_SERVO_DEBUG_PARM7               127	//
 
-#define MENU_FB_SERVO_CONFIG_PARM0              130	//bit     						servo_work_mode_lock_flag_set
+#define MENU_FB_SERVO_CONFIG_PARM0              130	//bit     				servo_work_mode_lock_flag_set
 #define MENU_FB_SERVO_CONFIG_PARM1              131	//unsigned  char     	servo_work_mode_now
 #define MENU_FB_SERVO_CONFIG_PARM2              133	//unsigned  char     	servo_pram_config_set
 #define MENU_FB_SERVO_CONFIG_PARM3              135	//bit     						servo_command_fb_flag
