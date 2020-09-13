@@ -74,7 +74,7 @@ void start_page(void)
         {
             Lcd_Clr_Scr();
             put_chars_middle(0, "SERVO");
-            put_chars_middle(1, "Connect OK?");
+            put_chars_middle(1, "Connect OK");
             rt_thread_delay(RT_TICK_PER_SECOND / 2);
 
             Lcd_Clr_Scr();
