@@ -18,13 +18,13 @@
 
 //----------------------消息定义-------------------------
 struct rt_messagequeue key_mq;
-char key_msg_pool[50];
+char key_msg_pool[10];
 
 struct rt_messagequeue usart1_r_mq;
-static char usart1_r_msg_pool[120];
+static char usart1_r_msg_pool[60];
 
 struct rt_messagequeue usart2_r_mq;
-static char usart2_r_msg_pool[120];
+static char usart2_r_msg_pool[60];
 
 //-----------------------按键处理线程-----------------------
 static void key_scan_thread(void* parameter)
@@ -284,9 +284,7 @@ int rt_application_init(void)
 
     tid1 = rt_thread_create("usart_sw", usart_sw_thread_entry, RT_NULL, 1024, 16, 10);
     if(tid1 != RT_NULL) rt_thread_startup(tid1);
-
-//		tid1 = rt_thread_create("blink", blink_thread_entry, RT_NULL, 256, 18, 10);
-//    if(tid1 != RT_NULL) rt_thread_startup(tid1);
+	
     return 0;
 }
 

@@ -18,6 +18,11 @@ static u16 ListShow = 0;
 
 void SelItemOfList(u8 index, char* s);
 
+char *servo_version[] ={"PGC-D12", "PGC-D15", "WH-40KG", "WH-30KG", "WH-20KG", \
+						"PGB-S50", "PGB-S35", "PGB-S25", "PGB-S15", "***-***"};
+int servo_version_num[] ={40, 01, 02, 03, 04, \
+						99, 98, 97, 96};
+
 //--------------------------------------------
 void LCD_Write_Str(u8 x, u8 y, char* data)
 {
@@ -45,14 +50,27 @@ void Menu_SetSelItem(u8 num)
     SelItem = num;
 }
 
+int find_version(int num)
+{
+	int i =0;
+	for(; i<sizeof(servo_version_num)/sizeof(int); i++){
+		if(num == servo_version_num[i]){
+			return i;
+		}
+	}
+	return 100;
+}
+
 //--------------------------------------------
 void ShowList(u8 min, u8 max)
 {
-    char str[10] = { 0 };
+    char str[16] = { 0 };
     u8 i = 0, index = 0;
     Lcd_Clr_Scr();
     uint8_t u8_data;
-
+	int distribtor, costormer;
+	
+	uint8_t buf[2];
     for(index = min; index <= max; index++)
     {
         LCD_Write_Str(i, 1, pPage->pItem[index].pText);
@@ -66,17 +84,30 @@ void ShowList(u8 min, u8 max)
                     u8_data = (uint8_t)pPage->pItem[index].data;
                     sprintf(str, "%d", u8_data);
                     break;
-
                 case SHOW_STRING:
-                    if(pPage->pItem[index].data)
-                    {
-                        sprintf(str, "%s", "Y");
-                    }
-                    else
-                    {
-                        sprintf(str, "%s", "N");
-                    }
-
+                    if(pPage->pItem[index].data) sprintf(str, "%s", "Y");
+                    else sprintf(str, "%s", "N");
+					break;
+				case SHOW_STRING_VER:
+					buf[0] = pPage->pItem[index].data / 10000 % 10 +1;
+					sprintf(str, "V1.%d ",buf[0]);
+					buf[0] = pPage->pItem[index].data / 1000 % 10;
+					buf[1] = pPage->pItem[index].data / 100 % 10;
+					distribtor = buf[0]*10 + buf[1];
+					sprintf(&str[5], "%s-",servo_version[find_version(distribtor)]);
+					buf[0] = pPage->pItem[index].data / 10 % 10;
+					buf[1] = pPage->pItem[index].data / 1 % 10;
+					costormer = buf[0]*10 +buf[1];
+					if(costormer == 21){
+						sprintf(&str[13], "00");
+					}
+					else if(costormer >=10){
+						sprintf(&str[13], "%d",costormer);
+					}
+					else{
+						sprintf(&str[13], "0%d",costormer);
+					}
+					break;
                 default:
                     break;
             }
@@ -156,7 +187,7 @@ void BlinkEdit(char *str, uint8_t state)
     }
 }
 
-void GetShowString(char * str, uint16_t *data)
+void GetShowString(char *str, uint16_t *data)
 {
 	switch(pPage->pItem[Menu_GetSelItem()].type)
 	{
@@ -194,6 +225,11 @@ void ShowItemPage_Num(u8 num) //编辑参数值首先到这个函数
     }
 
     if(pPage->pItem[Menu_GetSelItem()].type == SHOW_NULL)
+    {
+        return;
+    }
+	
+	if(pPage->pItem[Menu_GetSelItem()].type == SHOW_STRING_VER)
     {
         return;
     }
@@ -302,11 +338,9 @@ void KeySelItem(u8 key)
 {
     uint8_t index;
     char data[] = ">";
-//    char str[10] = {0};
 
     if(pPage->pItem[Menu_GetSelItem()].state == 1) //edit param state
     {
-
         return;
     }
 

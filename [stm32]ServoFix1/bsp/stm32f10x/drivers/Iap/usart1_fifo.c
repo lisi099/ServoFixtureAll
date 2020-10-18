@@ -8,7 +8,7 @@
 #include "common_fifo.h"
 #include "usart1.h"
 
-#define     USART1_FIFO_PAKAGE_SIZE    		10
+#define     USART1_FIFO_PAKAGE_SIZE    		5
 struct      Common_Fifo_Stru        		Usart1_Fifo_Rx;
 struct 		Usart1Package        			Usart1_Package_Rx[USART1_FIFO_PAKAGE_SIZE];
 

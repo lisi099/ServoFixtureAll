@@ -58,7 +58,7 @@ struct PAGE mainPage = {0, Menu_One_CallBack, Main_item, SIZE_OF_ITEM(Main_item)
 //----2
 struct Item Setting_item[] =
 {
-    (char*)"1.Ver.",							0,  0,  8,   1, SHOW_NUM, 0, 65535,
+    (char*)" ",									0,  0,  1,   1, SHOW_STRING_VER, 0, 65535,
     (char*)"2.Max Power",						0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"3.Boost",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"4.Dead Band",						0,  0,  14,  1, SHOW_NUM, 1, 10,
@@ -388,7 +388,7 @@ void Menu_Three_CallBack(u8 key)
 void Lcd_Upgrade_CallBack(u8 key)
 {
     Lcd_Clr_Scr();
-    put_chars_middle(0, "LCD UPGRADE");
+    put_chars_middle(0, "LCD Upgrade");
     usart_state = USB_SERIAL_PROGRAM;
     usart1_init(115200);
 
@@ -660,44 +660,35 @@ void Servo_Set_Factory_CallBack(u8 key)
     {
         case KEY_UP:
             num ++;
-
             if(num > 99)
             {
                 num = 0;
             }
-
             break;
 
         case KEY_Down:
             num --;
-
             if(num > 99)
             {
                 num = 99;
             }
-
             break;
 
         case KEY_UP_L:
             num ++;
-
             if(num > 99)
             {
                 num = 0;
             }
-
             break;
 
         case KEY_Down_L:
             num --;
-
             if(num > 99)
             {
                 num = 99;
             }
-
             break;
-
         case KEY_Return:
             ShowParentPage_Num(Item_Num_[1]);
             return;
@@ -710,7 +701,6 @@ void Servo_Set_Factory_CallBack(u8 key)
             LCD_Write_Str(0, 0, (char*)"<Setting>...");
             save_servo_data_in_flash(num + CUSTOMER_OUT_SPACE, data_version);
             rt_thread_delay(RT_TICK_PER_SECOND);
-
             if(keep(S_SUCCESS) == F_RETURN)
             {
                 ShowParentPage_Num(Item_Num_[1]);
@@ -720,10 +710,8 @@ void Servo_Set_Factory_CallBack(u8 key)
                 SetMainPage(&Setting_Page);
                 ShowPage_Num(pPage, 0);
             }
-
             return;
     }
-
     Lcd_Clr_Scr();
     buf[9] += num / 10 % 10;
     buf[10] += num / 1 % 10;
@@ -745,7 +733,7 @@ void Servo_Version_Page_CallBack(u8 key)
 
     Lcd_Clr_Scr();
     put_chars_middle(0, "Servo Version");
-    data_version = (uint16_t)servoDataStru.work_p12 ;
+    data_version = (uint16_t)servoDataStru.work_p12;
     buf[0] += data_version / 10000 % 10;
     buf[1] += data_version / 1000 % 10;
     buf[2] += data_version / 100 % 10;
@@ -789,23 +777,18 @@ void Broadband_Page_CallBack(u8 key)
         case 0:
             menu_combine_position(500);
             break;
-
         case 1:
             menu_combine_position(900);
             break;
-
         case 2:
             menu_combine_position(1500);
             break;
-
         case 3:
             menu_combine_position(2100);
             break;
-
         case 4:
             menu_combine_position(2500);
             break;
-
         default:
             break;
     }
@@ -821,11 +804,9 @@ void Narrowband_Page_CallBack(u8 key)
         case KEY_Down_L:
             KeySelItem(key);
             break;
-
         case KEY_Return:
             ShowParentPage_Num(0);
             return;
-
         case KEY_Ok:
             break;
     }
@@ -835,15 +816,12 @@ void Narrowband_Page_CallBack(u8 key)
         case 0:
             menu_combine_position(500);
             break;
-
         case 1:
             menu_combine_position(750);
             break;
-
         case 2:
             menu_combine_position(1000);
             break;
-
         default:
             break;
     }
@@ -881,44 +859,32 @@ void Reset_Data_Read_Page_CallBack(u8 key)
             {
                 num = 0;
             }
-
             break;
-
         case KEY_Down:
             num --;
-
             if(num > 99)
             {
                 num = 99;
             }
-
             break;
-
         case KEY_UP_L:
             num ++;
-
             if(num > 99)
             {
                 num = 0;
             }
-
             break;
-
         case KEY_Down_L:
             num --;
-
             if(num > 99)
             {
                 num = 99;
             }
-
             break;
-
         case KEY_Return:
             ShowParentPage_Num(Item_Num_[1]);
             fisrt = 0;
             return;
-
         case KEY_Ok:
             Lcd_Clr_Scr();
             LCD_Write_Str(0, 0, (char*)"<Restoring>...");
@@ -937,10 +903,10 @@ void Reset_Data_Read_Page_CallBack(u8 key)
     LCD_Write_Str(1, 0, (char*)buf);
 }
 
-
 void Copy_Data_To_Show(void)
 {
-    Setting_item[0].data = servoDataStru.work_p12;
+//    Setting_item[0].data = servoDataStru.work_p12;
+	Setting_item[0].data = 10121;
     Setting_item[1].data = (servoDataStru.set_p11 - 727.7f)/72.2f;
     Setting_item[2].data = (servoDataStru.set_p15 -4.3f)/5.6f;
     Setting_item[3].data = servoDataStru.work_p6;
