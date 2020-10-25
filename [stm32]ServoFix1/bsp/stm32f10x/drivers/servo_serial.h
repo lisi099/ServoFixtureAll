@@ -81,7 +81,7 @@
 //【参数ID1】
 #define MENU_WORK_SERVO_PARM0             			20	//unsigned 	int      	control_pulse_upper 
 #define MENU_WORK_SERVO_PARM1             			21	//unsigned 	int      	control_pulse_mid	
-#define MENU_WORK_SERVO_PARM2            				22	//unsigned 	int      	control_pulse_lower		
+#define MENU_WORK_SERVO_PARM2            			22	//unsigned 	int      	control_pulse_lower		
 #define MENU_WORK_SERVO_PARM3             			23	//unsigned 	int      	control_set_upper	
 #define MENU_WORK_SERVO_PARM4          					24	//unsigned 	int      	control_set_mid
 #define MENU_WORK_SERVO_PARM5            				25	//unsigned 	int      	control_set_lower
@@ -330,7 +330,7 @@ void menu_combine_prom_work_clear_parm(void);
 uint8_t menu_combine_verify_work_parm(void);
 
 #define 	FACTORY_OUT_SPACE		0
-#define 	CUSTOMER_OUT_SPACE	9
+#define 	CUSTOMER_OUT_SPACE		9
 #define 	USER_OUT_SPACE			108
 
 

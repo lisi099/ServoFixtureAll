@@ -19,6 +19,7 @@ volatile uint8_t receive_uart_data_flag = 0;
 struct Servo_Data_Stru_ servoDataStru;
 
 #define SERVO_DELAY_TIME	50
+#define SERVO_DELAY_TIME_S	5
 uint16_t 	servo_unique_address_id_set 	= 16;
 uint16_t 	servo_unique_address_id 		= 16;
 //--------------------------------------
@@ -305,7 +306,7 @@ void menu_combine_prom_work_parm(void)
 	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
     rt_thread_delay(SERVO_DELAY_TIME);
     uart_send_p_command();
-	rt_thread_delay(5);
+	rt_thread_delay(SERVO_DELAY_TIME_S);
 }
 
 void menu_combine_prom_work_clear_parm(void)
@@ -343,7 +344,7 @@ void menu_combine_prom_work_clear_parm(void)
 	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
     rt_thread_delay(SERVO_DELAY_TIME);
     uart_send_p_command();
-	rt_thread_delay(5);
+	rt_thread_delay(SERVO_DELAY_TIME_S);
 }
 
 void read_work_param(uint8_t seq)
@@ -488,7 +489,7 @@ uint8_t menu_combine_fb_work_parm(void)
 	}
 	memcpy(&servoDataStru, &servo_data, sizeof(servo_data));
 	Copy_Data_To_Show();
-	rt_thread_delay(5);
+	rt_thread_delay(SERVO_DELAY_TIME_S);
 	return 1;
 }
 
@@ -568,7 +569,7 @@ uint8_t menu_combine_verify_work_parm(void)
 	}
     rt_thread_delay(SERVO_DELAY_TIME);
     uart_send_p_command();
-	rt_thread_delay(5);
+	rt_thread_delay(SERVO_DELAY_TIME_S);
 	return 1;
 }
 /******************************************************/

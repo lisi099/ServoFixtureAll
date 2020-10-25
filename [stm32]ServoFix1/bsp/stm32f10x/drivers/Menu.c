@@ -5,6 +5,7 @@
 #include "Menu.h"
 #include "1602_iic_sw.h"
 #include <rtthread.h>
+#include "servo_serial.h"
 
 #define LOW_BYTE_NUM   8
 #define LOW_BYTE_MAX  0xFF
@@ -18,12 +19,36 @@ static u16 ListShow = 0;
 
 void SelItemOfList(u8 index, char* s);
 
-char *servo_version[] ={"PGC-D12", "PGC-D15", "WH-40KG", "WH-30KG", "WH-20KG", \
-						"PGB-S50", "PGB-S35", "PGB-S25", "PGB-S15", "***-***"};
-int servo_version_num[] ={40, 01, 02, 03, 04, \
-						99, 98, 97, 96};
-
+char *servo_version[] ={"PGC-D12", "D1206G2", "WH-20KG", "WH-30KG", "WH-40KG", \
+						"PGC-DRF", "PGC-D15", "PGC-R12", "PGC-A20", "PGC-A30",
+						"PGC-A30", "PGC-A40", "PGC-A50"	};
+int servo_version_num[] ={40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+extern struct Servo_Data_Stru_ servoDataStru;
 //--------------------------------------------
+int find_version(int num)
+{
+	int i =0;
+	for(; i<sizeof(servo_version_num)/sizeof(int); i++){
+		if(num == servo_version_num[i]){
+			return i;
+		}
+	}
+	return 100;
+}
+											
+uint8_t is_need_update(void)
+{
+	uint8_t buf[2];
+	uint8_t distribtor;
+	buf[0] = servoDataStru.work_p12 / 1000 % 10;
+	buf[1] = servoDataStru.work_p12 / 100 % 10;
+	distribtor = buf[0]*10 + buf[1];
+	if(find_version(distribtor)==100){
+		return 1;
+	}
+	return 0;
+}	
+						
 void LCD_Write_Str(u8 x, u8 y, char* data)
 {
     put_chars(x, y, data);
@@ -48,17 +73,6 @@ uint8_t Menu_GetSelItem(void)
 void Menu_SetSelItem(u8 num)
 {
     SelItem = num;
-}
-
-int find_version(int num)
-{
-	int i =0;
-	for(; i<sizeof(servo_version_num)/sizeof(int); i++){
-		if(num == servo_version_num[i]){
-			return i;
-		}
-	}
-	return 100;
 }
 
 //--------------------------------------------
@@ -91,10 +105,17 @@ void ShowList(u8 min, u8 max)
 				case SHOW_STRING_VER:
 					buf[0] = pPage->pItem[index].data / 10000 % 10 +1;
 					sprintf(str, "V1.%d ",buf[0]);
+					
 					buf[0] = pPage->pItem[index].data / 1000 % 10;
 					buf[1] = pPage->pItem[index].data / 100 % 10;
 					distribtor = buf[0]*10 + buf[1];
-					sprintf(&str[5], "%s-",servo_version[find_version(distribtor)]);
+					if(find_version(distribtor) ==100){
+						sprintf(&str[5], "%s-","XXX-XXX");
+					}
+					else{
+						sprintf(&str[5], "%s-",servo_version[find_version(distribtor)]);
+					}
+					
 					buf[0] = pPage->pItem[index].data / 10 % 10;
 					buf[1] = pPage->pItem[index].data / 1 % 10;
 					costormer = buf[0]*10 +buf[1];

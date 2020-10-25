@@ -81,7 +81,13 @@ void start_page(void)
             put_chars(0, 0, "<Reading>....");
             if(menu_combine_fb_work_parm())
             {
-                put_chars(1, 0, ">Success");
+				if(!is_need_update()){
+					put_chars(1, 0, ">Success");
+				}
+				else{
+					put_chars(1, 0, ">Pls Update LCD");
+					rt_thread_delay(RT_TICK_PER_SECOND *10);
+				}
             }
             else
             {

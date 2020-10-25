@@ -42,6 +42,8 @@ struct Item
 extern struct PAGE* pPage;
 
 //----------------------functions---------------------
+uint8_t is_need_update(void);
+
 void Lcd_Clr_Scr(void);
 void LCD_Write_Str(u8 x, u8 y, char* data);
 

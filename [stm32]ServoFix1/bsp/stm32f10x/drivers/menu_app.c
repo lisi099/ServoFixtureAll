@@ -25,7 +25,7 @@ extern struct PAGE Info_Page;
 extern struct PAGE Lcd_Page;
 extern struct PAGE Set_Factory_Page;
 //--3
-extern struct PAGE Servo_Version_Page;
+extern struct PAGE Servo_Center_Page;
 extern struct PAGE Data_Save_Page;
 extern struct PAGE Data_Read_Page;
 extern struct PAGE Servo_Bd_Set_Page;
@@ -65,7 +65,7 @@ struct Item Setting_item[] =
     (char*)"5.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"6.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
     (char*)"7.Brake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-	(char*)"8.Center",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+	(char*)"8.Center        L1",	&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
     (char*)"9.Soft Start",						0,  0,  14,  1, SHOW_STRING, 0, 1,
     (char*)"10.Write Data",			&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
     (char*)"11.Read Data",			&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
@@ -85,7 +85,7 @@ struct PAGE Position_Page = {&mainPage, Menu_Two_CallBack, Position_item, SIZE_O
 //----2
 struct Item Info_item[] =
 {
-    (char*)"Servo Version",					&Servo_Version_Page1,  0,  0,  1, SHOW_NULL, 0, 0,
+//    (char*)"Servo Version",					&Servo_Version_Page1,  0,  0,  1, SHOW_NULL, 0, 0,
     (char*)"Lcd Settings",        	&Lcd_Page,  		0, 0,   0, SHOW_NULL, 0, 0,
 //										(char*)"DATA FACTOCY SET",      			&Set_Factory_Page,  0, 0,   0, SHOW_NULL,0,0,
 };
@@ -103,7 +103,7 @@ struct PAGE Lcd_Page = {&Info_Page, Menu_Three_CallBack, Lcd_item, SIZE_OF_ITEM(
 struct PAGE Set_Factory_Page = {&Info_Page, Servo_Set_Factory_CallBack, 0, 0};
 /*******************************************************3**************************************************/
 //----3
-//struct PAGE Servo_Version_Page = {&Setting_Page, Servo_Version_Page_CallBack, 0, 0};
+struct PAGE Servo_Center_Page = {&Setting_Page, Servo_Center_Page_CallBack, 0, 0};
 //----3
 struct Item Data_Save_item[] =
 {
@@ -141,7 +141,7 @@ struct PAGE Host_Bd_Set_Page = {&Lcd_Page, Lcd_Bd_Set_CallBack, Host_Bd_Set_item
 
 struct PAGE Lcd_Upgrade_Page = {&Lcd_Page, Lcd_Upgrade_CallBack, 0, 0};
 //----3
-struct PAGE Servo_Version_Page1 = {&Info_Page, Servo_Version_Page_CallBack, 0, 0};
+//struct PAGE Servo_Version_Page1 = {&Info_Page, Servo_Version_Page_CallBack, 0, 0};
 
 
 struct Item Brodband_item[] =
@@ -719,37 +719,52 @@ void Servo_Set_Factory_CallBack(u8 key)
     LCD_Write_Str(1, 0, (char*)buf);
 }
 
-void Servo_Version_Page_CallBack(u8 key)
+void Servo_Center_Page_CallBack(u8 key)
 {
-    char buf[5] = {'0', '0', '0', '0', '0'};
-    char buf_show[16];
-    uint8_t i;
-    uint16_t data_version;
-
-    for(i = 0; i < 16; i++)
-    {
-        buf_show[i] = ' ';
-    }
-
+	char oper_num[] = "L10 ---0--- R10";
+	static uint8_t l_num = 0, r_num = 0;
     Lcd_Clr_Scr();
-    put_chars_middle(0, "Servo Version");
-    data_version = (uint16_t)servoDataStru.work_p12;
-    buf[0] += data_version / 10000 % 10;
-    buf[1] += data_version / 1000 % 10;
-    buf[2] += data_version / 100 % 10;
-    buf[3] += data_version / 10 % 10;
-    buf[4] += data_version / 1 % 10;
-
-    for(i = 0; i < 5; i++)
+	switch(key)
     {
-        buf_show[i + 6] = buf[i];
+        case KEY_UP:
+			r_num ++;
+			if(r_num >10){
+				r_num = 0;
+			}
+			l_num = 0;
+            break;
+        case KEY_Down:
+			l_num ++;
+			if(l_num >10){
+				l_num = 0;
+			}
+			r_num = 0;
+            break;
     }
-
-    LCD_Write_Str(1, 0, buf_show);
-
+	
+	if(l_num <10){ //1,2
+		oper_num[1] = '0';
+		oper_num[2] = '0' + l_num;
+	}
+	else{
+		oper_num[1] = '1';
+		oper_num[2] = '0';
+	}
+	if(r_num <10){
+		oper_num[13] = '0';
+		oper_num[14] = '0' + r_num;
+	}
+	else{
+		oper_num[13] = '1';
+		oper_num[14] = '0';
+	}
+	put_chars_middle(0, "Center");
+	put_chars_middle(1, oper_num);
+	
+	
     if(key == KEY_Return)
     {
-        ShowParentPage_Num(0);
+        ShowParentPage_Num(Item_Num_[1]);
     }
 }
 
@@ -905,8 +920,8 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 
 void Copy_Data_To_Show(void)
 {
-//    Setting_item[0].data = servoDataStru.work_p12;
-	Setting_item[0].data = 10121;
+    Setting_item[0].data = servoDataStru.work_p12;
+//	Setting_item[0].data = 10121;
     Setting_item[1].data = (servoDataStru.set_p11 - 727.7f)/72.2f;
     Setting_item[2].data = (servoDataStru.set_p15 -4.3f)/5.6f;
     Setting_item[3].data = servoDataStru.work_p6;
