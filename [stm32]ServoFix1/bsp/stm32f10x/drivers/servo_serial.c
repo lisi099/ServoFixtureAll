@@ -187,6 +187,27 @@ void uart_send_p_command(void)
 	memset(uart_write_datas, 0, sizeof(uart_write_datas));
 }
 
+void menu_combine_center(int16_t data)
+{
+	int16_t data_send;
+	uart_send_clear_command();
+	rt_thread_delay(SERVO_DELAY_TIME);
+	data_send = servoDataStru.work_p3 + data*28;
+	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_WORK, SERVO_STATE_COM, MENU_WORK_SERVO_PARM3, data_send, 0, 0);
+	rt_thread_delay(SERVO_DELAY_TIME);
+	
+	data_send = servoDataStru.work_p4 + data*28;
+	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_WORK, SERVO_STATE_COM, MENU_WORK_SERVO_PARM4, data_send, 0, 0);
+	rt_thread_delay(SERVO_DELAY_TIME);
+	
+	data_send = servoDataStru.work_p5 + data*28;
+	uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_WORK, SERVO_STATE_COM, MENU_WORK_SERVO_PARM5, data_send, 0, 0);
+	rt_thread_delay(SERVO_DELAY_TIME);
+	
+	uart_send_p_command();
+	rt_thread_delay(SERVO_DELAY_TIME);
+}
+
 void menu_combine_position(uint16_t pos)
 {
 	uart_send_clear_command();

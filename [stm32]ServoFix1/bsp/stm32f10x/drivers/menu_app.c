@@ -741,7 +741,7 @@ void Servo_Center_Page_CallBack(u8 key)
 			r_num = 0;
             break;
     }
-	
+
 	if(l_num <10){ //1,2
 		oper_num[1] = '0';
 		oper_num[2] = '0' + l_num;
@@ -760,8 +760,17 @@ void Servo_Center_Page_CallBack(u8 key)
 	}
 	put_chars_middle(0, "Center");
 	put_chars_middle(1, oper_num);
+	switch(key)
+    {
+        case KEY_UP:
+			menu_combine_center(r_num);
+            break;
+        case KEY_Down:
+			menu_combine_center(-l_num);
+            break;
+    }
 	
-	
+	menu_combine_position(1500);
     if(key == KEY_Return)
     {
         ShowParentPage_Num(Item_Num_[1]);

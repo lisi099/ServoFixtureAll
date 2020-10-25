@@ -328,6 +328,7 @@ uint8_t menu_combine_fb_work_parm(void);
 void menu_combine_prom_work_parm(void);
 void menu_combine_prom_work_clear_parm(void);
 uint8_t menu_combine_verify_work_parm(void);
+void menu_combine_center(int16_t data);
 
 #define 	FACTORY_OUT_SPACE		0
 #define 	CUSTOMER_OUT_SPACE		9
