@@ -149,15 +149,15 @@ void EXTI4_IRQHandler(void)
  */
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
-#ifdef RT_USING_CAN
+    #ifdef RT_USING_CAN
     CAN1_RX0_IRQHandler();
-#endif
+    #endif
 }
 void USB_HP_CAN1_TX_IRQHandler(void)
 {
-#ifdef RT_USING_CAN
+    #ifdef RT_USING_CAN
     CAN1_TX_IRQHandler();
-#endif
+    #endif
 }
 #endif
 

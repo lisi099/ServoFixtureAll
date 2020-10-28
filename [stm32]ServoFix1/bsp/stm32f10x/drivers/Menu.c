@@ -6,6 +6,7 @@
 #include "1602_iic_sw.h"
 #include <rtthread.h>
 #include "servo_serial.h"
+#include "factory_data.h"
 
 #define LOW_BYTE_NUM   8
 #define LOW_BYTE_MAX  0xFF
@@ -19,36 +20,40 @@ static u16 ListShow = 0;
 
 void SelItemOfList(u8 index, char* s);
 
-char *servo_version[] ={"PGC-D12", "D1206G2", "WH-20KG", "WH-30KG", "WH-40KG", \
-						"PGC-DRF", "PGC-D15", "PGC-R12", "PGC-A20", "PGC-A30",
-						"PGC-A30", "PGC-A40", "PGC-A50"	};
-int servo_version_num[] ={40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 extern struct Servo_Data_Stru_ servoDataStru;
 //--------------------------------------------
 int find_version(int num)
 {
-	int i =0;
-	for(; i<sizeof(servo_version_num)/sizeof(int); i++){
-		if(num == servo_version_num[i]){
-			return i;
-		}
-	}
-	return 100;
+    int i;
+    int total = get_total_num();
+
+    for(i = 0; i < total; i++)
+    {
+        if(num == get_ver_num(i))
+        {
+            return i;
+        }
+    }
+
+    return 100;
 }
-											
+
 uint8_t is_need_update(void)
 {
-	uint8_t buf[2];
-	uint8_t distribtor;
-	buf[0] = servoDataStru.work_p12 / 1000 % 10;
-	buf[1] = servoDataStru.work_p12 / 100 % 10;
-	distribtor = buf[0]*10 + buf[1];
-	if(find_version(distribtor)==100){
-		return 1;
-	}
-	return 0;
-}	
-						
+    uint8_t buf[2];
+    uint8_t distribtor;
+    buf[0] = servoDataStru.work_p12 / 1000 % 10;
+    buf[1] = servoDataStru.work_p12 / 100 % 10;
+    distribtor = buf[0] * 10 + buf[1];
+
+    if(find_version(distribtor) == 100)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
 void LCD_Write_Str(u8 x, u8 y, char* data)
 {
     put_chars(x, y, data);
@@ -82,9 +87,10 @@ void ShowList(u8 min, u8 max)
     u8 i = 0, index = 0;
     Lcd_Clr_Scr();
     uint8_t u8_data;
-	int distribtor, costormer;
-	
-	uint8_t buf[2];
+    int distribtor, costormer;
+
+    uint8_t buf[2];
+
     for(index = min; index <= max; index++)
     {
         LCD_Write_Str(i, 1, pPage->pItem[index].pText);
@@ -98,37 +104,49 @@ void ShowList(u8 min, u8 max)
                     u8_data = (uint8_t)pPage->pItem[index].data;
                     sprintf(str, "%d", u8_data);
                     break;
+
                 case SHOW_STRING:
                     if(pPage->pItem[index].data) sprintf(str, "%s", "Y");
                     else sprintf(str, "%s", "N");
-					break;
-				case SHOW_STRING_VER:
-					buf[0] = pPage->pItem[index].data / 10000 % 10 +1;
-					sprintf(str, "V1.%d ",buf[0]);
-					
-					buf[0] = pPage->pItem[index].data / 1000 % 10;
-					buf[1] = pPage->pItem[index].data / 100 % 10;
-					distribtor = buf[0]*10 + buf[1];
-					if(find_version(distribtor) ==100){
-						sprintf(&str[5], "%s-","XXX-XXX");
-					}
-					else{
-						sprintf(&str[5], "%s-",servo_version[find_version(distribtor)]);
-					}
-					
-					buf[0] = pPage->pItem[index].data / 10 % 10;
-					buf[1] = pPage->pItem[index].data / 1 % 10;
-					costormer = buf[0]*10 +buf[1];
-					if(costormer == 21){
-						sprintf(&str[13], "00");
-					}
-					else if(costormer >=10){
-						sprintf(&str[13], "%d",costormer);
-					}
-					else{
-						sprintf(&str[13], "0%d",costormer);
-					}
-					break;
+
+                    break;
+
+                case SHOW_STRING_VER:
+                    buf[0] = pPage->pItem[index].data / 10000 % 10 + 1;
+                    sprintf(str, "V1.%d ", buf[0]);
+
+                    buf[0] = pPage->pItem[index].data / 1000 % 10;
+                    buf[1] = pPage->pItem[index].data / 100 % 10;
+                    distribtor = buf[0] * 10 + buf[1];
+
+                    if(find_version(distribtor) == 100)
+                    {
+                        sprintf(&str[5], "%s-", "XXX-XXX");
+                    }
+                    else
+                    {
+                        sprintf(&str[5], "%s-", get_ver_char(find_version(distribtor)));
+                    }
+
+                    buf[0] = pPage->pItem[index].data / 10 % 10;
+                    buf[1] = pPage->pItem[index].data / 1 % 10;
+                    costormer = buf[0] * 10 + buf[1];
+
+                    if(costormer == 21)
+                    {
+                        sprintf(&str[13], "00");
+                    }
+                    else if(costormer >= 10)
+                    {
+                        sprintf(&str[13], "%d", costormer);
+                    }
+                    else
+                    {
+                        sprintf(&str[13], "0%d", costormer);
+                    }
+
+                    break;
+
                 default:
                     break;
             }
@@ -210,24 +228,26 @@ void BlinkEdit(char *str, uint8_t state)
 
 void GetShowString(char *str, uint16_t *data)
 {
-	switch(pPage->pItem[Menu_GetSelItem()].type)
-	{
-		case SHOW_NUM:
-			sprintf(str, "%d", *data);
-			break;
-		case SHOW_STRING:
-			if(*data)
-			{
-				*data = 1;
-				sprintf(str, "%s", "Y");
-			}
-			else
-			{
-				sprintf(str, "%s", "N");
-			}
-		default:
-			break;
-	}
+    switch(pPage->pItem[Menu_GetSelItem()].type)
+    {
+        case SHOW_NUM:
+            sprintf(str, "%d", *data);
+            break;
+
+        case SHOW_STRING:
+            if(*data)
+            {
+                *data = 1;
+                sprintf(str, "%s", "Y");
+            }
+            else
+            {
+                sprintf(str, "%s", "N");
+            }
+
+        default:
+            break;
+    }
 }
 
 void ShowItemPage_Num(u8 num) //编辑参数值首先到这个函数
@@ -249,51 +269,56 @@ void ShowItemPage_Num(u8 num) //编辑参数值首先到这个函数
     {
         return;
     }
-	
-	if(pPage->pItem[Menu_GetSelItem()].type == SHOW_STRING_VER)
+
+    if(pPage->pItem[Menu_GetSelItem()].type == SHOW_STRING_VER)
     {
         return;
     }
 
     data_old = pPage->pItem[Menu_GetSelItem()].data;
-	GetShowString(str, &data_old);
+    GetShowString(str, &data_old);
+
     // blink on
     while(1)
     {
-		while(!rt_mq_recv(&key_mq, &rec_buff, 2, 0)){
-			if(rec_buff[0] == 0) //KEY_Up
-			{
-				if(data_old < pPage->pItem[Menu_GetSelItem()].max)
-				{
-					data_old ++;
-				}
-				GetShowString(str, &data_old);
-			}
-			else if(rec_buff[0] == 1) //KEY_Down
-			{
-				if(data_old > pPage->pItem[Menu_GetSelItem()].min)
-				{
-					data_old --;
-				}
-				GetShowString(str, &data_old);
-			}
-			else if(rec_buff[0] == 3) //ok
-			{
-				pPage->pItem[Menu_GetSelItem()].data = data_old;
-				GetShowString(str, &data_old);
-				BlinkEdit(str, 1);
-				return;
-			}
-			else if(rec_buff[0] == 2) //KEY_Return
-			{
-				GetShowString(str, &pPage->pItem[Menu_GetSelItem()].data );
-				BlinkEdit(str, 1);
-				return;
-			}
-		}
-		
-		GetShowString(str, &data_old);
+        while(!rt_mq_recv(&key_mq, &rec_buff, 2, 0))
+        {
+            if(rec_buff[0] == 0) //KEY_Up
+            {
+                if(data_old < pPage->pItem[Menu_GetSelItem()].max)
+                {
+                    data_old ++;
+                }
+
+                GetShowString(str, &data_old);
+            }
+            else if(rec_buff[0] == 1) //KEY_Down
+            {
+                if(data_old > pPage->pItem[Menu_GetSelItem()].min)
+                {
+                    data_old --;
+                }
+
+                GetShowString(str, &data_old);
+            }
+            else if(rec_buff[0] == 3) //ok
+            {
+                pPage->pItem[Menu_GetSelItem()].data = data_old;
+                GetShowString(str, &data_old);
+                BlinkEdit(str, 1);
+                return;
+            }
+            else if(rec_buff[0] == 2) //KEY_Return
+            {
+                GetShowString(str, &pPage->pItem[Menu_GetSelItem()].data );
+                BlinkEdit(str, 1);
+                return;
+            }
+        }
+
+        GetShowString(str, &data_old);
         time_count ++;
+
         if(time_count > BLINK_TIME1)
         {
             time_count = 0;
@@ -307,7 +332,7 @@ void ShowItemPage_Num(u8 num) //编辑参数值首先到这个函数
         {
             BlinkEdit(str, 0);
         }
-		
+
     }
 }
 

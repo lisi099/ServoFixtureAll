@@ -7,13 +7,14 @@
 
 #include "Menu.h"
 
-enum{
-	S_FAILED =0,
-	S_SUCCESS = 1,
-	S_CONFORM = 2,
-	F_RETURN = 10,
-	F_OK = 11,
-	
+enum
+{
+    S_FAILED = 0,
+    S_SUCCESS = 1,
+    S_CONFORM = 2,
+    F_RETURN = 10,
+    F_OK = 11,
+
 };
 
 extern struct PAGE mainPage;
@@ -34,7 +35,7 @@ void Servo_Set_Factory_CallBack(u8 key);
 
 void Narrowband_Page_CallBack(u8 key);
 void Broadband_Page_CallBack(u8 key);
-	
+
 void Servo_Bd_Set_CallBack(u8 key);
 void Lcd_Bd_Set_CallBack(u8 key);
 

@@ -5,8 +5,8 @@
 #include "stm32f10x.h"
 ////////////////////////////////////////////////////////////////////////////////////////
 //通讯包数据格式：
-//数据头       1个字节   0XFA	 
-//舵机地址     1个字节   
+//数据头       1个字节   0XFA
+//舵机地址     1个字节
 //命令字       1个字节
 //状态字       1个字节
 //参数ID       1个字节
@@ -16,7 +16,7 @@
 //参数值高位   1个字节
 //参数值低位   1个字节
 //校验和       1个字节   校验和 = 舵机地址+命令字+参数1ID+参数2ID
-//结束码       1个字节   0XED 
+//结束码       1个字节   0XED
 /////////////////////////////////////////////////////////////////////////////////////////
 //命令字(0-19)
 //命令字
@@ -63,7 +63,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //命令字：SERVO_COMMAND_SERVO_ADDRESS_SET       3
-//【参数ID1】						
+//【参数ID1】
 #define MENU_CONFIG_SERVO_COMMON_ADDRESS_SET  	5		//舵机通用地址	取值0-254			默认值248   
 #define MENU_CONFIG_SERVO_UNIQUE_ADDRESS_SET    6		//舵机设备地址	取值0-65534		默认值16 
 #define MENU_CONFIG_SERVO_RESET_ADDRESS_SET     7		//舵机设备地址	取值0-65534		默认值16 
@@ -117,7 +117,7 @@
 #define MENU_SETUP_SERVO_PARM15            			55	//signed 	  int      	servo_work_base_voltage	
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-//命令字：SERVO_COMMAND_SERVO_PARM_DEBUG       	7	
+//命令字：SERVO_COMMAND_SERVO_PARM_DEBUG       	7
 //【参数ID1】
 #define MENU_DEBUG_SERVO_PARM0    					60 //signed 		int	servo_position_pid_parm_p_set	
 #define MENU_DEBUG_SERVO_PARM1   					61 //signed 		int    	position_pid_speed_parm_radio	
@@ -148,7 +148,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //命令字：SERVO_COMMAND_SERVO_FB                9
-//【参数ID1】														
+//【参数ID1】
 #define MENU_FB_SERVO_WORK_PARM0    		    81	//unsigned 	int      	control_pulse_upper 			-->6
 #define MENU_FB_SERVO_WORK_PARM1                82	//unsigned 	int      	control_pulse_mid
 #define MENU_FB_SERVO_WORK_PARM2                83	//unsigned 	int      	control_pulse_lower 			-->5
@@ -205,15 +205,15 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //命令字：SERVO_COMMAND_SERVO_TARGET    		    10
-//【参数ID1】															
+//【参数ID1】
 #define MENU_SERVO_RUN_POSITION_VALUE         	150	//目标位置  		取值0-65535   默认值 0
-//【参数ID2】															
+//【参数ID2】
 #define MENU_SERVO_RUN_SPEED_VALUE              151	//目标速度  		取值0-65535   默认值 0
 //参数ID2参数值高位	= 速度周期
 //参数ID2参数值低位	= 速度步长
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-//命令字：SERVO_COMMAND_SERVO_RESET             15 
+//命令字：SERVO_COMMAND_SERVO_RESET             15
 //舵机地址 = XX  单个舵机动作
 //舵机地址 = 248 全部舵机动作
 //////////////////////////////////////////////////////////////////////////////
@@ -269,57 +269,58 @@
 #define  UART_DELAY_OV_TIME                 20000
 
 //---------------------------------------------------------------------------------------
-struct Servo_Data_Stru_{ //64 byte
-	int16_t work_p0;
-	int16_t work_p1;
-	int16_t work_p2;
-	int16_t work_p3;
-	int16_t work_p4;
-	int16_t work_p5;
-	int16_t work_p6;
-	int16_t work_p7;
-	int16_t work_p8;
-	int16_t work_p9;
-	int16_t work_p10;
-	int16_t work_p11;
-	int16_t work_p12;
-	int16_t work_p13;
-	int16_t work_p14;
-	int16_t work_p15;
-	int16_t set_p0;
-	int16_t set_p1;
-	int16_t set_p2;
-	int16_t set_p3;
-	int16_t set_p4;
-	int16_t set_p5;
-	int16_t set_p6;
-	int16_t set_p7;
-	int16_t set_p8;
-	int16_t set_p9;
-	int16_t set_p10;
-	int16_t set_p11;
-	int16_t set_p12;
-	int16_t set_p13;
-	int16_t set_p14;
-	int16_t set_p15;
-	int16_t debug_p0;
-	int16_t debug_p1;
-	int16_t debug_p2;
-	int16_t debug_p3;
-	int16_t debug_p4;
-	int16_t debug_p5;
-	int16_t debug_p6;
-	int16_t debug_p7;
-	int16_t debug_p8;
-	int16_t debug_p9;
-	int16_t debug_p10;
+struct Servo_Data_Stru_  //64 byte
+{
+    int16_t work_p0;
+    int16_t work_p1;
+    int16_t work_p2;
+    int16_t work_p3;
+    int16_t work_p4;
+    int16_t work_p5;
+    int16_t work_p6;
+    int16_t work_p7;
+    int16_t work_p8;
+    int16_t work_p9;
+    int16_t work_p10;
+    int16_t work_p11;
+    int16_t work_p12;
+    int16_t work_p13;
+    int16_t work_p14;
+    int16_t work_p15;
+    int16_t set_p0;
+    int16_t set_p1;
+    int16_t set_p2;
+    int16_t set_p3;
+    int16_t set_p4;
+    int16_t set_p5;
+    int16_t set_p6;
+    int16_t set_p7;
+    int16_t set_p8;
+    int16_t set_p9;
+    int16_t set_p10;
+    int16_t set_p11;
+    int16_t set_p12;
+    int16_t set_p13;
+    int16_t set_p14;
+    int16_t set_p15;
+    int16_t debug_p0;
+    int16_t debug_p1;
+    int16_t debug_p2;
+    int16_t debug_p3;
+    int16_t debug_p4;
+    int16_t debug_p5;
+    int16_t debug_p6;
+    int16_t debug_p7;
+    int16_t debug_p8;
+    int16_t debug_p9;
+    int16_t debug_p10;
 };
 
 
 void uart_receive_data(uint8_t data);
 void uart_send_command(uint8_t id, uint8_t cmd, uint8_t state, uint8_t para_id1, uint16_t para1, uint8_t para_id2, uint16_t para2);
 
-void save_servo_data_in_flash(uint8_t seq,uint16_t version);
+void save_servo_data_in_flash(uint8_t seq, uint16_t version);
 void read_servo_data_in_flash(uint8_t seq);
 void test_falsh_progrm(void);
 
@@ -330,9 +331,9 @@ void menu_combine_prom_work_clear_parm(void);
 uint8_t menu_combine_verify_work_parm(void);
 void menu_combine_center(int16_t data);
 
-#define 	FACTORY_OUT_SPACE		0
-#define 	CUSTOMER_OUT_SPACE		9
-#define 	USER_OUT_SPACE			108
+//#define 	FACTORY_OUT_SPACE			0
+//#define 	CUSTOMER_OUT_SPACE		9
+#define 	USER_OUT_SPACE			0
 
 
 

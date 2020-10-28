@@ -13,12 +13,12 @@
 
 struct Common_Fifo_Stru
 {
-int16_t Head;
-int16_t Tail;
-int16_t Total;
-int16_t Fifo_Size;
-int16_t Data_Size;
-uint8_t *Data_Ptr;
+    int16_t Head;
+    int16_t Tail;
+    int16_t Total;
+    int16_t Fifo_Size;
+    int16_t Data_Size;
+    uint8_t *Data_Ptr;
 };
 
 

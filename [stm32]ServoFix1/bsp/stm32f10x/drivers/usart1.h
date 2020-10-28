@@ -18,13 +18,14 @@ uint8_t* usart1_get_rx_ptr(void);
 uint32_t usart1_get_counter(void);
 
 
-typedef enum Usart_State_{
-	USB_SERIAL_DISABLE = 0,
-	USB_SERIAL_TO_SERVO,
-	USB_SERIAL_PROGRAM,
-	BLUETOOTH_MODE,
-	
-}Usart_State;
+typedef enum Usart_State_
+{
+    USB_SERIAL_DISABLE = 0,
+    USB_SERIAL_TO_SERVO,
+    USB_SERIAL_PROGRAM,
+    BLUETOOTH_MODE,
+
+} Usart_State;
 
 
 

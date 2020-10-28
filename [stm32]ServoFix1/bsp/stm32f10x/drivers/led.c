@@ -23,7 +23,7 @@ void rt_hw_led_init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    RCC_APB2PeriphClockCmd(led1_rcc|led2_rcc,ENABLE);
+    RCC_APB2PeriphClockCmd(led1_rcc | led2_rcc, ENABLE);
 
     GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -39,14 +39,16 @@ void rt_hw_led_on(rt_uint32_t n)
 {
     switch (n)
     {
-    case 0:
-        GPIO_SetBits(led1_gpio, led1_pin);
-        break;
-    case 1:
-        GPIO_SetBits(led2_gpio, led2_pin);
-        break;
-    default:
-        break;
+        case 0:
+            GPIO_SetBits(led1_gpio, led1_pin);
+            break;
+
+        case 1:
+            GPIO_SetBits(led2_gpio, led2_pin);
+            break;
+
+        default:
+            break;
     }
 }
 
@@ -54,14 +56,16 @@ void rt_hw_led_off(rt_uint32_t n)
 {
     switch (n)
     {
-    case 0:
-        GPIO_ResetBits(led1_gpio, led1_pin);
-        break;
-    case 1:
-        GPIO_ResetBits(led2_gpio, led2_pin);
-        break;
-    default:
-        break;
+        case 0:
+            GPIO_ResetBits(led1_gpio, led1_pin);
+            break;
+
+        case 1:
+            GPIO_ResetBits(led2_gpio, led2_pin);
+            break;
+
+        default:
+            break;
     }
 }
 

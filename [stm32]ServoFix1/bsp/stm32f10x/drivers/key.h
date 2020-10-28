@@ -10,23 +10,25 @@
 /*****KEY******/
 #define KEY_NUM		4
 
-typedef enum KeyState_{
-	WAIT_TRIG = 0,
-	TRIGGER,
-	ANTI_SHAKE,
-	CLICK,
-	WAILT_T,
-	TRIGGER_2,
-	ANTI_SHAKE_2,
-	DLICK
-}KeyState;
+typedef enum KeyState_
+{
+    WAIT_TRIG = 0,
+    TRIGGER,
+    ANTI_SHAKE,
+    CLICK,
+    WAILT_T,
+    TRIGGER_2,
+    ANTI_SHAKE_2,
+    DLICK
+} KeyState;
 
-typedef enum PressState_{
-	NO_CLICK = 0,
-	S_CLICK = 1,
-	D_CLICK = 2,
-	L_CLICK =3
-}PressState;
+typedef enum PressState_
+{
+    NO_CLICK = 0,
+    S_CLICK = 1,
+    D_CLICK = 2,
+    L_CLICK = 3
+} PressState;
 
 
 PressState key_run1(uint8_t key);

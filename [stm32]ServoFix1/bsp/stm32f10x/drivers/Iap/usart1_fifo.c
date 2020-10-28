@@ -20,7 +20,7 @@ struct 		Usart1Package        			Usart1_Package_Rx[USART1_FIFO_PAKAGE_SIZE];
 *************************************************************/
 void usart1_fifo_rx_init(void)
 {
-   common_fifo_init(&Usart1_Fifo_Rx, USART1_FIFO_PAKAGE_SIZE, sizeof(struct Usart1Package), Usart1_Package_Rx);
+    common_fifo_init(&Usart1_Fifo_Rx, USART1_FIFO_PAKAGE_SIZE, sizeof(struct Usart1Package), Usart1_Package_Rx);
 }
 /*************************************************************
   Function   :
@@ -30,7 +30,7 @@ void usart1_fifo_rx_init(void)
 *************************************************************/
 void usart1_fifo_rx_insert(struct Usart1Package *msg)
 {
-   common_fifo_insert_package(&Usart1_Fifo_Rx, msg);
+    common_fifo_insert_package(&Usart1_Fifo_Rx, msg);
 }
 /*************************************************************
   Function   :
@@ -40,7 +40,7 @@ void usart1_fifo_rx_insert(struct Usart1Package *msg)
 *************************************************************/
 uint8_t usart1_fifo_rx_get(struct Usart1Package *msg)
 {
-  return common_fifo_get_package(&Usart1_Fifo_Rx, msg);
+    return common_fifo_get_package(&Usart1_Fifo_Rx, msg);
 }
 
 /******************* (C) COPYRIGHT 2016*****END OF FILE****/

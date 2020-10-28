@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "QStandardItemModel"
+#include "QMessageBox"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -7,17 +9,30 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setFixedSize(708, 425);
-//    this->setStyleSheet("QPushButton{ background-color: rgb(0x1d, 0x1d, 0x1d); color: rgb(255, 255, 255);}");
     ui->pushButton_open->setStyleSheet(
                 "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
-                "QPushButton:hover{background-color:black; color: white;}"
+                "QPushButton:hover{background-color:blue; color: white;}"
                 "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
                 );
     ui->pushButton_save->setStyleSheet(
                 "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
-                "QPushButton:hover{background-color:black; color: white;}"
+                "QPushButton:hover{background-color:blue; color: white;}"
                 "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
                 );
+    ui->pushButton_connect->setStyleSheet(
+                "QPushButton{background-color:red; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
+                "QPushButton:hover{background-color:blue; color: white;}"
+                "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
+                );
+    ui->lineEdit->setStyleSheet("QLineEdit {background-color:white; color:black;}");
+    ui->lineEdit_pos->setStyleSheet("QLineEdit {background-color:white; color:black;}");
+    ui->textEdit->setStyleSheet(
+                "QTextEdit {background-color:rgba(29, 29, 29, 100%); color:white; border-width: 2px;  border-color: white;}"
+                );
+    ui->comboBox_com->setStyleSheet("QComboBox {background-color:white; color: black;}"
+                                    "QComboBox:QAbstractItemView {background-color: white; color: white}");
+
+
     QPushButton *prt[16];
     prt[0] = ui->pushButton_3;
     prt[1] = ui->pushButton_4;
@@ -29,9 +44,6 @@ MainWindow::MainWindow(QWidget *parent) :
                         );
     }
 
-    ui->textEdit->setStyleSheet(
-                "QTextEdit {background-color:rgba(29, 29, 29, 100%); color:white;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
-                );
     prt[0] = ui->pushButton_s1;
     prt[1] = ui->pushButton_s2;
     prt[2] = ui->pushButton_s3;
@@ -109,14 +121,119 @@ MainWindow::MainWindow(QWidget *parent) :
         combox_ptr[i]->setStyleSheet(
                         "QComboBox {background-color:black; color: white;}"
                         "QComboBox:QAbstractItemView {background-color: white; color: white}"
-
                     );
     }
-    ui->pushButton_connect->setStyleSheet( "QPushButton {background-color:white; color:red;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}");
+    for(int i=0; i<7; i++){
+        QStandardItemModel *pItemModel = qobject_cast<QStandardItemModel*>(combox_ptr[i]->model());
+        for(int j=0; j<11; j++){
+            pItemModel->item(j)->setBackground(QColor(255,255,255));
+        }
+    }
+    QStandardItemModel *pItemModel = qobject_cast<QStandardItemModel*>(combox_ptr[7]->model());
+    for(int j=0; j<2; j++){
+        pItemModel->item(j)->setBackground(QColor(255,255,255));
+    }
+
+    serialport_= new QSerialPort();
+    connect(serialport_, SIGNAL(readyRead()), this, SLOT(receieve_bytes()));
+
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        QSerialPort serial1;
+        serial1.setPort(info);
+        if(serial1.open(QIODevice::ReadWrite))
+        {
+            init_usart_list_.append(info.portName());
+            ui->comboBox_com->addItem(info.portName());
+            serial1.close();
+        }
+    }
+    serial_open_state_ = false;
+    com_detect_timer_= new QTimer;
+    com_detect_timer_->start(1000);
+    connect(com_detect_timer_, SIGNAL(timeout()), this, SLOT(com_detect_timeout()));
 
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+void MainWindow::com_detect_timeout()
+{
+    QStringList usart_list;
+    if(!serial_open_state_){
+        foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+        {
+            QSerialPort serial1;
+            serial1.setPort(info);
+            if(serial1.open(QIODevice::ReadWrite))
+            {
+                usart_list.append(info.portName());
+                serial1.close();
+            }
+        }
+        if(usart_list != init_usart_list_){
+//            ui->plainTextEdit->appendPlainText(QStringLiteral("串口更新"));
+            ui->comboBox_com->clear();
+            init_usart_list_.clear();
+            for(int i=0; i<usart_list.size(); i++){
+                ui->comboBox_com->addItem(usart_list.at(i));
+                init_usart_list_.append(usart_list.at(i));
+            }
+        }
+    }
+
+}
+
+void MainWindow::receieve_bytes(void)
+{
+    QByteArray temp = serialport_->readAll();
+}
+
+void MainWindow::on_pushButton_open_clicked()
+{
+    if(ui->pushButton_open->text() == QStringLiteral("打开串口")){
+//        serialport_->setPortName(ui->comboBox_name->currentText());
+//        serialport_->setBaudRate(ui->comboBox_baut->currentText().toInt());
+//        serialport_->setDataBits(QSerialPort::Data8);
+//        serialport_->setParity(QSerialPort::NoParity);
+//        serialport_->setStopBits(QSerialPort::OneStop);
+//        serialport_->setFlowControl(QSerialPort::NoFlowControl);
+//        if(serialport_->open(QIODevice::ReadWrite)){
+//            ui->comboBox_name->setDisabled(1);
+//            ui->comboBox_baut->setDisabled(1);
+//            ui->comboBox_channel->setDisabled(1);
+//            ui->comboBox_number->setDisabled(1);
+
+//            ui->pushButton_open->setText(QStringLiteral("关闭串口"));
+//            ui->plainTextEdit->appendPlainText(QStringLiteral("串口")+serialport_->portName()+QStringLiteral("已连接"));
+//        }
+//        else{
+//            QMessageBox::critical(this, tr("Error"), serialport_->errorString());
+//        }
+    }
+    else{
+//        if (serialport_->isOpen()){
+//            serialport_->close();
+//            ui->plainTextEdit->appendPlainText(QStringLiteral("串口")+serialport_->portName()+QStringLiteral("已关闭"));
+//        }
+//        ui->pushButton_open->setText(QStringLiteral("打开串口"));
+//        ui->comboBox_name->setDisabled(0);
+//        ui->comboBox_baut->setDisabled(0);
+//        ui->comboBox_channel->setDisabled(0);
+//        ui->comboBox_number->setDisabled(0);
+    }
+}
+
+void MainWindow::on_pushButton_connect_clicked()
+{
+    if(ui->pushButton_connect->text() == "Connect"){
+        ui->pushButton_connect->setText("Disconnect");
+        serial_open_state_ = true;
+    }
+    else{
+        ui->pushButton_connect->setText("Connect");
+        serial_open_state_ = false;
+    }
 }

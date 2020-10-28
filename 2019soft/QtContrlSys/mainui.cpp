@@ -363,6 +363,7 @@ void    MainUI::SetUI_NormSteeringEngineParam()
     short fvalue = m_SysParam.m_NormSteeringEngineParam.m_UpperPulseWidthlimit.GetValue();
     str.sprintf("%d",fvalue);
     ui->lineEdit_14->setText(str);
+    qDebug() <<"----" << fvalue;
 
     fvalue = m_SysParam.m_NormSteeringEngineParam.m_MiddlePulseWidthlimit.GetValue();
     str.sprintf("%d",fvalue);
@@ -1521,8 +1522,13 @@ void  MainUI::OnOpenFileA()
     int     iSize = sizeof(m_SysParam);
     char    *buf = new char[iSize+1];
     bool    bhr = CSysFile::read(fileName,buf,iSize);
-    if( bhr )
+    if( bhr ){
         memcpy((char*)&m_SysParam,buf,iSize);
+        qDebug() << "open success";
+    }
+    else{
+        qDebug() << "open fail";
+    }
     SetUI_NormSteeringEngineParam();
     SetUI_COMMSteeringEngineParam();
     SetUI_AdditionalVariable();

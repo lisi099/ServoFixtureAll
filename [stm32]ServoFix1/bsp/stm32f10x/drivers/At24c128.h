@@ -17,7 +17,7 @@
 #define SetSCL(state)   GPIO_WriteBit(IIC_SCL_PORT,IIC_SCL_PIN,state)
 
 void IIC_EEInit(void);
-void AT24CXX_Read(u32 ReadAddr,u8 *pBuffer,u16 NumToRead);
-void AT24CXX_Write(u32 WriteAddr,u8 *pBuffer,u16 NumToWrite);
+void AT24CXX_Read(u32 ReadAddr, u8 *pBuffer, u16 NumToRead);
+void AT24CXX_Write(u32 WriteAddr, u8 *pBuffer, u16 NumToWrite);
 
 #endif

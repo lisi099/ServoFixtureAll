@@ -9,6 +9,7 @@
 #include "usart3.h"
 #include "servo_serial.h"
 #include "string.h"
+#include "factory_data.h"
 
 #define BLINK_TIME 	10
 #define SIZE_OF_ITEM(x) (sizeof(x) / sizeof(struct Item))
@@ -65,7 +66,7 @@ struct Item Setting_item[] =
     (char*)"5.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"6.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
     (char*)"7.Brake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-	(char*)"8.Center        L1",	&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
+    (char*)"8.Center        L1",	&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
     (char*)"9.Soft Start",						0,  0,  14,  1, SHOW_STRING, 0, 1,
     (char*)"10.Write Data",			&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
     (char*)"11.Read Data",			&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
@@ -96,11 +97,11 @@ struct Item Lcd_item[] =
 {
     (char*)"Servo Bd Set",						&Servo_Bd_Set_Page,  0,  0,  1, SHOW_NUM, 0, 0,
     (char*)"Host Bd Set",							&Host_Bd_Set_Page,   0,  0,  1, SHOW_NUM, 0, 0,
-    (char*)"Lcd Upgrade",								&Lcd_Upgrade_Page,  0,  0,  1, SHOW_NUM, 0, 0,
+    (char*)"Lcd Upgrade",							&Lcd_Upgrade_Page,  0,  0,  1, SHOW_NUM, 0, 0,
 };
 struct PAGE Lcd_Page = {&Info_Page, Menu_Three_CallBack, Lcd_item, SIZE_OF_ITEM(Lcd_item)};
 
-struct PAGE Set_Factory_Page = {&Info_Page, Servo_Set_Factory_CallBack, 0, 0};
+//struct PAGE Set_Factory_Page = {&Info_Page, Servo_Set_Factory_CallBack, 0, 0};
 /*******************************************************3**************************************************/
 //----3
 struct PAGE Servo_Center_Page = {&Setting_Page, Servo_Center_Page_CallBack, 0, 0};
@@ -179,9 +180,9 @@ void keep_string(uint8_t state)
     }
     else if(state == S_SUCCESS)
     {
-        LCD_Write_Str(1, 0, (char*)">Success");
+        LCD_Write_Str(1, 0, (char*)">Success!");
     }
-    else if (state == S_CONFORM)
+    else if(state == S_CONFORM)
     {
         LCD_Write_Str(0, 0, (char*)">Confirm?");
     }
@@ -649,128 +650,142 @@ void Servo_Read_Memory_CallBack(u8 key)
     LCD_Write_Str(1, 0, (char*)buf);
 }
 
-void Servo_Set_Factory_CallBack(u8 key)
+//void Servo_Set_Factory_CallBack(u8 key)
+//{
+//    static uint8_t num = 0;
+//    char buf[] = "  FDATA_X00XX  ";
+//    uint16_t data_version;
+//    uint16_t version;
+
+//    switch(key)
+//    {
+//        case KEY_UP:
+//            num ++;
+//            if(num > 99)
+//            {
+//                num = 0;
+//            }
+//            break;
+//        case KEY_Down:
+//            num --;
+//            if(num > 99)
+//            {
+//                num = 99;
+//            }
+//            break;
+//        case KEY_UP_L:
+//            num ++;
+//            if(num > 99)
+//            {
+//                num = 0;
+//            }
+//            break;
+//        case KEY_Down_L:
+//            num --;
+//            if(num > 99)
+//            {
+//                num = 99;
+//            }
+//            break;
+//        case KEY_Return:
+//            ShowParentPage_Num(Item_Num_[1]);
+//            return;
+
+//        case KEY_Ok:
+//            Lcd_Clr_Scr();
+//            version = (uint16_t) servoDataStru.work_p12;
+//            data_version = version / 10000 * 10000 + num * 100 + 0;
+//            Copy_Data_To_Stru();
+//            LCD_Write_Str(0, 0, (char*)"<Setting>...");
+//            save_servo_data_in_flash(num + CUSTOMER_OUT_SPACE, data_version);
+//            rt_thread_delay(RT_TICK_PER_SECOND);
+//            if(keep(S_SUCCESS) == F_RETURN)
+//            {
+//                ShowParentPage_Num(Item_Num_[1]);
+//            }
+//            else
+//            {
+//                SetMainPage(&Setting_Page);
+//                ShowPage_Num(pPage, 0);
+//            }
+//            return;
+//    }
+//    Lcd_Clr_Scr();
+//    buf[9] += num / 10 % 10;
+//    buf[10] += num / 1 % 10;
+//    put_chars_middle(0, (char*)"Setting default");
+//    LCD_Write_Str(1, 0, (char*)buf);
+//}
+
+void Servo_Center_Page_CallBack(u8 key)
 {
-    static uint8_t num = 0;
-    char buf[] = "  FDATA_X00XX  ";
-    uint16_t data_version;
-    uint16_t version;
+    char oper_num[] = "L10 ---0--- R10";
+    static uint8_t l_num = 0, r_num = 0;
+    Lcd_Clr_Scr();
 
     switch(key)
     {
         case KEY_UP:
-            num ++;
-            if(num > 99)
+            r_num ++;
+
+            if(r_num > 10)
             {
-                num = 0;
+                r_num = 0;
             }
+
+            l_num = 0;
             break;
 
         case KEY_Down:
-            num --;
-            if(num > 99)
-            {
-                num = 99;
-            }
-            break;
+            l_num ++;
 
-        case KEY_UP_L:
-            num ++;
-            if(num > 99)
+            if(l_num > 10)
             {
-                num = 0;
+                l_num = 0;
             }
-            break;
 
-        case KEY_Down_L:
-            num --;
-            if(num > 99)
-            {
-                num = 99;
-            }
+            r_num = 0;
             break;
-        case KEY_Return:
-            ShowParentPage_Num(Item_Num_[1]);
-            return;
-
-        case KEY_Ok:
-            Lcd_Clr_Scr();
-            version = (uint16_t) servoDataStru.work_p12;
-            data_version = version / 10000 * 10000 + num * 100 + 0;
-            Copy_Data_To_Stru();
-            LCD_Write_Str(0, 0, (char*)"<Setting>...");
-            save_servo_data_in_flash(num + CUSTOMER_OUT_SPACE, data_version);
-            rt_thread_delay(RT_TICK_PER_SECOND);
-            if(keep(S_SUCCESS) == F_RETURN)
-            {
-                ShowParentPage_Num(Item_Num_[1]);
-            }
-            else
-            {
-                SetMainPage(&Setting_Page);
-                ShowPage_Num(pPage, 0);
-            }
-            return;
     }
-    Lcd_Clr_Scr();
-    buf[9] += num / 10 % 10;
-    buf[10] += num / 1 % 10;
-    put_chars_middle(0, (char*)"Setting default");
-    LCD_Write_Str(1, 0, (char*)buf);
-}
 
-void Servo_Center_Page_CallBack(u8 key)
-{
-	char oper_num[] = "L10 ---0--- R10";
-	static uint8_t l_num = 0, r_num = 0;
-    Lcd_Clr_Scr();
-	switch(key)
+    if(l_num < 10) //1,2
+    {
+        oper_num[1] = '0';
+        oper_num[2] = '0' + l_num;
+    }
+    else
+    {
+        oper_num[1] = '1';
+        oper_num[2] = '0';
+    }
+
+    if(r_num < 10)
+    {
+        oper_num[13] = '0';
+        oper_num[14] = '0' + r_num;
+    }
+    else
+    {
+        oper_num[13] = '1';
+        oper_num[14] = '0';
+    }
+
+    put_chars_middle(0, "Center");
+    put_chars_middle(1, oper_num);
+
+    switch(key)
     {
         case KEY_UP:
-			r_num ++;
-			if(r_num >10){
-				r_num = 0;
-			}
-			l_num = 0;
+            menu_combine_center(r_num);
             break;
+
         case KEY_Down:
-			l_num ++;
-			if(l_num >10){
-				l_num = 0;
-			}
-			r_num = 0;
+            menu_combine_center(-l_num);
             break;
     }
 
-	if(l_num <10){ //1,2
-		oper_num[1] = '0';
-		oper_num[2] = '0' + l_num;
-	}
-	else{
-		oper_num[1] = '1';
-		oper_num[2] = '0';
-	}
-	if(r_num <10){
-		oper_num[13] = '0';
-		oper_num[14] = '0' + r_num;
-	}
-	else{
-		oper_num[13] = '1';
-		oper_num[14] = '0';
-	}
-	put_chars_middle(0, "Center");
-	put_chars_middle(1, oper_num);
-	switch(key)
-    {
-        case KEY_UP:
-			menu_combine_center(r_num);
-            break;
-        case KEY_Down:
-			menu_combine_center(-l_num);
-            break;
-    }
-	
-	menu_combine_position(1500);
+    menu_combine_position(1500);
+
     if(key == KEY_Return)
     {
         ShowParentPage_Num(Item_Num_[1]);
@@ -801,18 +816,23 @@ void Broadband_Page_CallBack(u8 key)
         case 0:
             menu_combine_position(500);
             break;
+
         case 1:
             menu_combine_position(900);
             break;
+
         case 2:
             menu_combine_position(1500);
             break;
+
         case 3:
             menu_combine_position(2100);
             break;
+
         case 4:
             menu_combine_position(2500);
             break;
+
         default:
             break;
     }
@@ -828,9 +848,11 @@ void Narrowband_Page_CallBack(u8 key)
         case KEY_Down_L:
             KeySelItem(key);
             break;
+
         case KEY_Return:
             ShowParentPage_Num(0);
             return;
+
         case KEY_Ok:
             break;
     }
@@ -840,12 +862,15 @@ void Narrowband_Page_CallBack(u8 key)
         case 0:
             menu_combine_position(500);
             break;
+
         case 1:
             menu_combine_position(750);
             break;
+
         case 2:
             menu_combine_position(1000);
             break;
+
         default:
             break;
     }
@@ -855,6 +880,8 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 {
     static uint8_t num = 0;
     static uint8_t fisrt = 0;
+    int total_num  = get_total_num() - 1;
+    char buf_title[17];
 
     if(fisrt == 0)
     {
@@ -870,49 +897,59 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 
     fisrt = 1;
 
-
     Lcd_Clr_Scr();
-    char buf[] = "  FDATA_X00XX   ";
-
+    
     switch(key)
     {
         case KEY_UP:
             num ++;
 
-            if(num > 99)
+            if(num > total_num)
             {
                 num = 0;
             }
+
             break;
+
         case KEY_Down:
             num --;
-            if(num > 99)
+
+            if(num > total_num)
             {
-                num = 99;
+                num = total_num;
             }
+
             break;
+
         case KEY_UP_L:
             num ++;
-            if(num > 99)
+
+            if(num > total_num)
             {
                 num = 0;
             }
+
             break;
+
         case KEY_Down_L:
             num --;
-            if(num > 99)
+
+            if(num > total_num)
             {
-                num = 99;
+                num = total_num;
             }
+
             break;
+
         case KEY_Return:
             ShowParentPage_Num(Item_Num_[1]);
             fisrt = 0;
             return;
+
         case KEY_Ok:
             Lcd_Clr_Scr();
             LCD_Write_Str(0, 0, (char*)"<Restoring>...");
-            read_servo_data_in_flash(num + CUSTOMER_OUT_SPACE);
+            read_servo_data_in_flash(num + 20);
             rt_thread_delay(RT_TICK_PER_SECOND);
             keep(S_SUCCESS);
             ShowParentPage_Num(0);
@@ -920,35 +957,39 @@ void Reset_Data_Read_Page_CallBack(u8 key)
             return;
     }
 
-    buf[9] += num / 10 % 10;
-    buf[10] += num / 1 % 10;
+//    buf[9] += num / 10 % 10;
+//    buf[10] += num / 1 % 10;
     Lcd_Clr_Scr();
-    put_chars_middle(0, (char*)"Factory Reset");
-    LCD_Write_Str(1, 0, (char*)buf);
+		char *buf = get_ver_char(num);
+//    put_chars_middle(0, (char*)"Factory Reset");
+//    LCD_Write_Str(1, 0, (char*)buf);
+    sprintf(buf_title, "Factory Reset %d", num);
+    LCD_Write_Str(0, 0, buf_title);
+    LCD_Write_Str(1, 0, buf);
 }
 
 void Copy_Data_To_Show(void)
 {
     Setting_item[0].data = servoDataStru.work_p12;
 //	Setting_item[0].data = 10121;
-    Setting_item[1].data = (servoDataStru.set_p11 - 727.7f)/72.2f;
-    Setting_item[2].data = (servoDataStru.set_p15 -4.3f)/5.6f;
+    Setting_item[1].data = (servoDataStru.set_p11 - 727.7f) / 72.2f;
+    Setting_item[2].data = (servoDataStru.set_p15 - 4.3f) / 5.6f;
     Setting_item[3].data = servoDataStru.work_p6;
     Setting_item[4].data = servoDataStru.debug_p0;
     Setting_item[5].data = servoDataStru.debug_p5;
-    Setting_item[6].data = (servoDataStru.debug_p2 +3.2f)/4.3f;
+    Setting_item[6].data = (servoDataStru.debug_p2 + 3.2f) / 4.3f;
     Setting_item[7].data = servoDataStru.set_p14; //
 }
 
 void Copy_Data_To_Stru(void)
 {
     servoDataStru.work_p12 = Setting_item[0].data; //version
-    servoDataStru.set_p11 = Setting_item[1].data*72.2 +727.7f; //servo_max_pwm_set
-    servoDataStru.set_p15 = Setting_item[2].data*5.6f +4.3f;//servo_work_base_voltage
+    servoDataStru.set_p11 = Setting_item[1].data * 72.2 + 727.7f; //servo_max_pwm_set
+    servoDataStru.set_p15 = Setting_item[2].data * 5.6f + 4.3f; //servo_work_base_voltage
     servoDataStru.work_p6 = Setting_item[3].data; //servo_zero_zone_set
     servoDataStru.debug_p0 = Setting_item[4].data; //servo_position_pid_parm_p_set
     servoDataStru.debug_p5 = Setting_item[5].data; //servo_speed_pid_parm_p_set
-    servoDataStru.debug_p2 = Setting_item[6].data*4.3f -3.2f; //servo_speed_run_sample_k_set
+    servoDataStru.debug_p2 = Setting_item[6].data * 4.3f - 3.2f; //servo_speed_run_sample_k_set
     servoDataStru.set_p14 = Setting_item[7].data;//servo_init_flag_set
 }
 

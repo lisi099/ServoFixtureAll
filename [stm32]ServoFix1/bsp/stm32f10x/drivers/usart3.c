@@ -36,27 +36,27 @@ volatile uint8_t  Txd3_Flag;
 *************************************************************/
 uint8_t usart3_get_tx_flag(void)
 {
-  return Txd3_Flag;
+    return Txd3_Flag;
 }
 uint8_t usart3_get_rx_flag(void)
 {
-  return Rcv3_Flag;
+    return Rcv3_Flag;
 }
 void usart3_reset_rx_flag(void)
 {
-  Rcv3_Flag = 0;
+    Rcv3_Flag = 0;
 }
 uint8_t* usart3_get_tx_ptr(void)
 {
-  return Txd3_Buffer;
+    return Txd3_Buffer;
 }
 uint8_t* usart3_get_rx_ptr(void)
 {
-  return Rcv3_Buffer;
+    return Rcv3_Buffer;
 }
 uint32_t usart3_get_counter(void)
 {
-  return Rcv3_Counter;
+    return Rcv3_Counter;
 }
 /*************************************************************
   Function   :
@@ -79,7 +79,7 @@ static void usart3_config(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
 
-	USART_DeInit(USART3);
+    USART_DeInit(USART3);
     USART_InitStructure.USART_BaudRate = COM_BAUDRATE;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
@@ -119,8 +119,8 @@ static void usart3_DMA_config(void)
     DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(COM_DMA_TX, &DMA_InitStructure);
-    DMA_ITConfig(COM_DMA_TX,DMA_IT_TC,ENABLE);
-    DMA_Cmd (COM_DMA_TX,DISABLE);
+    DMA_ITConfig(COM_DMA_TX, DMA_IT_TC, ENABLE);
+    DMA_Cmd (COM_DMA_TX, DISABLE);
 
     DMA_DeInit(COM_DMA_RX);
     DMA_InitStructure.DMA_PeripheralBaseAddr = COM_PORT_DR_Base;
@@ -135,8 +135,8 @@ static void usart3_DMA_config(void)
     DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(COM_DMA_RX, &DMA_InitStructure);
-    DMA_ITConfig(COM_DMA_RX,DMA_IT_TC,DISABLE);
-    DMA_Cmd (COM_DMA_RX,ENABLE);
+    DMA_ITConfig(COM_DMA_RX, DMA_IT_TC, DISABLE);
+    DMA_Cmd (COM_DMA_RX, ENABLE);
 }
 /*************************************************************
   Function   :
@@ -146,19 +146,19 @@ static void usart3_DMA_config(void)
 *************************************************************/
 static void usart3_NVIC_config(void)
 {
-  NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
 
-  NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
+    NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 
-  NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
+    NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 }
 /*************************************************************
   Function   :
@@ -168,12 +168,12 @@ static void usart3_NVIC_config(void)
 *************************************************************/
 void usart3_init(void)
 {
-   usart3_config();
-   usart3_DMA_config();
-   usart3_NVIC_config();
-   Rcv3_Counter = 0;
-   Rcv3_Flag = 0;
-   Txd3_Flag = 0;
+    usart3_config();
+    usart3_DMA_config();
+    usart3_NVIC_config();
+    Rcv3_Counter = 0;
+    Rcv3_Flag = 0;
+    Txd3_Flag = 0;
 }
 /*************************************************************
   Function   :
@@ -183,15 +183,17 @@ void usart3_init(void)
 *************************************************************/
 void usart3_send_buff(uint8_t *pbuffer, uint32_t size)
 {
-	if(size > TXD3_BUFFSIZE){
-		size = TXD3_BUFFSIZE;
-	}
-   memcpy(Txd3_Buffer, pbuffer, size);
-   DMA_Cmd (COM_DMA_TX,DISABLE);
-   COM_DMA_TX->CMAR =  (u32)Txd3_Buffer;
-   COM_DMA_TX->CNDTR = size;
-   DMA_Cmd (COM_DMA_TX,ENABLE);
-   Txd3_Flag    =1;
+    if(size > TXD3_BUFFSIZE)
+    {
+        size = TXD3_BUFFSIZE;
+    }
+
+    memcpy(Txd3_Buffer, pbuffer, size);
+    DMA_Cmd (COM_DMA_TX, DISABLE);
+    COM_DMA_TX->CMAR =  (u32)Txd3_Buffer;
+    COM_DMA_TX->CNDTR = size;
+    DMA_Cmd (COM_DMA_TX, ENABLE);
+    Txd3_Flag    = 1;
 }
 /*************************************************************
   Function   :
@@ -201,13 +203,13 @@ void usart3_send_buff(uint8_t *pbuffer, uint32_t size)
 *************************************************************/
 void DMA1_Channel2_IRQHandler(void)
 {
-  if(DMA_GetFlagStatus(DMA1_FLAG_TC2)==SET)
-  {
-      DMA_ClearITPendingBit(DMA1_IT_GL2);
-      DMA_ClearFlag(DMA1_FLAG_TC2);
-      DMA_Cmd (COM_DMA_TX,DISABLE);
-      Txd3_Flag = 0;
-  }
+    if(DMA_GetFlagStatus(DMA1_FLAG_TC2) == SET)
+    {
+        DMA_ClearITPendingBit(DMA1_IT_GL2);
+        DMA_ClearFlag(DMA1_FLAG_TC2);
+        DMA_Cmd (COM_DMA_TX, DISABLE);
+        Txd3_Flag = 0;
+    }
 }
 /*************************************************************
   Function   :
@@ -219,30 +221,36 @@ extern Usart_State usart_state;
 
 void USART3_IRQHandler(void)
 {
-  if(USART_GetITStatus(USART3, USART_IT_IDLE) != RESET)
-  {
-      USART_ReceiveData(USART3);
-      Rcv3_Counter = RCV3_BUFFSIZE - DMA1_Channel3->CNDTR;
-      if(Rcv3_Counter)
-      {
-         Rcv3_Flag = 1;
-      }
-      DMA_Cmd (DMA1_Channel3, DISABLE);
-      DMA1_Channel3->CMAR = (u32)Rcv3_Buffer;
-      DMA1_Channel3->CNDTR = RCV3_BUFFSIZE;
-      DMA_Cmd(DMA1_Channel3, ENABLE);
-	  
-	  if(Rcv3_Flag ==1 && Rcv3_Counter==12){
-		Rcv3_Flag = 0;
-		switch(usart_state){
-			case BLUETOOTH_MODE:
-				usart2_send_buff(Rcv3_Buffer, Rcv3_Counter);
-				break;
-		  default:
-			  break;
-		}
-	 }
-  }
+    if(USART_GetITStatus(USART3, USART_IT_IDLE) != RESET)
+    {
+        USART_ReceiveData(USART3);
+        Rcv3_Counter = RCV3_BUFFSIZE - DMA1_Channel3->CNDTR;
+
+        if(Rcv3_Counter)
+        {
+            Rcv3_Flag = 1;
+        }
+
+        DMA_Cmd (DMA1_Channel3, DISABLE);
+        DMA1_Channel3->CMAR = (u32)Rcv3_Buffer;
+        DMA1_Channel3->CNDTR = RCV3_BUFFSIZE;
+        DMA_Cmd(DMA1_Channel3, ENABLE);
+
+        if(Rcv3_Flag == 1 && Rcv3_Counter == 12)
+        {
+            Rcv3_Flag = 0;
+
+            switch(usart_state)
+            {
+                case BLUETOOTH_MODE:
+                    usart2_send_buff(Rcv3_Buffer, Rcv3_Counter);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
 }
 /******************* (C) COPYRIGHT 3016*****END OF FILE****/
 

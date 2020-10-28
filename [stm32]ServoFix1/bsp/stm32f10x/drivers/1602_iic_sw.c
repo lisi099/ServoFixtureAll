@@ -36,10 +36,13 @@ void iic_init(void)
 void delay(unsigned int t)
 {
     unsigned char tt;
+
     while(t > 0)
     {
         tt = 60;
+
         while(--tt) {}
+
         --t;
     }
 }
@@ -47,6 +50,7 @@ void delay(unsigned int t)
 void flash(void)
 {
     unsigned char t1 = 200;
+
     while(t1 > 0)t1--;
 }
 
@@ -77,12 +81,14 @@ void stop(void)
 void writecommand(unsigned char dat)
 {
     unsigned char k;
+
     for(k = 0; k < 8; k++)
     {
         if((dat & 0x80) >> 7)
             sda = 1;
         else
             sda = 0;
+
         flash();
         scl = 1;
         flash();
@@ -90,6 +96,7 @@ void writecommand(unsigned char dat)
         flash();
         dat <<= 1;
     }
+
     sda = 1;
     flash();
     scl = 1; //ack
@@ -161,10 +168,12 @@ void setcgrom(unsigned char* q)
     writecommand(0x80);//c=1:write command
     writecommand(0x40);
     writecommand(0x40);
+
     for(i = 0; i < 56; i++)
     {
         writecommand(*q++);
     }
+
     stop();
 }
 
@@ -202,18 +211,22 @@ void displaychar(unsigned char* p)
     unsigned char row;
     start();
     displayAddress0();          //第一行的地址
+
     for(row = 0; row < 16; row++)
     {
         writecommand(*p++);
     }
+
     stop();
     delay(100);
     start();
     displayAddress1();        //第二行的地址
+
     for(row = 0; row < 16; row++)
     {
         writecommand(*p++);
     }
+
     stop();
 }
 
@@ -222,19 +235,24 @@ void lcd_clear(void)
     unsigned char row, i;
     start();
     displayAddress0();          //第一行的地址
+
     for(row = 0; row < 16; row++)
     {
         writecommand(' ');
     }
+
     stop();
     delay(100);
     start();
     displayAddress1();        //第二行的地址
+
     for(row = 0; row < 16; row++)
     {
         writecommand(' ');
     }
+
     stop();
+
     for(i = 0; i < 16; i++)
     {
         show_data0_[i] = ' ';
@@ -246,10 +264,12 @@ void put_chars_middle(unsigned char row, char* p)
 {
     uint8_t len = strlen(p);
     uint8_t col = 0;
+
     if(len < 16)
     {
         col = (16 - len) / 2;
     }
+
     put_chars(row, col, p);
 
 }
@@ -258,6 +278,7 @@ void put_chars(unsigned char row, unsigned char col, char* p)
 {
     static uint8_t first_in = 1;
     uint8_t i;
+
     if(first_in)
     {
         for(i = 0; i < 16; i++)
@@ -265,6 +286,7 @@ void put_chars(unsigned char row, unsigned char col, char* p)
             show_data0_[i] = ' ';
             show_data1_[i] = ' ';
         }
+
         first_in = 0;
     }
 
@@ -292,9 +314,11 @@ void put_chars(unsigned char row, unsigned char col, char* p)
     }
 
     start();
+
     if(row == 0)
     {
         displayAddress0();
+
         for(i = 0; i < 16; i++)
         {
             writecommand(show_data0_[i]);
@@ -303,11 +327,13 @@ void put_chars(unsigned char row, unsigned char col, char* p)
     else
     {
         displayAddress1();
+
         for(i = 0; i < 16; i++)
         {
             writecommand(show_data1_[i]);
         }
     }
+
     stop();
 }
 
@@ -316,6 +342,7 @@ void test_lcd(void)
     iic_init();
     delay(1000);
     lcd_init();
+
     while(1)
     {
         put_chars(0, 0, "FIRST LINE");

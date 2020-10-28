@@ -20,14 +20,14 @@
 
 struct Iap_Status_Stru
 {
-	uint8_t Lock_flag;
-	uint8_t Erase_flag;
-	uint8_t Iap_Cmd;
-	uint8_t Data[7];
+    uint8_t Lock_flag;
+    uint8_t Erase_flag;
+    uint8_t Iap_Cmd;
+    uint8_t Data[7];
 };
 
 void IAP_JumpToApplication(void);
 void iap_update(void);
 uint8_t iap_data_receieve(void);
 uint8_t get_update_status(void);
-#endif 
+#endif

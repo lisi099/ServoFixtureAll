@@ -31,15 +31,15 @@
 *******************************************************************************/
 void NVIC_Configuration(void)
 {
-#ifdef  VECT_TAB_RAM
+    #ifdef  VECT_TAB_RAM
     /* Set the Vector Table base location at 0x20000000 */
     NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
-#else  /* VECT_TAB_FLASH  */
+    #else  /* VECT_TAB_FLASH  */
     /* Set the Vector Table base location at 0x08000000 */
     NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x1800);
-#endif
-	
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    #endif
+
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 }
 
 #if STM32_EXT_SRAM
@@ -63,7 +63,7 @@ void EXT_SRAM_Configuration(void)
         PD14 FSMC_D0   PD15 FSMC_D1   PD0  FSMC_D2   PD1  FSMC_D3
         */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_14 | GPIO_Pin_15;
-        GPIO_Init(GPIOD,&GPIO_InitStructure);
+        GPIO_Init(GPIOD, &GPIO_InitStructure);
 
         /*
         FSMC_D4 ~ FSMC_D12
@@ -71,11 +71,11 @@ void EXT_SRAM_Configuration(void)
         */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10
                                       | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
-        GPIO_Init(GPIOE,&GPIO_InitStructure);
+        GPIO_Init(GPIOE, &GPIO_InitStructure);
 
         /* FSMC_D13 ~ FSMC_D15   PD8 ~ PD10 */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10;
-        GPIO_Init(GPIOD,&GPIO_InitStructure);
+        GPIO_Init(GPIOD, &GPIO_InitStructure);
 
         /*
         FSMC_A0 ~ FSMC_A5   FSMC_A6 ~ FSMC_A9
@@ -83,36 +83,36 @@ void EXT_SRAM_Configuration(void)
         */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3
                                       | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
-        GPIO_Init(GPIOF,&GPIO_InitStructure);
+        GPIO_Init(GPIOF, &GPIO_InitStructure);
 
         /* FSMC_A10 ~ FSMC_A15  PG0 ~ PG5 */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5;
-        GPIO_Init(GPIOG,&GPIO_InitStructure);
+        GPIO_Init(GPIOG, &GPIO_InitStructure);
 
         /* FSMC_A16 ~ FSMC_A18  PD11 ~ PD13 */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13;
-        GPIO_Init(GPIOD,&GPIO_InitStructure);
+        GPIO_Init(GPIOD, &GPIO_InitStructure);
 
         /* RD-PD4 WR-PD5 */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
-        GPIO_Init(GPIOD,&GPIO_InitStructure);
+        GPIO_Init(GPIOD, &GPIO_InitStructure);
 
         /* NBL0-PE0 NBL1-PE1 */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
-        GPIO_Init(GPIOE,&GPIO_InitStructure);
+        GPIO_Init(GPIOE, &GPIO_InitStructure);
 
         /* NE1/NCE2 */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-        GPIO_Init(GPIOD,&GPIO_InitStructure);
+        GPIO_Init(GPIOD, &GPIO_InitStructure);
         /* NE2 */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-        GPIO_Init(GPIOG,&GPIO_InitStructure);
+        GPIO_Init(GPIOG, &GPIO_InitStructure);
         /* NE3 */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-        GPIO_Init(GPIOG,&GPIO_InitStructure);
+        GPIO_Init(GPIOG, &GPIO_InitStructure);
         /* NE4 */
         GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
-        GPIO_Init(GPIOG,&GPIO_InitStructure);
+        GPIO_Init(GPIOG, &GPIO_InitStructure);
     }
     /* FSMC GPIO configure */
 
@@ -174,16 +174,16 @@ void rt_hw_board_init(void)
     /* Configure the SysTick */
     SysTick_Config( SystemCoreClock / RT_TICK_PER_SECOND );
 
-#if STM32_EXT_SRAM
+    #if STM32_EXT_SRAM
     EXT_SRAM_Configuration();
-#endif
+    #endif
 
 //    rt_hw_usart_init();
 //    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
-#ifdef RT_USING_COMPONENTS_INIT
+    #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
-#endif
+    #endif
 }
 
 /*@}*/

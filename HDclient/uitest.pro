@@ -5,10 +5,12 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = uitest
+
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -24,9 +26,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    dataprocess.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    dataprocess.h
 
 FORMS    += mainwindow.ui
 

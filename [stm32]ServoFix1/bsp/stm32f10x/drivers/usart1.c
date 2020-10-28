@@ -41,27 +41,27 @@ uint32_t data_count_tx = 0;
 *************************************************************/
 inline uint8_t usart1_get_tx_flag(void)
 {
-  return Txd1_Flag;
+    return Txd1_Flag;
 }
 inline uint8_t usart1_get_rx_flag(void)
 {
-  return Rcv1_Flag;
+    return Rcv1_Flag;
 }
 inline void usart1_reset_rx_flag(void)
 {
-  Rcv1_Flag = 0;
+    Rcv1_Flag = 0;
 }
 inline uint8_t* usart1_get_tx_ptr(void)
 {
-  return Txd1_Buffer;
+    return Txd1_Buffer;
 }
 inline uint8_t* usart1_get_rx_ptr(void)
 {
-  return Rcv1_Buffer;
+    return Rcv1_Buffer;
 }
 inline uint32_t usart1_get_counter(void)
 {
-  return Rcv1_Counter;
+    return Rcv1_Counter;
 }
 /*************************************************************
   Function   :
@@ -84,7 +84,7 @@ static void usart1_config(uint32_t bd)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
 
-	USART_DeInit(COM_PORT);
+    USART_DeInit(COM_PORT);
     USART_InitStructure.USART_BaudRate = bd;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
@@ -124,8 +124,8 @@ static void usart1_DMA_config(void)
     DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(COM_DMA_TX, &DMA_InitStructure);
-    DMA_ITConfig(COM_DMA_TX,DMA_IT_TC,ENABLE);
-    DMA_Cmd (COM_DMA_TX,DISABLE);
+    DMA_ITConfig(COM_DMA_TX, DMA_IT_TC, ENABLE);
+    DMA_Cmd (COM_DMA_TX, DISABLE);
 
     DMA_DeInit(COM_DMA_RX);
     DMA_InitStructure.DMA_PeripheralBaseAddr = COM_PORT_DR_Base;
@@ -140,8 +140,8 @@ static void usart1_DMA_config(void)
     DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(COM_DMA_RX, &DMA_InitStructure);
-    DMA_ITConfig(COM_DMA_RX,DMA_IT_TC,DISABLE);
-    DMA_Cmd (COM_DMA_RX,ENABLE);
+    DMA_ITConfig(COM_DMA_RX, DMA_IT_TC, DISABLE);
+    DMA_Cmd (COM_DMA_RX, ENABLE);
 }
 /*************************************************************
   Function   :
@@ -151,19 +151,19 @@ static void usart1_DMA_config(void)
 *************************************************************/
 static void usart1_NVIC_config(void)
 {
-  NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
 
-  NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel4_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
+    NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel4_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 
-  NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
+    NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 }
 /*************************************************************
   Function   :
@@ -173,12 +173,12 @@ static void usart1_NVIC_config(void)
 *************************************************************/
 void usart1_init(uint32_t bd)
 {
-   usart1_config(bd);
-   usart1_DMA_config();
-   usart1_NVIC_config();
-   Rcv1_Counter = 0;
-   Rcv1_Flag = 0;
-   Txd1_Flag = 0;
+    usart1_config(bd);
+    usart1_DMA_config();
+    usart1_NVIC_config();
+    Rcv1_Counter = 0;
+    Rcv1_Flag = 0;
+    Txd1_Flag = 0;
 }
 /*************************************************************
   Function   :
@@ -188,16 +188,19 @@ void usart1_init(uint32_t bd)
 *************************************************************/
 void usart1_send_buff(uint8_t *pbuffer, uint32_t size)
 {
-	data_count_tx += size;
-	if(size >= TXD1_BUFFSIZE){
-		size = TXD1_BUFFSIZE;
-	}
-	memcpy(Txd1_Buffer, pbuffer, size);
-	DMA_Cmd (COM_DMA_TX,DISABLE);
-	COM_DMA_TX->CMAR =  (u32)Txd1_Buffer;
-	COM_DMA_TX->CNDTR = size;
-	DMA_Cmd (COM_DMA_TX,ENABLE);
-	Txd1_Flag    =1;
+    data_count_tx += size;
+
+    if(size >= TXD1_BUFFSIZE)
+    {
+        size = TXD1_BUFFSIZE;
+    }
+
+    memcpy(Txd1_Buffer, pbuffer, size);
+    DMA_Cmd (COM_DMA_TX, DISABLE);
+    COM_DMA_TX->CMAR =  (u32)Txd1_Buffer;
+    COM_DMA_TX->CNDTR = size;
+    DMA_Cmd (COM_DMA_TX, ENABLE);
+    Txd1_Flag    = 1;
 }
 /*************************************************************
   Function   :
@@ -207,13 +210,13 @@ void usart1_send_buff(uint8_t *pbuffer, uint32_t size)
 *************************************************************/
 void DMA1_Channel4_IRQHandler(void)
 {
-  if(DMA_GetFlagStatus(DMA1_FLAG_TC4)==SET)
-  {
-      DMA_ClearITPendingBit(DMA1_IT_GL4);
-      DMA_ClearFlag(DMA1_FLAG_TC4);
-      DMA_Cmd (COM_DMA_TX,DISABLE);
-      Txd1_Flag = 0;
-  }
+    if(DMA_GetFlagStatus(DMA1_FLAG_TC4) == SET)
+    {
+        DMA_ClearITPendingBit(DMA1_IT_GL4);
+        DMA_ClearFlag(DMA1_FLAG_TC4);
+        DMA_Cmd (COM_DMA_TX, DISABLE);
+        Txd1_Flag = 0;
+    }
 }
 /*************************************************************
   Function   :
@@ -225,50 +228,63 @@ extern struct rt_messagequeue usart1_r_mq;
 
 void USART1_IRQHandler(void)
 {
-	uint8_t i;
-	if(USART_GetITStatus(COM_PORT, USART_IT_IDLE) != RESET)
-	{
-	  USART_ReceiveData(COM_PORT);
-	  Rcv1_Counter = RCV1_BUFFSIZE - COM_DMA_RX->CNDTR;
-	  if(Rcv1_Counter)
-	  {
-		 Rcv1_Flag = 1;
-		  data_count_rx += Rcv1_Counter;
-	  }
-	  DMA_Cmd (COM_DMA_RX,DISABLE);
-	  COM_DMA_RX->CMAR =  (u32)Rcv1_Buffer;
-	  COM_DMA_RX->CNDTR =  RCV1_BUFFSIZE;
-	  DMA_Cmd (COM_DMA_RX,ENABLE);
-	}
-	if(USART_GetFlagStatus(COM_PORT,USART_FLAG_ORE)==SET)
-	{
-	  int c = COM_PORT->DR;
-	  COM_PORT->SR = (uint16_t)~USART_FLAG_ORE;
-	}
+    uint8_t i;
 
-	if(Rcv1_Flag ==1){
-		Rcv1_Flag = 0;
-		switch(usart_state){
-			case USB_SERIAL_DISABLE:
-				//do nothing
-				break;
-			case USB_SERIAL_TO_SERVO:
+    if(USART_GetITStatus(COM_PORT, USART_IT_IDLE) != RESET)
+    {
+        USART_ReceiveData(COM_PORT);
+        Rcv1_Counter = RCV1_BUFFSIZE - COM_DMA_RX->CNDTR;
+
+        if(Rcv1_Counter)
+        {
+            Rcv1_Flag = 1;
+            data_count_rx += Rcv1_Counter;
+        }
+
+        DMA_Cmd (COM_DMA_RX, DISABLE);
+        COM_DMA_RX->CMAR =  (u32)Rcv1_Buffer;
+        COM_DMA_RX->CNDTR =  RCV1_BUFFSIZE;
+        DMA_Cmd (COM_DMA_RX, ENABLE);
+    }
+
+    if(USART_GetFlagStatus(COM_PORT, USART_FLAG_ORE) == SET)
+    {
+        int c = COM_PORT->DR;
+        COM_PORT->SR = (uint16_t)~USART_FLAG_ORE;
+    }
+
+    if(Rcv1_Flag == 1)
+    {
+        Rcv1_Flag = 0;
+
+        switch(usart_state)
+        {
+            case USB_SERIAL_DISABLE:
+                //do nothing
+                break;
+
+            case USB_SERIAL_TO_SERVO:
+
 //				if(Rcv1_Counter == 12){
 //					usart2_send_buff(&Rcv1_Buffer[0], 12);
 //				}
 //				else{
-					for(i=0; i<Rcv1_Counter; i++){
-						rt_mq_send(&usart1_r_mq, &Rcv1_Buffer[i], 1);
-					}
+                for(i = 0; i < Rcv1_Counter; i++)
+                {
+                    rt_mq_send(&usart1_r_mq, &Rcv1_Buffer[i], 1);
+                }
+
 //				}
-				break;
-			case USB_SERIAL_PROGRAM://program data
-				usart1_length_13_data_receieve();
-				break;
-		  default:
-			  break;
-		}
-	}
+                break;
+
+            case USB_SERIAL_PROGRAM://program data
+                usart1_length_13_data_receieve();
+                break;
+
+            default:
+                break;
+        }
+    }
 }
 
 /******************* (C) COPYRIGHT 2016*****END OF FILE****/

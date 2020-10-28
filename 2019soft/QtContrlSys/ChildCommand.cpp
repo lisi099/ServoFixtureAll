@@ -259,14 +259,17 @@ void        MainUI::OnNormSendUI()
     m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_DOWNLOAD,cID,SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM,0,0,0);
     sleep(delyTime);
     QString data_print;
-    data_print = "const struct data ={";
+    data_print = "{";
     for (int i=0; i<43; i++){
         data_print = data_print + QString::number(params.data[i]);
         if(i !=42){
-            data_print = data_print + ", ";
+            data_print = data_print + ",";
         }
     }
-    data_print = data_print +"}";
+    data_print = data_print +"}, ";
+    QStringList str_list = this->windowTitle().split("/");
+    QStringList str_list_1 = str_list[str_list.size()-1].split("(");
+     data_print = data_print +"//" + str_list_1[0];
     qDebug() << data_print;
 }
 //串口舵机下发界面配置指令
