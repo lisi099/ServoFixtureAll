@@ -203,6 +203,13 @@ void    MainUI::AnalyzeTheFeedbackDataOfSteeringGear(unsigned char  IDByte1,shor
     case MENU_FB_SERVO_WORK_PARM7:
     {
         //死区时间 servo_zero_zone_time
+        m_bSendrecvData = false;
+        if( checkFlag == 0 )
+            m_SysParam.m_SysLoseParam.servo_zero_zone_time.SetValue(IDValue2);
+        else
+        {
+        }
+
         break;
     }
     case MENU_FB_SERVO_WORK_PARM8:
@@ -424,12 +431,14 @@ void    MainUI::AnalyzeTheFeedbackDataOfSteeringGear(unsigned char  IDByte1,shor
     }
     case MENU_FB_SERVO_SETUP_PARM6:
     {
-        //堵转区间 servo_halt_zone_set
+        //20200520 堵转保护和保护对比对换
+        //堵转保护 servo_halt_zone_set
         m_bSendrecvData = false;
         if(iQueryByte == 0)
         {
             if( checkFlag == 0 )
-                m_SysParam.m_NormSteeringEngineParam.m_Locked_rotorProtection.SetValue(IDValue2);
+                m_SysParam.m_SysLoseParam.servo_protect_pwm_cmpt.SetValue(IDValue2);
+                //m_SysParam.m_NormSteeringEngineParam.m_Locked_rotorProtection.SetValue(IDValue2);
             else
             {
                // if( m_SysParam.m_NormSteeringEngineParam.m_Locked_rotorProtection.GetValue() != IDValue2)
@@ -439,7 +448,8 @@ void    MainUI::AnalyzeTheFeedbackDataOfSteeringGear(unsigned char  IDByte1,shor
         else if(iQueryByte == 1)
         {
             if( checkFlag == 0 )
-                m_SysParam.m_COMMSteeringEngineParam.m_Locked_rotorProtection.SetValue(IDValue2);
+                m_SysParam.m_SysLoseParam.servo_protect_pwm_cmpt.SetValue(IDValue2);
+                //m_SysParam.m_COMMSteeringEngineParam.m_Locked_rotorProtection.SetValue(IDValue2);
             else
             {
                // if( m_SysParam.m_COMMSteeringEngineParam.m_Locked_rotorProtection.GetValue() != IDValue2)
@@ -488,13 +498,30 @@ void    MainUI::AnalyzeTheFeedbackDataOfSteeringGear(unsigned char  IDByte1,shor
     }
     case MENU_FB_SERVO_SETUP_PARM9:
     {
+        //20200520 堵转保护和保护对比对换
         //保护比较 servo_protect_pwm_cmp
-        if( checkFlag == 0 )
-            m_SysParam.m_SysLoseParam.servo_protect_pwm_cmpt.SetValue(IDValue2);
-        else
+        m_bSendrecvData = false;
+        if(iQueryByte == 0)
         {
-           // if( m_SysParam.m_COMMSteeringEngineParam.m_ProtectionTime.GetValue() != IDValue2)
-            //    m_ErrorInfoManger.AddValue(QString::fromUtf8("保护时间对比错误"),ui->comboBox_6,ui->comboBox_5);
+            if( checkFlag == 0 )
+                //m_SysParam.m_SysLoseParam.servo_protect_pwm_cmpt.SetValue(IDValue2);
+                m_SysParam.m_NormSteeringEngineParam.m_Locked_rotorProtection.SetValue(IDValue2);
+            else
+            {
+               // if( m_SysParam.m_NormSteeringEngineParam.m_Locked_rotorProtection.GetValue() != IDValue2)
+               //     m_ErrorInfoManger.AddValue(QString::fromUtf8("保护比较"),ui->comboBox_6,ui->comboBox_5);
+            }
+        }
+        else if(iQueryByte == 1)
+        {
+            if( checkFlag == 0 )
+                //m_SysParam.m_SysLoseParam.servo_protect_pwm_cmpt.SetValue(IDValue2);
+                m_SysParam.m_COMMSteeringEngineParam.m_Locked_rotorProtection.SetValue(IDValue2);
+            else
+            {
+               // if( m_SysParam.m_COMMSteeringEngineParam.m_Locked_rotorProtection.GetValue() != IDValue2)
+                //    m_ErrorInfoManger.AddValue(QString::fromUtf8("保护比较"),ui->comboBox_6,ui->comboBox_5);
+            }
         }
         break;
     }
@@ -647,7 +674,14 @@ void    MainUI::AnalyzeTheFeedbackDataOfSteeringGear(unsigned char  IDByte1,shor
     case MENU_FB_SERVO_DEBUG_PARM0:
     {
         //位置比例 servo_position_pid_parm_p_set
-        m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set.SetValue(IDValue2);
+        if(iQueryByte == 0)
+        {
+            m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[0].SetValue(IDValue2);
+        }
+        else if(iQueryByte == 1)
+        {
+            m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[1].SetValue(IDValue2);
+        }
         break;
     }
     case MENU_FB_SERVO_DEBUG_PARM1:
@@ -659,7 +693,14 @@ void    MainUI::AnalyzeTheFeedbackDataOfSteeringGear(unsigned char  IDByte1,shor
     case MENU_FB_SERVO_DEBUG_PARM2:
     {
         //速度比率 servo_speed_run_sample_k_set
-        m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set.SetValue(IDValue2);
+        if(iQueryByte == 0)
+        {
+            m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[0].SetValue(IDValue2);
+        }
+        else if(iQueryByte == 1)
+        {
+            m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[1].SetValue(IDValue2);
+        }
         break;
     }
     case MENU_FB_SERVO_DEBUG_PARM3:
@@ -677,7 +718,14 @@ void    MainUI::AnalyzeTheFeedbackDataOfSteeringGear(unsigned char  IDByte1,shor
     case MENU_FB_SERVO_DEBUG_PARM5:
     {
         //速度比例 servo_speed_pid_parm_p_set
-        m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set.SetValue(IDValue2);
+        if(iQueryByte == 0)
+        {
+            m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[0].SetValue(IDValue2);
+        }
+        else if(iQueryByte == 1)
+        {
+            m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[1].SetValue(IDValue2);
+        }
         break;
     }
     case MENU_FB_SERVO_DEBUG_PARM6:

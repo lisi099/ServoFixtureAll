@@ -84,10 +84,70 @@ void   CNormSteeringEngineParam::SetValue(short  sValue)
     m_AngularMidpoint= CParamItem(QStringLiteral("角度中点"),0,sValue) ;
     //角度下限
     m_LowerAngleLimit= CParamItem(QStringLiteral("角度下限"),0,sValue) ;
-    m_MaximumOutput= CParamItem(QStringLiteral("最大输出"),0,sValue) ;    //最大输出
+    //最大输出
+    m_MaximumOutput= CParamItem(QStringLiteral("最大输出"),0,sValue) ;
     //频率设置
     m_FrequencySetting= CParamItem(QStringLiteral("频率设置"),0,sValue) ;
 }
+//判断-1
+bool   CNormSteeringEngineParam::Jump()
+{
+    //脉宽上限
+    if( m_UpperPulseWidthlimit.GetValue() == -1 )
+        return  false;
+
+    //脉宽中点
+    if( m_MiddlePulseWidthlimit.GetValue() == -1 )
+        return  false;
+    //脉宽下限
+    if( m_DownPulseWidthlimit.GetValue() == -1 )
+        return  false;
+    //启动电压
+    if( m_StartingVoltage.GetValue() == -1 )
+        return  false;
+    //驱动频率
+    if( m_DrivingFrequency.GetValue() == -1 )
+        return  false;
+    //死区
+    if( m_DeadZone.GetValue() == -1 )
+        return  false;
+    //自锁设置
+    if( m_Self_lockingSetting.GetValue() == -1 )
+        return  false;
+    //堵转保护
+    if( m_Locked_rotorProtection.GetValue() == -1 )
+        return  false;
+    //信号复位
+    if( m_SignalReset.GetValue() == -1 )
+        return  false;
+    //保护时间
+    if( m_ProtectionTime.GetValue() == -1 )
+        return  false;
+    //舵机方向
+    if( m_SteeringGearDirection.GetValue() == -1 )
+        return  false;
+    //保护输出
+    if( m_ProtectionOutput.GetValue() == -1 )
+        return  false;
+    //角度上限
+    if( m_UpperLimitOfAngle.GetValue() == -1 )
+        return  false;
+    //角度中点
+    if( m_AngularMidpoint.GetValue() == -1 )
+        return  false;
+    //角度下限
+    if( m_LowerAngleLimit.GetValue() == -1 )
+        return  false;
+    //最大输出
+    if( m_MaximumOutput.GetValue() == -1 )
+        return  false;
+    //频率设置
+    if( m_FrequencySetting.GetValue() == -1 )
+        return  false;
+
+    return  true;
+}
+
 CNormSteeringEngineParam::CNormSteeringEngineParam()
 {
     //脉宽上限
@@ -335,6 +395,79 @@ CCOMMSteeringEngineParam::~CCOMMSteeringEngineParam()
 {
 
 }
+//判断-1
+bool   CCOMMSteeringEngineParam::Jump()
+{
+    //脉宽上限
+    if(m_UpperPulseWidthlimit.GetValue() == -1)
+        return false;
+
+    //脉宽中点
+    if(m_MiddlePulseWidthlimit.GetValue() == -1)
+        return false;
+
+    //脉宽下限
+    if(m_DownPulseWidthlimit.GetValue() == -1)
+        return false;
+
+    //启动电压
+    if(m_StartingVoltage.GetValue() == -1)
+        return false;
+
+    //驱动频率
+    if(m_DrivingFrequency.GetValue() == -1)
+        return false;
+
+    //死区
+    if(m_DeadZone.GetValue() == -1)
+        return false;
+
+    //自锁设置
+    if(m_Self_lockingSetting.GetValue() == -1)
+        return false;
+
+    //堵转保护
+    if(m_Locked_rotorProtection.GetValue() == -1)
+        return false;
+
+    //信号复位
+    if(m_SignalReset.GetValue() == -1)
+        return false;
+
+    //保护时间
+    if(m_ProtectionTime.GetValue() == -1)
+        return false;
+
+    //舵机方向
+    if(m_SteeringGearDirection.GetValue() == -1)
+        return false;
+
+    //保护输出
+    if(m_ProtectionOutput.GetValue() == -1)
+        return false;
+
+    //角度上限
+    if(m_UpperLimitOfAngle.GetValue() == -1)
+        return false;
+
+    //角度中点
+    if(m_AngularMidpoint.GetValue() == -1)
+        return false;
+
+    //角度下限
+    if(m_LowerAngleLimit.GetValue() == -1)
+        return false;
+
+    //最大输出
+    if(m_MaximumOutput.GetValue() == -1)
+        return false;
+
+    //频率设置
+    if(m_FrequencySetting.GetValue() == -1)
+        return false;
+
+    return true;
+ }
 //设置值
 void   CCOMMSteeringEngineParam::SetValue(short  sValue)
 {
@@ -498,7 +631,63 @@ CCOMMSteeringEngineTest::~CCOMMSteeringEngineTest()
 {
 
 }
+//判断-1
+bool   CAdditionalVariable::Jump()
+{
+    //电机方向
+    if( m_MotorDirection.GetValue() == -1 )
+        return  false;
 
+    //信号容差
+    if( m_SignalTolerance.GetValue() == -1 )
+        return  false;
+
+    //程序版本
+    if( m_ProgramVersion.GetValue() == -1 )
+        return  false;
+
+    //掉电使能
+    if( m_PowerDownEnable.GetValue() == -1 )
+        return  false;
+
+    //舵机ID
+    if( m_SteeringGearID.GetValue() == -1 )
+        return  false;
+
+    //通用ID
+    if( m_UniversalID.GetValue() == -1 )
+        return  false;
+
+    //复位位置
+    if( m_ResetPosition.GetValue() == -1 )
+        return  false;
+
+    //复位时间
+    if( m_ResetTime.GetValue() == -1 )
+        return  false;
+
+    //复位步长
+    if( m_ResetStepSize.GetValue() == -1 )
+        return  false;
+
+    //启动时间
+    if( m_StartTime.GetValue() == -1 )
+        return  false;
+
+    //启动步长
+    if( m_StartingStepSize.GetValue() == -1 )
+        return  false;
+
+    //堵转时间
+    if( m_BlockingTime.GetValue() == -1 )
+        return  false;
+
+    //上电复位
+    if( m_Power_onReset.GetValue() == -1 )
+        return  false;
+
+    return  true;
+}
     //设置值
 void   CAdditionalVariable::SetValue(short  sValue)
 {
@@ -622,6 +811,64 @@ CAdditionalVariable::~CAdditionalVariable()
 {
 
 }
+//判断-1
+bool   CSysLoseParam::Jump()
+{
+    //模式锁定 servo_work_mode_lock_flag_set 0
+    if( servo_work_mode_lock_flag_set.GetValue() == -1 )
+        return  false;
+
+    //模式设置 servo_work_mode_now 2
+    if( servo_work_mode_now.GetValue() == -1 )
+        return  false;
+
+    //参数范围 servo_pram_config_set 4
+    if( servo_pram_config_set.GetValue() == -1 )
+        return  false;
+
+    //反馈使能 servo_command_fb_flag 1
+    if( servo_command_fb_flag.GetValue() == -1 )
+        return  false;
+
+    //死区时间 servo_zero_zone_time  1
+    if( servo_zero_zone_time.GetValue() == -1 )
+        return  false;
+
+    //保护比较 servo_protect_pwm_cmpt 1000
+    if( servo_protect_pwm_cmpt.GetValue() == -1 )
+        return  false;
+
+    //位置比例 servo_position_pid_parm_p_set 1
+    if( servo_position_pid_parm_p_set[0].GetValue() == -1 )
+        return  false;
+
+    //位置比率 position_pid_speed_parm_radio 2
+    if( position_pid_speed_parm_radio.GetValue() == -1 )
+        return  false;
+
+    //速度比率 servo_speed_run_sample_k_set 4
+    if( servo_speed_run_sample_k_set[0].GetValue() == -1 )
+        return  false;
+
+    //位置时间 servo_position_sample_ov_time_set 16
+    if( servo_position_sample_ov_time_set.GetValue() == -1 )
+        return  false;
+
+    //速度时间 servo_speed_sample_ov_time_set 32
+    if( servo_speed_sample_ov_time_set.GetValue() == -1 )
+        return  false;
+
+    //速度比例 servo_speed_pid_parm_p_set 2
+    if( servo_speed_pid_parm_p_set[0].GetValue() == -1 )
+        return  false;
+
+    //速度增量 servo_speed_pid_parm_p_radio 1
+    if( servo_speed_pid_parm_p_radio.GetValue() == -1 )
+        return  false;
+
+    return  true;
+
+}
 //设置值
 void   CSysLoseParam::SetValue(short  sValue)
 {
@@ -638,17 +885,20 @@ void   CSysLoseParam::SetValue(short  sValue)
     //保护比较 servo_protect_pwm_cmpt 1000
     servo_protect_pwm_cmpt= CParamItem(QStringLiteral("保护比较"),0,sValue) ;
     //位置比例 servo_position_pid_parm_p_set 1
-    servo_position_pid_parm_p_set= CParamItem(QStringLiteral("位置比例"),0,sValue) ;
+    servo_position_pid_parm_p_set[0] = CParamItem(QStringLiteral("位置比例"),0,sValue) ;
+    servo_position_pid_parm_p_set[1] = CParamItem(QStringLiteral("位置比例"),0,sValue) ;
     //位置比率 position_pid_speed_parm_radio 2
     position_pid_speed_parm_radio= CParamItem(QStringLiteral("位置比率"),0,sValue) ;
     //速度比率 servo_speed_run_sample_k_set 4
-    servo_speed_run_sample_k_set= CParamItem(QStringLiteral("速度比率"),0,sValue) ;
+    servo_speed_run_sample_k_set[0]= CParamItem(QStringLiteral("速度比率"),0,sValue) ;
+    servo_speed_run_sample_k_set[1]= CParamItem(QStringLiteral("速度比率"),0,sValue) ;
     //位置时间 servo_position_sample_ov_time_set 16
     servo_position_sample_ov_time_set= CParamItem(QStringLiteral("位置时间"),0,sValue) ;
     //速度时间 servo_speed_sample_ov_time_set 32
     servo_speed_sample_ov_time_set= CParamItem(QStringLiteral("速度时间"),0,sValue) ;
     //速度比例 servo_speed_pid_parm_p_set 2
-    servo_speed_pid_parm_p_set= CParamItem(QStringLiteral("速度比例"),0,sValue) ;
+    servo_speed_pid_parm_p_set[0]= CParamItem(QStringLiteral("速度比例"),0,sValue) ;
+    servo_speed_pid_parm_p_set[1]= CParamItem(QStringLiteral("速度比例"),0,sValue) ;
     //速度增量 servo_speed_pid_parm_p_radio 1
     servo_speed_pid_parm_p_radio= CParamItem(QStringLiteral("速度增量"),0,sValue) ;
 }
@@ -668,17 +918,20 @@ CSysLoseParam::CSysLoseParam()
     //保护比较 servo_protect_pwm_cmpt 1000
     servo_protect_pwm_cmpt= CParamItem(QStringLiteral("保护比较"),0,1000) ;
     //位置比例 servo_position_pid_parm_p_set 1
-    servo_position_pid_parm_p_set= CParamItem(QStringLiteral("位置比例"),0,1) ;
+    servo_position_pid_parm_p_set[0]= CParamItem(QStringLiteral("位置比例"),0,1) ;
+    servo_position_pid_parm_p_set[1]= CParamItem(QStringLiteral("位置比例"),0,1) ;
     //位置比率 position_pid_speed_parm_radio 2
     position_pid_speed_parm_radio= CParamItem(QStringLiteral("位置比率"),0,2) ;
     //速度比率 servo_speed_run_sample_k_set 4
-    servo_speed_run_sample_k_set= CParamItem(QStringLiteral("速度比率"),0,4) ;
+    servo_speed_run_sample_k_set[0]= CParamItem(QStringLiteral("速度比率"),0,4) ;
+    servo_speed_run_sample_k_set[1]= CParamItem(QStringLiteral("速度比率"),0,4) ;
     //位置时间 servo_position_sample_ov_time_set 16
     servo_position_sample_ov_time_set= CParamItem(QStringLiteral("位置时间"),0,16) ;
     //速度时间 servo_speed_sample_ov_time_set 32
     servo_speed_sample_ov_time_set= CParamItem(QStringLiteral("速度时间"),0,32) ;
     //速度比例 servo_speed_pid_parm_p_set 2
-    servo_speed_pid_parm_p_set= CParamItem(QStringLiteral("速度比例"),0,2) ;
+    servo_speed_pid_parm_p_set[0]= CParamItem(QStringLiteral("速度比例"),0,2) ;
+    servo_speed_pid_parm_p_set[1]= CParamItem(QStringLiteral("速度比例"),0,2) ;
     //速度增量 servo_speed_pid_parm_p_radio 1
     servo_speed_pid_parm_p_radio= CParamItem(QStringLiteral("速度增量"),0,1) ;
 }
@@ -697,17 +950,20 @@ CSysLoseParam::CSysLoseParam( const  CSysLoseParam  & old )
     //保护比较 servo_protect_pwm_cmpt 1000
     servo_protect_pwm_cmpt= old.servo_protect_pwm_cmpt;
     //位置比例 servo_position_pid_parm_p_set 1
-    servo_position_pid_parm_p_set=old.servo_position_pid_parm_p_set;
+    servo_position_pid_parm_p_set[0]=old.servo_position_pid_parm_p_set[0];
+    servo_position_pid_parm_p_set[1]=old.servo_position_pid_parm_p_set[1];
     //位置比率 position_pid_speed_parm_radio 2
     position_pid_speed_parm_radio= old.position_pid_speed_parm_radio;
     //速度比率 servo_speed_run_sample_k_set 4
-    servo_speed_run_sample_k_set=old.servo_speed_run_sample_k_set;
+    servo_speed_run_sample_k_set[0]=old.servo_speed_run_sample_k_set[0];
+    servo_speed_run_sample_k_set[1]=old.servo_speed_run_sample_k_set[1];
     //位置时间 servo_position_sample_ov_time_set 16
     servo_position_sample_ov_time_set= old.servo_position_sample_ov_time_set;
     //速度时间 servo_speed_sample_ov_time_set 32
     servo_speed_sample_ov_time_set=old.servo_speed_sample_ov_time_set;
     //速度比例 servo_speed_pid_parm_p_set 2
-    servo_speed_pid_parm_p_set= old.servo_speed_pid_parm_p_set;
+    servo_speed_pid_parm_p_set[0]= old.servo_speed_pid_parm_p_set[0];
+    servo_speed_pid_parm_p_set[1]= old.servo_speed_pid_parm_p_set[1];
     //速度增量 servo_speed_pid_parm_p_radio 1
     servo_speed_pid_parm_p_radio= old.servo_speed_pid_parm_p_radio;
 }
@@ -726,17 +982,20 @@ const  CSysLoseParam &CSysLoseParam::operator=(const CSysLoseParam &old)
     //保护比较 servo_protect_pwm_cmpt 1000
     servo_protect_pwm_cmpt= old.servo_protect_pwm_cmpt;
     //位置比例 servo_position_pid_parm_p_set 1
-    servo_position_pid_parm_p_set=old.servo_position_pid_parm_p_set;
+    servo_position_pid_parm_p_set[0]=old.servo_position_pid_parm_p_set[0];
+    servo_position_pid_parm_p_set[1]=old.servo_position_pid_parm_p_set[1];
     //位置比率 position_pid_speed_parm_radio 2
     position_pid_speed_parm_radio= old.position_pid_speed_parm_radio;
     //速度比率 servo_speed_run_sample_k_set 4
-    servo_speed_run_sample_k_set=old.servo_speed_run_sample_k_set;
+    servo_speed_run_sample_k_set[0]=old.servo_speed_run_sample_k_set[0];
+    servo_speed_run_sample_k_set[1]=old.servo_speed_run_sample_k_set[1];
     //位置时间 servo_position_sample_ov_time_set 16
     servo_position_sample_ov_time_set= old.servo_position_sample_ov_time_set;
     //速度时间 servo_speed_sample_ov_time_set 32
     servo_speed_sample_ov_time_set=old.servo_speed_sample_ov_time_set;
     //速度比例 servo_speed_pid_parm_p_set 2
-    servo_speed_pid_parm_p_set= old.servo_speed_pid_parm_p_set;
+    servo_speed_pid_parm_p_set[0]= old.servo_speed_pid_parm_p_set[0];
+    servo_speed_pid_parm_p_set[1]= old.servo_speed_pid_parm_p_set[1];
     //速度增量 servo_speed_pid_parm_p_radio 1
     servo_speed_pid_parm_p_radio= old.servo_speed_pid_parm_p_radio;
 

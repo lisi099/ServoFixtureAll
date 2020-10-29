@@ -103,6 +103,17 @@ MainUI::MainUI(QWidget *parent) :
     m_bSendrecvData = false;
     m_RefTable = false;
 
+    QString fileName ;
+    fileName = path+"/base.bat" ;
+    int     iSize = sizeof(m_SysParam);
+    char    *buf = new char[iSize+1];
+    bhr = CSysFile::read(fileName,buf,iSize);
+    if( bhr )
+        memcpy((char*)&m_SysParam,buf,iSize);
+
+    delete  []buf;
+    buf = NULL;
+
     //刷新界面
     //设置界面-常规舵机参数
     SetUI_NormSteeringEngineParam();
@@ -133,7 +144,7 @@ MainUI::MainUI(QWidget *parent) :
     ui->comboBox_2->addItem(QString("38400"));
     ui->comboBox_2->addItem(QString("57600"));
     ui->comboBox_2->addItem(QString("115200"));
-    ui->comboBox_2->setCurrentIndex(7);
+    ui->comboBox_2->setCurrentIndex(4);
 
     //数据位
     ui->comboBox_3->addItem(QString("5"));
@@ -193,9 +204,9 @@ MainUI::MainUI(QWidget *parent) :
 
 
 //    QwtPlotZoomer *zoomer = new QwtPlotZoomer( ui->qwtPlot->canvas() );                     //选择图形局部放大
-/*    zoomer->setRubberBandPen( QColor( Qt::blue ) );                          //勾选扩大区域边界颜色
-    zoomer->setMousePattern( QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlModifier );//ctrl+右键==回复到原始状态
-    zoomer->setMousePattern( QwtEventPattern::MouseSelect3, Qt::RightButton );  */     //右键==恢复到上一次扩大之前的状态
+//    zoomer->setRubberBandPen( QColor( Qt::blue ) );                          //勾选扩大区域边界颜色
+//    zoomer->setMousePattern( QwtEventPattern::MouseSelect2, Qt::RightButton, Qt::ControlModifier );//ctrl+右键==回复到原始状态
+//    zoomer->setMousePattern( QwtEventPattern::MouseSelect3, Qt::RightButton );       //右键==恢复到上一次扩大之前的状态
 
 //    QwtPlotPanner *panner = new QwtPlotPanner( ui->qwtPlot->canvas() );              //默认的左键移动功能
 //    panner->setMouseButton( Qt::LeftButton ,Qt::ControlModifier);                    //设置哪个按钮移动画布  如果不设置(注册掉当前行)按钮默认为左键为移动
@@ -264,15 +275,29 @@ void    MainUI::SetInfo(QString str)
     int  index = ui->tableWidget->rowCount();
     ui->tableWidget->setRowCount(index + 1);
 
-
     QTableWidgetItem *item1 = new QTableWidgetItem(strTime);   //加入图标和字符串
     ui->tableWidget->setItem(index, 0, item1);
 
     QTableWidgetItem *item2 = new QTableWidgetItem(str);   //加入图标和字符串
     ui->tableWidget->setItem(index, 1, item2);
+    for( int  i = index - 1 ; i >= 0 ;i-- )
+    {
+        QString  str1 = ui->tableWidget->item(i,0)->text();
+        QString  str2 = ui->tableWidget->item(i,1)->text();
 
+        ui->tableWidget->item(i+1, 0)->setText(str1);
+        ui->tableWidget->item(i+1, 1)->setText(str2);
+    }
+    ui->tableWidget->item(0, 0)->setText(strTime);
+    ui->tableWidget->item(0, 1)->setText(str);
+
+
+    /*ui->tableWidget->update();
     QScrollBar  *ph = ui->tableWidget->verticalScrollBar();
-    ph->setValue(index++);
+    ph->update();
+
+    index = ph->maximum();
+    ph->setValue(index);*/
 }
 //获得界面-常规舵机参数
 void    MainUI::GetUI_NormSteeringEngineParam()
@@ -303,11 +328,16 @@ void    MainUI::GetUI_NormSteeringEngineParam()
         fvalue = 0;
     m_SysParam.m_NormSteeringEngineParam.m_Self_lockingSetting.SetValue(fvalue);
 
+    fvalue = ui->lineEdit_33->text().toInt();
+    m_SysParam.m_NormSteeringEngineParam.m_MaximumOutput.SetValue(fvalue);
+
+    //最大值
+    float  fMaxValue = m_SysParam.m_NormSteeringEngineParam.m_MaximumOutput.GetValue();
     bState = ui->checkBox_2->checkState();
     if( bState == Qt::Checked )
-        fvalue = 100;
+        fvalue = fMaxValue * 0.8 ;    //最大值+10
     else
-        fvalue = 0;
+        fvalue = fMaxValue + 10;    //最大值%80
     m_SysParam.m_NormSteeringEngineParam.m_Locked_rotorProtection.SetValue(fvalue);
 
     bState = ui->checkBox_3->checkState();
@@ -340,20 +370,19 @@ void    MainUI::GetUI_NormSteeringEngineParam()
     fvalue = ui->lineEdit_32->text().toInt();
     m_SysParam.m_NormSteeringEngineParam.m_LowerAngleLimit.SetValue(fvalue);
 
-    fvalue = ui->lineEdit_33->text().toInt();
-    m_SysParam.m_NormSteeringEngineParam.m_MaximumOutput.SetValue(fvalue);
+
 
     fvalue = ui->lineEdit_35->text().toInt();
     m_SysParam.m_NormSteeringEngineParam.m_FrequencySetting.SetValue(fvalue);
 
     fvalue = ui->lineEdit_99->text().toInt();
-    m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set.SetValue(fvalue);
+    m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[0].SetValue(fvalue);
 
     fvalue = ui->lineEdit_101->text().toInt();
-    m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set.SetValue(fvalue);
+    m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[0].SetValue(fvalue);
 
     fvalue = ui->lineEdit_100->text().toInt();
-    m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set.SetValue(fvalue);
+    m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[0].SetValue(fvalue);
 
 }
 //设置界面-常规舵机参数
@@ -363,7 +392,6 @@ void    MainUI::SetUI_NormSteeringEngineParam()
     short fvalue = m_SysParam.m_NormSteeringEngineParam.m_UpperPulseWidthlimit.GetValue();
     str.sprintf("%d",fvalue);
     ui->lineEdit_14->setText(str);
-    qDebug() <<"----" << fvalue;
 
     fvalue = m_SysParam.m_NormSteeringEngineParam.m_MiddlePulseWidthlimit.GetValue();
     str.sprintf("%d",fvalue);
@@ -392,8 +420,13 @@ void    MainUI::SetUI_NormSteeringEngineParam()
     else
         ui->checkBox->setCheckState(Qt::Unchecked);
 
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_MaximumOutput.GetValue();
+    str.sprintf("%d",fvalue);
+    ui->lineEdit_33->setText(str);
+
+    short  sMaxValue = m_SysParam.m_NormSteeringEngineParam.m_MaximumOutput.GetValue();
     fvalue = m_SysParam.m_NormSteeringEngineParam.m_Locked_rotorProtection.GetValue();
-    if(fvalue != 0)
+    if(fvalue < sMaxValue )
         ui->checkBox_2->setCheckState(Qt::Checked);
     else
         ui->checkBox_2->setCheckState(Qt::Unchecked);
@@ -430,23 +463,21 @@ void    MainUI::SetUI_NormSteeringEngineParam()
     str.sprintf("%d",fvalue);
     ui->lineEdit_32->setText(str);
 
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_MaximumOutput.GetValue();
-    str.sprintf("%d",fvalue);
-    ui->lineEdit_33->setText(str);
+
 
     fvalue = m_SysParam.m_NormSteeringEngineParam.m_FrequencySetting.GetValue();
     str.sprintf("%d",fvalue);
     ui->lineEdit_35->setText(str);
 
-    fvalue =m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set.GetValue();
+    fvalue =m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[0].GetValue();
     str.sprintf("%d",fvalue);
     ui->lineEdit_99->setText(str);
 
-    fvalue =m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set.GetValue();
+    fvalue =m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[0].GetValue();
     str.sprintf("%d",fvalue);
     ui->lineEdit_101->setText(str);
 
-    fvalue =m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set.GetValue();
+    fvalue =m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[0].GetValue();
     str.sprintf("%d",fvalue);
     ui->lineEdit_100->setText(str);
 }
@@ -479,11 +510,16 @@ void    MainUI::GetUI_COMMSteeringEngineParam()
         fvalue = 0;
     m_SysParam.m_COMMSteeringEngineParam.m_Self_lockingSetting.SetValue(fvalue);
 
+
+    fvalue = ui->lineEdit_47->text().toInt();
+    m_SysParam.m_COMMSteeringEngineParam.m_MaximumOutput.SetValue(fvalue);
+    //最大值
+    float  fMaxValue = m_SysParam.m_COMMSteeringEngineParam.m_MaximumOutput.GetValue();
     bState = ui->checkBox_12->checkState();
     if( bState == Qt::Checked )
-        fvalue = 100;
+        fvalue = fMaxValue * 0.8 ;
     else
-        fvalue = 0;
+        fvalue = fMaxValue + 10;
     m_SysParam.m_COMMSteeringEngineParam.m_Locked_rotorProtection.SetValue(fvalue);
 
     bState = ui->checkBox_11->checkState();
@@ -516,8 +552,7 @@ void    MainUI::GetUI_COMMSteeringEngineParam()
     fvalue = ui->lineEdit_39->text().toInt();
     m_SysParam.m_COMMSteeringEngineParam.m_LowerAngleLimit.SetValue(fvalue);
 
-    fvalue = ui->lineEdit_47->text().toInt();
-    m_SysParam.m_COMMSteeringEngineParam.m_MaximumOutput.SetValue(fvalue);
+
 
     fvalue = ui->lineEdit_37->text().toInt();
     m_SysParam.m_COMMSteeringEngineParam.m_FrequencySetting.SetValue(fvalue);
@@ -529,13 +564,13 @@ void    MainUI::GetUI_COMMSteeringEngineParam()
     m_SysParam.m_COMMSteeringEngineParam.m_NewID.SetValue(fvalue);
 
     fvalue = ui->lineEdit_104->text().toInt();
-    m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set.SetValue(fvalue);
+    m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[1].SetValue(fvalue);
 
     fvalue = ui->lineEdit_102->text().toInt();
-    m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set.SetValue(fvalue);
+    m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[1].SetValue(fvalue);
 
     fvalue = ui->lineEdit_103->text().toInt();
-    m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set.SetValue(fvalue);
+    m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[1].SetValue(fvalue);
 
 }
 //设置界面-串口舵机参数
@@ -573,8 +608,13 @@ void    MainUI::SetUI_COMMSteeringEngineParam()
     else
         ui->checkBox_9->setCheckState(Qt::Unchecked);
 
+    fvalue = m_SysParam.m_COMMSteeringEngineParam.m_MaximumOutput.GetValue();
+    str.sprintf("%d",fvalue);
+    ui->lineEdit_47->setText(str);
+
+    short  sMaxValue = m_SysParam.m_COMMSteeringEngineParam.m_MaximumOutput.GetValue();
     fvalue =m_SysParam.m_COMMSteeringEngineParam.m_Locked_rotorProtection.GetValue();
-    if( fvalue != 0 )
+    if( fvalue < sMaxValue )
         ui->checkBox_12->setCheckState(Qt::Checked);
     else
         ui->checkBox_12->setCheckState(Qt::Unchecked);
@@ -611,9 +651,7 @@ void    MainUI::SetUI_COMMSteeringEngineParam()
     str.sprintf("%d",fvalue);
     ui->lineEdit_39->setText(str);
 
-    fvalue = m_SysParam.m_COMMSteeringEngineParam.m_MaximumOutput.GetValue();
-    str.sprintf("%d",fvalue);
-    ui->lineEdit_47->setText(str);
+
 
     fvalue = m_SysParam.m_COMMSteeringEngineParam.m_FrequencySetting.GetValue();
     str.sprintf("%d",fvalue);
@@ -628,15 +666,15 @@ void    MainUI::SetUI_COMMSteeringEngineParam()
     str.sprintf("%d",fvalue);
     ui->lineEdit_51->setText(str);
 
-    fvalue =m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set.GetValue();
+    fvalue =m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[1].GetValue();
     str.sprintf("%d",fvalue);
     ui->lineEdit_104->setText(str);
 
-    fvalue =m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set.GetValue();
+    fvalue =m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[1].GetValue();
     str.sprintf("%d",fvalue);
     ui->lineEdit_102->setText(str);
 
-    fvalue =m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set.GetValue();
+    fvalue =m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[1].GetValue();
     str.sprintf("%d",fvalue);
     ui->lineEdit_103->setText(str);
 }
@@ -1046,6 +1084,9 @@ void    MainUI::GetUI_AdditionalVariable()
 
     fvalue = ui->lineEdit_98->text().toInt();
     m_SysParam.m_SysLoseParam.servo_protect_pwm_cmpt.SetValue(fvalue);
+
+    fvalue = ui->lineEdit_105->text().toInt();
+    m_SysParam.m_SysLoseParam.servo_zero_zone_time.SetValue(fvalue);
 }
 //设置界面-附加信息
 void    MainUI::SetUI_AdditionalVariable()
@@ -1153,6 +1194,11 @@ void    MainUI::SetUI_AdditionalVariable()
     fvalue =m_SysParam.m_SysLoseParam.servo_protect_pwm_cmpt.GetValue();
     str.sprintf("%d",fvalue);
     ui->lineEdit_98->setText(str);
+
+    fvalue =m_SysParam.m_SysLoseParam.servo_zero_zone_time.GetValue();
+    str.sprintf("%d",fvalue);
+    ui->lineEdit_105->setText(str);
+
 }
 //数据分包
 void  MainUI::SegPacket( QByteArray InStr , std::vector<QByteArray> &outStrs )
@@ -1260,6 +1306,13 @@ void    MainUI::RefEnglish()
 
     ui->label_72->setText(QStringLiteral("Vehicle"));
     ui->label_76->setText(QStringLiteral("Vehicle"));
+
+    ui->label_77->setText(QStringLiteral("DZ Time"));
+
+    //20200520(保护采样、增量上限)
+    ui->label_40->setText(QStringLiteral("IC Ceil"));
+    ui->label_45->setText(QStringLiteral("Protect Sample"));
+
 }
 //刷新中文
 void    MainUI::RefChinese()
@@ -1313,7 +1366,7 @@ void    MainUI::RefChinese()
         if( str == QStringLiteral("Serial port servo configuration servo reset complete") )
             str = QStringLiteral("串口舵机配置舵机复位完成");
 
-        if( str == QStringLiteral("Save system files to files"))
+        if( str == QStringLiteral("Save system files to files") )
             str = QStringLiteral("将系统文件存入文件");
         if( str == QStringLiteral("Open the file import system") )
             str = QStringLiteral("打开文件导入系统");
@@ -1341,12 +1394,20 @@ void    MainUI::RefChinese()
     ui->checkBox_10->setText(QStringLiteral("舵机方向"));
     ui->checkBox_11->setText(QStringLiteral("信号复位"));
     ui->checkBox_12->setText(QStringLiteral("堵转保护"));
+    ui->label_77->setText(QStringLiteral("死区时间"));
+
+    //20200520(保护采样、增量上限)
+    ui->label_40->setText(QStringLiteral("增量上限"));
+    ui->label_45->setText(QStringLiteral("保护采样"));
 }
 //语言切换
 void   MainUI::OnSwitchLang(int Index)
 {
     setWindowTitle(QStringLiteral("舵机控制系统"));
 
+    GetUI_AdditionalVariable();
+    GetUI_NormSteeringEngineParam();
+    GetUI_COMMSteeringEngineParam();
     if( Index == 0 )
     {
         qApp->removeTranslator(&translator);
@@ -1356,7 +1417,7 @@ void   MainUI::OnSwitchLang(int Index)
     else if( Index == 1 )
     {
         QString path=QDir::currentPath();
-        QString strName = path+"/english_EN_3.qm" ;
+        QString strName = path+"/english_EN_x.qm" ;
         if ( translator.load(strName))
         {
            qApp->installTranslator(&translator);
@@ -1364,7 +1425,9 @@ void   MainUI::OnSwitchLang(int Index)
            RefEnglish();
         }
     }
-
+    SetUI_AdditionalVariable();
+    SetUI_NormSteeringEngineParam();
+    SetUI_COMMSteeringEngineParam();
 }
 //开始
 void   MainUI::OnStratTest()
@@ -1425,12 +1488,19 @@ void  MainUI::receiveInfo()
     if( !m_SysComm.Read( outData ) )
         return ;
 
+    m_iBytecount += outData.size();
+
+    QString ouputStr;
+    ouputStr.sprintf("m_iBytecount  %d\n" , m_iBytecount);
+    qDebug(ouputStr.toLatin1().data());
     m_outData.append(outData);
+
+
     if( m_outData.size() >= 12 )
     {
         QString str;
         str.sprintf("%d",m_outData.size());
-        qDebug(str.toLatin1().data());
+        //qDebug(str.toLatin1().data());
 
         //对数据包进行分包检测
         std::vector<QByteArray>  singleStrs;
@@ -1442,8 +1512,13 @@ void  MainUI::receiveInfo()
 
         int  icount = singleStrs.size();
         for( int i = 0 ; i < icount;i++ )
+        {
+            m_iDecodeCount++;
             DecodePacket(singleStrs[i]);
 
+            str.sprintf("m_iDecodeCount %d",m_iDecodeCount);
+            qDebug(str.toLatin1().data());
+        }
         m_outData.clear();
     }
 }
@@ -1500,7 +1575,7 @@ void  MainUI::OnOpenCOMM()
 }
 //打开文件
 void  MainUI::OnOpenFileA()
-{
+{ 
     QFileDialog  fDlg(this);
     //英文
     if( ui->comboBox_5->currentIndex() == 1 )
@@ -1522,13 +1597,8 @@ void  MainUI::OnOpenFileA()
     int     iSize = sizeof(m_SysParam);
     char    *buf = new char[iSize+1];
     bool    bhr = CSysFile::read(fileName,buf,iSize);
-    if( bhr ){
+    if( bhr )
         memcpy((char*)&m_SysParam,buf,iSize);
-        qDebug() << "open success";
-    }
-    else{
-        qDebug() << "open fail";
-    }
     SetUI_NormSteeringEngineParam();
     SetUI_COMMSteeringEngineParam();
     SetUI_AdditionalVariable();
@@ -1575,6 +1645,8 @@ void  MainUI::OnSaveFileA()
 //常规舵机读取
 void  MainUI::OnNormRead()
 {
+    m_iBytecount = 0;
+    m_iDecodeCount = 0;
     if( !m_SysComm.IsOpen() )
     {
         QMessageBox message(QMessageBox::NoIcon, QStringLiteral("提示"), QStringLiteral("\n 串口没有打开..."));
@@ -1602,12 +1674,22 @@ void  MainUI::OnNormRead()
     SetUI_AdditionalVariable();
     SetUI_NormSteeringEngineParam();
 
+
+    //走到中点
+    CenterPosition(cID);
+
+    //掉电
+    DownCommand(cID);
+
     //反馈
     m_SysComm.HeadEncode();
     sleep(delyTime);
 
     for(int i = 81;i <= 115;i++)
     {
+        if( i == 97 || i == 98 || i== 99 )
+            continue;
+
         m_SysComm.Encode(SERVO_COMMAND_SERVO_FB, cID,SERVO_STATE_COM, i,0,0, 0);
         m_bSendrecvData = true;
         sleep(delyTime);
@@ -1664,8 +1746,29 @@ void  MainUI::OnNormWirte()
         return ;
     }
 
+    //获得界面参数
+    GetUI_NormSteeringEngineParam();
+    GetUI_AdditionalVariable();
+    if( !m_SysParam.m_NormSteeringEngineParam.Jump() ||
+            !m_SysParam.m_AdditionalVariable.Jump()||
+            !m_SysParam.m_SysLoseParam.Jump())
+    {
+        QMessageBox message(QMessageBox::NoIcon, QStringLiteral("提示"), QStringLiteral("\n 参数有误，请检查后，重新下载..."));
+        message.exec();
+        return ;
+    }
+
     m_SendMark = true;
     SetInfo(QStringLiteral("常规舵机配置下载参数"));
+
+
+    char  cID = GetID();
+    //走到中点
+    CenterPosition(cID);
+
+    //掉电
+    DownCommand(cID);
+
 
     m_SysComm.HeadEncode();
     sleep(delyTime);
@@ -1695,6 +1798,13 @@ void  MainUI::OnNormReStore()
     SetInfo(QStringLiteral("常规舵机配置复位参数"));
 
     ui->lineEdit_4->setText("0");
+
+    char  cID = GetID();
+    //走到中点
+    CenterPosition(cID);
+
+    //掉电
+    DownCommand(cID);
 
     m_SysComm.HeadEncode();
     sleep(delyTime);
@@ -1736,12 +1846,21 @@ void   MainUI::OnCOMMRead()
     //当前舵机ID
     char  cID = m_SysParam.m_COMMSteeringEngineParam.m_CurID.GetValue();
 
+    //走到中点
+    CenterPosition(cID);
+
+    //掉电
+    DownCommand(cID);
+
     //反馈
     m_SysComm.HeadEncode();
     sleep(delyTime);
 
     for(int i = 81;i <= 115;i++)
     {
+        if( i == 97 || i == 98 || i== 99 )
+            continue;
+
         m_SysComm.Encode(SERVO_COMMAND_SERVO_FB, cID,SERVO_STATE_COM, i,0,0, 0);
         m_bSendrecvData = true;
         sleep(delyTime);
@@ -1797,14 +1916,30 @@ void  MainUI::OnCOMMWirte()
         message.exec();
         return ;
     }
+
+    //获得界面参数
+    GetUI_COMMSteeringEngineParam();
+    GetUI_AdditionalVariable();
+    if( !m_SysParam.m_COMMSteeringEngineParam.Jump() ||
+            !m_SysParam.m_AdditionalVariable.Jump()||
+            !m_SysParam.m_SysLoseParam.Jump())
+    {
+        QMessageBox message(QMessageBox::NoIcon, QStringLiteral("提示"), QStringLiteral("\n 参数有误，请检查后，重新下载..."));
+        message.exec();
+        return ;
+    }
+
      m_SendMark = true;
     SetInfo(QStringLiteral("串口舵机配置下载参数"));
 
-    //将界面数据设置到舵机
-    GetUI_COMMSteeringEngineParam();
-
     //当前舵机ID
     char  cID = m_SysParam.m_COMMSteeringEngineParam.m_CurID.GetValue();
+
+    //走到中点
+    CenterPosition(cID);
+
+    //掉电
+    DownCommand(cID);
 
 
     m_SysComm.HeadEncode();
@@ -1846,6 +1981,16 @@ void  MainUI::OnCOMMReStore()
     SetInfo(QStringLiteral("串口舵机配置舵机复位"));
 
     ui->lineEdit_4->setText("0");
+
+
+    //获得界面参数
+    GetUI_COMMSteeringEngineParam();
+    char  cID = m_SysParam.m_COMMSteeringEngineParam.m_CurID.GetValue();
+    //走到中点
+    CenterPosition(cID);
+
+    //掉电
+    DownCommand(cID);
 
     m_SysComm.HeadEncode();
     sleep(delyTime);
@@ -2122,4 +2267,37 @@ void        MainUI::Refdianliu(int  iv)
     //curve_dianliu.setStyle(QwtPlotCurve::Dots);//设置曲线上是点还是线，默认是线，所以此行可不加
 //    curve_dianliu.setCurveAttribute(QwtPlotCurve::Fitted, true);//使曲线更光滑，不加这句曲线会很硬朗，有折点
 //    curve_dianliu.setPen(QPen(Qt::black));//设置画笔
+}
+//中位指令
+void        MainUI::CenterPosition( int  id )
+{
+    m_SysComm.HeadEncode();
+    sleep(delyTime);
+
+    //中间位置
+    char2short  ispeed;
+    ispeed.c2[1] = 1;//m_SysParam.m_AdditionalVariable.m_StartTime.GetValue();
+    ispeed.c2[0] = 5;//m_SysParam.m_AdditionalVariable.m_StartingStepSize.GetValue();
+    short  sPos = m_SysParam.m_NormSteeringEngineTest.m_MiddleValue.GetValue();
+    m_SysComm.Encode(SERVO_COMMAND_SERVO_TARGET,
+                     id,
+                     SERVO_STATE_COM,
+                     MENU_SERVO_RUN_POSITION_VALUE,
+                     sPos,
+                     MENU_SERVO_RUN_SPEED_VALUE,
+                     ispeed.s1);
+    sleep(delyTime);
+
+    //运行
+    m_SysComm.Encode(SERVO_COMMAND_SERVO_RUN, id,SERVO_STATE_COM, 0,0,0,0);
+    sleep(delyTime);
+}
+//掉电指令
+void        MainUI::DownCommand( int  id )
+{
+    m_SysComm.HeadEncode();
+    sleep(delyTime);
+
+    m_SysComm.Encode(SERVO_COMMAND_SERVO_DUMP,id,1,0,0,0,0);
+    sleep(delyTime);
 }

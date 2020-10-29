@@ -74,6 +74,8 @@ public:
 public:
     //设置值
     void   SetValue(short  sValue);
+    //判断-1
+    bool   Jump();
 };
 //串口舵机参数
 class  CCOMMSteeringEngineParam
@@ -125,6 +127,8 @@ public:
 public:
     //设置值
     void   SetValue(short  sValue);
+    //判断-1
+    bool   Jump();
 };
 
 //常规舵机测试
@@ -214,6 +218,8 @@ public:
 public:
     //设置值
     void   SetValue(short  sValue);
+    //判断-1
+    bool   Jump();
 };
 
 //默认参数
@@ -240,22 +246,24 @@ public:
     CParamItem   servo_protect_pwm_cmpt;
 
     //位置比例 servo_position_pid_parm_p_set 1
-    CParamItem   servo_position_pid_parm_p_set;
+    CParamItem   servo_position_pid_parm_p_set[2];
     //位置比率 position_pid_speed_parm_radio 2
     CParamItem   position_pid_speed_parm_radio;
     //速度比率 servo_speed_run_sample_k_set 4
-    CParamItem   servo_speed_run_sample_k_set;
+    CParamItem   servo_speed_run_sample_k_set[2];
     //位置时间 servo_position_sample_ov_time_set 16
     CParamItem   servo_position_sample_ov_time_set;
     //速度时间 servo_speed_sample_ov_time_set 32
     CParamItem   servo_speed_sample_ov_time_set;
     //速度比例 servo_speed_pid_parm_p_set 2
-    CParamItem   servo_speed_pid_parm_p_set;
+    CParamItem   servo_speed_pid_parm_p_set[2];
     //速度增量 servo_speed_pid_parm_p_radio 1
     CParamItem   servo_speed_pid_parm_p_radio;
 public:
     //设置值
     void   SetValue(short  sValue);
+    //判断-1
+    bool   Jump();
 };
 //系统参数
 class  CSysParam

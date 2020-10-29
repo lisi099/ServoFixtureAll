@@ -1,6 +1,5 @@
-#include "csysfile.h"
+﻿#include "csysfile.h"
 #include<QFile>
-#include <QDebug>
 CSysFile::CSysFile()
 {
 }
@@ -52,18 +51,14 @@ bool  CSysFile::read( QString fileName, char*    str ,int &ilen )
 {
     QFile  file(fileName);
     bool bhr = file.open(QIODevice::ReadOnly);//|QIODevice::Text
-    if( !bhr ){
-        qDebug() << "fail open";
+    if( !bhr )
         return  false;
-    }
 
     QByteArray  t = file.readAll();
-//    if( t.size()!=ilen ){
-//        qDebug() << "fail size" << "[file size:" << t.size() << "read size:" << ilen << "]";
-//        return false;
-//    }
+    if( t.size()!=ilen )
+        return false;
 
-//    ilen = t.size();
+    ilen = t.size();
     memcpy(str,t.data(),ilen);
     file.close();
 

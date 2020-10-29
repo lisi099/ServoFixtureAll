@@ -42,6 +42,11 @@ void CSendSlider::run()
             char  cID = m_MainUI->GetID();
             m_MainUI->OnSendPoistion(cID,ivalue,ispeed.s1);
         }
+        else
+        {
+            m_MainUI->sleep(50);
+        }
+
     }
 
 }
@@ -165,6 +170,7 @@ void RefComm::run()
         }
 
         HisComm = outComm;
+        m_MainUI->sleep(100);
     }
 }
 

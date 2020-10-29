@@ -23,11 +23,11 @@
 extern int  rt_application_init(void);
 
 #if defined(__CC_ARM) || defined(__CLANG_ARM)
-extern int Image$$RW_IRAM1$$ZI$$Limit;
+    extern int Image$$RW_IRAM1$$ZI$$Limit;
 #elif __ICCARM__
-#pragma section="HEAP"
+    #pragma section="HEAP"
 #else
-extern int __bss_end;
+    extern int __bss_end;
 #endif
 
 /*******************************************************************************
@@ -59,20 +59,20 @@ void rtthread_startup(void)
     /* show version */
     rt_show_version();
 
-#ifdef RT_USING_HEAP
-#if STM32_EXT_SRAM
+    #ifdef RT_USING_HEAP
+    #if STM32_EXT_SRAM
     rt_system_heap_init((void*)STM32_EXT_SRAM_BEGIN, (void*)STM32_EXT_SRAM_END);
-#else
-#if defined(__CC_ARM) || defined(__CLANG_ARM)
+    #else
+    #if defined(__CC_ARM) || defined(__CLANG_ARM)
     rt_system_heap_init((void*)&Image$$RW_IRAM1$$ZI$$Limit, (void*)STM32_SRAM_END);
-#elif __ICCARM__
+    #elif __ICCARM__
     rt_system_heap_init(__segment_end("HEAP"), (void*)STM32_SRAM_END);
-#else
+    #else
     /* init memory system */
     rt_system_heap_init((void*)&__bss_end, (void*)STM32_SRAM_END);
-#endif
-#endif  /* STM32_EXT_SRAM */
-#endif /* RT_USING_HEAP */
+    #endif
+    #endif  /* STM32_EXT_SRAM */
+    #endif /* RT_USING_HEAP */
 
     /* init scheduler system */
     rt_system_scheduler_init();
@@ -97,7 +97,7 @@ void rtthread_startup(void)
 }
 
 int main(void)
-  {
+{
     /* disable interrupt first */
     rt_hw_interrupt_disable();
 

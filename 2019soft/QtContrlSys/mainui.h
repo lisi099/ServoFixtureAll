@@ -19,12 +19,9 @@ union char2short
     char  c2[2];
     short s1;
 };
-
 struct servo_params{
     qint16 data[43];
 };
-
-
 #include<qmath.h>
 #include <QVector>
 //#include <qwt_plot.h>
@@ -89,6 +86,10 @@ public:
     bool                     m_SendMark;
     //当前串口号
     QString                  m_CurComm;
+    //
+    int                      m_iBytecount;
+    //
+    int                      m_iDecodeCount;
 protected:
     //数据缓存
     QByteArray               m_outData;
@@ -198,6 +199,11 @@ public:
     void        Refdianya(int iv);
     //刷新电流
     void        Refdianliu(int  iv);
+public:
+    //中位指令
+    void        CenterPosition( int  id );
+    //掉电指令
+    void        DownCommand( int  id );
 public:
 //     QwtPlotCurve curve_weizhi;
 //     QwtPlotCurve curve_wendu;

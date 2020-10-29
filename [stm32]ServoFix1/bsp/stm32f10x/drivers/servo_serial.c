@@ -11,20 +11,20 @@
 #include "menu_app.h"
 #include "factory_data.h"
 
+#define SERVO_DELAY_TIME	50
+#define SERVO_DELAY_TIME_S	5
+#define SAVE_DATA_SIZE		128
+#define DATA_NUM_OF_PAGE 	(PAGE_SIZE/SAVE_DATA_SIZE)
+
 uint8_t uart_write_datas[12];
 uint8_t uart_read_datas[12];
 volatile uint8_t receive_uart_data_flag = 0;
 struct Servo_Data_Stru_ servoDataStru;
 
-#define SERVO_DELAY_TIME	50
-#define SERVO_DELAY_TIME_S	5
 uint16_t 	servo_unique_address_id_set 	= 16;
 uint16_t 	servo_unique_address_id 		= 16;
 //--------------------------------------
 uint8_t data_in_flash[PAGE_SIZE] = {0};
-#define SAVE_DATA_SIZE		128
-#define DATA_NUM_OF_PAGE 	(PAGE_SIZE/SAVE_DATA_SIZE)
-
 
 
 void save_servo_data_in_flash(uint8_t seq, uint16_t version)

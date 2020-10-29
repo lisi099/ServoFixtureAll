@@ -13,3 +13,4 @@ int get_ver_num(int num);
 
 void get_factory_data(struct Servo_Data_Stru_ *data, int num);
 
+//--------------------------------------------------------------

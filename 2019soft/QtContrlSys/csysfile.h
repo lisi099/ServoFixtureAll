@@ -1,4 +1,4 @@
-#ifndef CSYSFILE_H
+﻿#ifndef CSYSFILE_H
 #define CSYSFILE_H
 #include<QString>
 /*

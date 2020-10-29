@@ -29,8 +29,8 @@ HEADERS  += mainui.h \
     ccrcthread.h
 
 FORMS    += mainui.ui
-TRANSLATIONS = english_EN_2.ts
+TRANSLATIONS = english_EN_x.ts
 
-#LIBS += -L”C:\Users\ubtech\Desktop\2019soft\lib” -lqwt
-#INCLUDEPATH += "C:\Users\ubtech\Desktop\2019soft\qwt-6.1.2\qwt-6.1.2\src"
-#include (C:\Users\ubtech\Desktop\2019soft\qwt-6.1.2\qwt-6.1.2\qwt.prf)
+#LIBS += -L”C:\Qt\Qt5.2.1\5.2.1\mingw48_32\lib” -lqwt
+#INCLUDEPATH += "C:\Qt\Qt5.2.1\5.2.1\mingw48_32\include\qwt"
+#include (C:\Users\KC\Desktop\qwt-6.1.2\qwt-6.1.2\qwt.prf)

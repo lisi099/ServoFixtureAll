@@ -146,7 +146,8 @@ void        MainUI::OnNormSendUI()
     params.data[21] = sValue;
     //堵转保护(堵转区间)
     sValue = m_SysParam.m_NormSteeringEngineParam.m_Locked_rotorProtection.GetValue();
-    m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM6,sValue,0,0);
+    //m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM6,sValue,0,0);
+    m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM9,sValue,0, 0);
     sleep(delyTime);
     params.data[22] = sValue;
 
@@ -162,7 +163,8 @@ void        MainUI::OnNormSendUI()
     params.data[24] = sValue;
     //保护比较---
     sValue = m_SysParam.m_SysLoseParam.servo_protect_pwm_cmpt.GetValue();
-    m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM9,sValue,0, 0);
+    //m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM9,sValue,0, 0);
+    m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM6,sValue,0,0);
     sleep(delyTime);
     params.data[25] = sValue;
     //保护输出
@@ -198,11 +200,11 @@ void        MainUI::OnNormSendUI()
     //生效指令
     m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_DOWNLOAD,cID,SERVO_STATE_COM, MENU_DOWMLOAD_WORK_PARM,0,0,0);
     sleep(delyTime);
-
     //位置比例---
-    sValue = m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set.GetValue();
+    sValue = m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[0].GetValue();
     m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_DEBUG, cID,SERVO_STATE_COM, MENU_DEBUG_SERVO_PARM0,sValue,0,0);
     sleep(delyTime);
+//    qDebug() << "servo_position_pid_parm_p_set: " << m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[0].GetValue() << " " << m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[1].GetValue();
     params.data[32] = sValue;
     //位置比率---
     sValue = m_SysParam.m_SysLoseParam.position_pid_speed_parm_radio.GetValue();
@@ -210,9 +212,11 @@ void        MainUI::OnNormSendUI()
     sleep(delyTime);
     params.data[33] = sValue;
     //速度比率---
-    sValue = m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set.GetValue();
+    sValue = m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[0].GetValue();
     m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_DEBUG, cID,SERVO_STATE_COM, MENU_DEBUG_SERVO_PARM2,sValue,0,0);
     sleep(delyTime);
+//    qDebug() << "servo_speed_run_sample_k_set: " << m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[0].GetValue() << " " << m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[1].GetValue();
+
     params.data[34] = sValue;
     //位置时间---
     sValue = m_SysParam.m_SysLoseParam.servo_position_sample_ov_time_set.GetValue();
@@ -225,9 +229,11 @@ void        MainUI::OnNormSendUI()
     sleep(delyTime);
     params.data[36] = sValue;
     //速度比例---
-    sValue = m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set.GetValue();
+    sValue = m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[0].GetValue();
     m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_DEBUG, cID,SERVO_STATE_COM, MENU_DEBUG_SERVO_PARM5,sValue,0,0);
     sleep(delyTime);
+//    qDebug() << "servo_speed_pid_parm_p_set: " << m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[0].GetValue() << " " << m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[1].GetValue();
+
     params.data[37] = sValue;
     //速度增量---
     sValue = m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_radio.GetValue();
@@ -393,9 +399,10 @@ void        MainUI::OnCOMMSendUI()
     m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM5,sValue,0, 0);
     sleep(delyTime);
 
-    //堵转保护(堵转区间)
+    //堵转保护(堵转区间) 20200520 保护对比  码子对换
     sValue = m_SysParam.m_COMMSteeringEngineParam.m_Locked_rotorProtection.GetValue();
-    m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM6,sValue,0,0);
+    //m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM6,sValue,0,0);
+    m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM9,sValue,0, 0);
     sleep(delyTime);
 
 
@@ -409,9 +416,10 @@ void        MainUI::OnCOMMSendUI()
     m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP,cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM8,sValue,0, 0);
     sleep(delyTime);
 
-    //保护比较---
+    //保护比较---20200520 堵转保护  码子对换
     sValue = m_SysParam.m_SysLoseParam.servo_protect_pwm_cmpt.GetValue();
-    m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM9,sValue,0, 0);
+    //m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM9,sValue,0, 0);
+    m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_SETUP, cID,SERVO_STATE_COM, MENU_SETUP_SERVO_PARM6,sValue,0,0);
     sleep(delyTime);
 
     //保护输出
@@ -449,7 +457,7 @@ void        MainUI::OnCOMMSendUI()
     sleep(delyTime);
 
     //位置比例---
-    sValue = m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set.GetValue();
+    sValue = m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[1].GetValue();
     m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_DEBUG, cID,SERVO_STATE_COM, MENU_DEBUG_SERVO_PARM0,sValue,0,0);
     sleep(delyTime);
 
@@ -459,7 +467,7 @@ void        MainUI::OnCOMMSendUI()
     sleep(delyTime);
 
     //速度比率---
-    sValue = m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set.GetValue();
+    sValue = m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[1].GetValue();
     m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_DEBUG, cID,SERVO_STATE_COM, MENU_DEBUG_SERVO_PARM2,sValue,0,0);
     sleep(delyTime);
 
@@ -474,7 +482,7 @@ void        MainUI::OnCOMMSendUI()
     sleep(delyTime);
 
     //速度比例---
-    sValue = m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set.GetValue();
+    sValue = m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[1].GetValue();
     m_SysComm.Encode(SERVO_COMMAND_SERVO_PARM_DEBUG, cID,SERVO_STATE_COM, MENU_DEBUG_SERVO_PARM5,sValue,0,0);
     sleep(delyTime);
 
