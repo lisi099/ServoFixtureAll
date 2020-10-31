@@ -31,7 +31,8 @@ void Servo_Write_Memory_CallBack(u8 key);
 void Servo_Read_Memory_CallBack(u8 key);
 void Servo_Center_Page_CallBack(u8 key);
 void Reset_Data_Read_Page_CallBack(u8 key);
-void Servo_Set_Factory_CallBack(u8 key);
+//void Servo_Set_Factory_CallBack(u8 key);
+void Servo_Version_Page_CallBack(u8 key);
 
 void Narrowband_Page_CallBack(u8 key);
 void Broadband_Page_CallBack(u8 key);

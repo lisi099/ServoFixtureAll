@@ -59,5 +59,5 @@ void ShowItemPage_Num(u8 num);
 void KeySelItem(u8 key);
 void SelItemOfList(u8 index, char* s);
 
-
+int find_version(int num);
 #endif

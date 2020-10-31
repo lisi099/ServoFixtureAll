@@ -93,7 +93,7 @@ void start_page(void)
                 else
                 {
                     put_chars(1, 0, ">Pls Update LCD");
-                    rt_thread_delay(RT_TICK_PER_SECOND * 10);
+                    rt_thread_delay(RT_TICK_PER_SECOND * 2);
                 }
             }
             else

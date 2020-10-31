@@ -86,9 +86,9 @@ struct PAGE Position_Page = {&mainPage, Menu_Two_CallBack, Position_item, SIZE_O
 //----2
 struct Item Info_item[] =
 {
-//    (char*)"Servo Version",					&Servo_Version_Page1,  0,  0,  1, SHOW_NULL, 0, 0,
+    (char*)"Servo Version",			&Servo_Version_Page1,  0,  0,  1, SHOW_NULL, 0, 0,
     (char*)"Lcd Settings",        	&Lcd_Page,  		0, 0,   0, SHOW_NULL, 0, 0,
-//										(char*)"DATA FACTOCY SET",      			&Set_Factory_Page,  0, 0,   0, SHOW_NULL,0,0,
+//	(char*)"DATA FACTOCY SET",      			&Set_Factory_Page,  0, 0,   0, SHOW_NULL,0,0,
 };
 struct PAGE Info_Page = {&mainPage, Menu_Two_CallBack, Info_item, SIZE_OF_ITEM(Info_item)};
 
@@ -142,7 +142,7 @@ struct PAGE Host_Bd_Set_Page = {&Lcd_Page, Lcd_Bd_Set_CallBack, Host_Bd_Set_item
 
 struct PAGE Lcd_Upgrade_Page = {&Lcd_Page, Lcd_Upgrade_CallBack, 0, 0};
 //----3
-//struct PAGE Servo_Version_Page1 = {&Info_Page, Servo_Version_Page_CallBack, 0, 0};
+struct PAGE Servo_Version_Page1 = {&Info_Page, Servo_Version_Page_CallBack, 0, 0};
 
 
 struct Item Brodband_item[] =
@@ -650,72 +650,64 @@ void Servo_Read_Memory_CallBack(u8 key)
     LCD_Write_Str(1, 0, (char*)buf);
 }
 
-//void Servo_Set_Factory_CallBack(u8 key)
-//{
-//    static uint8_t num = 0;
-//    char buf[] = "  FDATA_X00XX  ";
-//    uint16_t data_version;
-//    uint16_t version;
+void Servo_Version_Page_CallBack(u8 key)
+{
+	int distribtor, costormer;
+    uint8_t buf[2];
+	char str[16] = { 0 };
+	
+	buf[0] = Setting_item[0].data / 10000 % 10 + 1;
+	sprintf(str, "V1.%d ", buf[0]);
 
-//    switch(key)
-//    {
-//        case KEY_UP:
-//            num ++;
-//            if(num > 99)
-//            {
-//                num = 0;
-//            }
-//            break;
-//        case KEY_Down:
-//            num --;
-//            if(num > 99)
-//            {
-//                num = 99;
-//            }
-//            break;
-//        case KEY_UP_L:
-//            num ++;
-//            if(num > 99)
-//            {
-//                num = 0;
-//            }
-//            break;
-//        case KEY_Down_L:
-//            num --;
-//            if(num > 99)
-//            {
-//                num = 99;
-//            }
-//            break;
-//        case KEY_Return:
-//            ShowParentPage_Num(Item_Num_[1]);
-//            return;
+	buf[0] = Setting_item[0].data / 1000 % 10;
+	buf[1] = Setting_item[0].data / 100 % 10;
+	distribtor = buf[0] * 10 + buf[1];
 
-//        case KEY_Ok:
-//            Lcd_Clr_Scr();
-//            version = (uint16_t) servoDataStru.work_p12;
-//            data_version = version / 10000 * 10000 + num * 100 + 0;
-//            Copy_Data_To_Stru();
-//            LCD_Write_Str(0, 0, (char*)"<Setting>...");
-//            save_servo_data_in_flash(num + CUSTOMER_OUT_SPACE, data_version);
-//            rt_thread_delay(RT_TICK_PER_SECOND);
-//            if(keep(S_SUCCESS) == F_RETURN)
-//            {
-//                ShowParentPage_Num(Item_Num_[1]);
-//            }
-//            else
-//            {
-//                SetMainPage(&Setting_Page);
-//                ShowPage_Num(pPage, 0);
-//            }
-//            return;
-//    }
-//    Lcd_Clr_Scr();
-//    buf[9] += num / 10 % 10;
-//    buf[10] += num / 1 % 10;
-//    put_chars_middle(0, (char*)"Setting default");
-//    LCD_Write_Str(1, 0, (char*)buf);
-//}
+	if(find_version(distribtor) == 100)
+	{
+	sprintf(&str[5], "%s-", "XXX-XXX");
+	}
+	else
+	{
+	sprintf(&str[5], "%s-", get_ver_char(find_version(distribtor)));
+	}
+
+	buf[0] = Setting_item[0].data / 10 % 10;
+	buf[1] = Setting_item[0].data / 1 % 10;
+	costormer = buf[0] * 10 + buf[1];
+
+	if(costormer == 21)
+	{
+		sprintf(&str[13], "00");
+	}
+	else if(costormer >= 10)
+	{
+		sprintf(&str[13], "%d", costormer);
+	}
+	else
+	{
+		sprintf(&str[13], "0%d", costormer);
+	}
+	
+	switch(key)
+    {
+        case KEY_UP:
+            break;
+        case KEY_Down:
+            break;
+        case KEY_UP_L:
+            break;
+        case KEY_Down_L:
+            break;
+        case KEY_Return:
+            ShowParentPage_Num(0);
+            return;
+        case KEY_Ok:
+            break;
+    }
+	Lcd_Clr_Scr();
+	put_chars_middle(0, str);
+}
 
 void Servo_Center_Page_CallBack(u8 key)
 {
