@@ -66,7 +66,7 @@ struct Item Setting_item[] =
     (char*)"5.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"6.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
     (char*)"7.Brake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"8.Center        L1",	&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
+    (char*)"8.Center",				&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
     (char*)"9.Soft Start",						0,  0,  14,  1, SHOW_STRING, 0, 1,
     (char*)"10.Write Data",			&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
     (char*)"11.Read Data",			&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
@@ -676,7 +676,7 @@ void Servo_Version_Page_CallBack(u8 key)
 	buf[1] = Setting_item[0].data / 1 % 10;
 	costormer = buf[0] * 10 + buf[1];
 
-	if(costormer == 21)
+	if(costormer >= 21)
 	{
 		sprintf(&str[13], "00");
 	}
@@ -717,26 +717,39 @@ void Servo_Center_Page_CallBack(u8 key)
 
     switch(key)
     {
-        case KEY_UP:
-            r_num ++;
-
-            if(r_num > 10)
-            {
-                r_num = 0;
-            }
-
-            l_num = 0;
-            break;
-
         case KEY_Down:
-            l_num ++;
-
-            if(l_num > 10)
-            {
-                l_num = 0;
-            }
-
-            r_num = 0;
+			if(l_num == 0 && r_num ==0){
+				l_num++;
+				if(l_num >10){
+					l_num = 10;
+				}
+			}
+			else if(l_num !=0){
+				l_num++;
+				if(l_num >10){
+					l_num = 10;
+				}
+			}
+			else if(r_num != 0){
+				r_num--;
+			}
+            break;
+        case KEY_UP:
+			if(l_num == 0 && r_num ==0){
+				r_num++;
+				if(r_num >10){
+					r_num = 10;
+				}
+			}
+			else if(l_num !=0){
+				l_num--;
+			}
+			else if(r_num != 0){
+				r_num++;
+				if(r_num >10){
+					r_num = 10;
+				}
+			}
             break;
     }
 
@@ -963,7 +976,7 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 void Copy_Data_To_Show(void)
 {
     Setting_item[0].data = servoDataStru.work_p12;
-//	Setting_item[0].data = 10121;
+	Setting_item[0].data = 10120;
     Setting_item[1].data = (servoDataStru.set_p11 - 727.7f) / 72.2f;
     Setting_item[2].data = (servoDataStru.set_p15 - 4.3f) / 5.6f;
     Setting_item[3].data = servoDataStru.work_p6;

@@ -103,14 +103,13 @@ void ShowList(u8 min, u8 max)
                 case SHOW_NUM:
                     u8_data = (uint8_t)pPage->pItem[index].data;
                     sprintf(str, "%d", u8_data);
+					LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
                     break;
-
                 case SHOW_STRING:
                     if(pPage->pItem[index].data) sprintf(str, "%s", "Y");
                     else sprintf(str, "%s", "N");
-
+					LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
                     break;
-
                 case SHOW_STRING_VER:
                     buf[0] = pPage->pItem[index].data / 10000 % 10 + 1;
                     sprintf(str, "V1.%d ", buf[0]);
@@ -132,7 +131,7 @@ void ShowList(u8 min, u8 max)
                     buf[1] = pPage->pItem[index].data / 1 % 10;
                     costormer = buf[0] * 10 + buf[1];
 
-                    if(costormer == 21)
+                    if(costormer >= 21)
                     {
                         sprintf(&str[13], "00");
                     }
@@ -144,14 +143,13 @@ void ShowList(u8 min, u8 max)
                     {
                         sprintf(&str[13], "0%d", costormer);
                     }
-
+					LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
                     break;
-
                 default:
                     break;
             }
 
-            LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
+            
         }
 
         i++;
