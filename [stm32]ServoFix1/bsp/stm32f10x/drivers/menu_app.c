@@ -492,7 +492,7 @@ void Lcd_Bd_Set_CallBack(u8 key)
 void Servo_Write_Memory_CallBack(u8 key)
 {
     static uint8_t num = 0;
-    char buf[] = "  UDATA_XXX00   ";
+    char buf[] = "  SERVO-DATA-00  ";
     uint16_t data_version;
     uint16_t version;
 
@@ -566,8 +566,8 @@ void Servo_Write_Memory_CallBack(u8 key)
     }
 
     Lcd_Clr_Scr();
-    buf[11] += num / 10 % 10;
-    buf[12] += num / 1 % 10;
+    buf[13] += num / 10 % 10;
+    buf[14] += num / 1 % 10;
     put_chars_middle(0, "Write Memory");
     LCD_Write_Str(1, 0, (char*)buf);
 }
@@ -576,7 +576,7 @@ void Servo_Write_Memory_CallBack(u8 key)
 void Servo_Read_Memory_CallBack(u8 key)
 {
     static uint8_t num = 0;
-    char buf[] = "  UDATA_XXX00   ";
+    char buf[] = "  SERVO-DATA-00  ";
 
     switch(key)
     {
@@ -644,8 +644,8 @@ void Servo_Read_Memory_CallBack(u8 key)
     }
 
     Lcd_Clr_Scr();
-    buf[11] += num / 10 % 10;
-    buf[12] += num / 1 % 10;
+    buf[13] += num / 10 % 10;
+    buf[14] += num / 1 % 10;
     put_chars_middle(0, "Read Memory");
     LCD_Write_Str(1, 0, (char*)buf);
 }
@@ -752,6 +752,18 @@ void Servo_Center_Page_CallBack(u8 key)
 			}
             break;
     }
+	if(l_num ==0 && r_num==0){
+		oper_num[4] ='-';
+		oper_num[10] ='-';
+	}
+	else if(r_num ==0 ){
+		oper_num[4] ='<';
+		oper_num[10] ='-';
+	}
+	else{
+		oper_num[4] ='-';
+		oper_num[10] ='>';
+	}
 
     if(l_num < 10) //1,2
     {
