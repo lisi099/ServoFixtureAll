@@ -81,6 +81,22 @@ void read_servo_data_in_flash(uint8_t seq)
     Copy_Data_To_Show();
 }
 
+uint8_t read_servo_data_in_flash_(uint8_t seq, struct Servo_Data_Stru_  *data)
+{
+    uint32_t page_start;
+    if(seq < 20)
+    {
+        uint8_t num_page = seq / DATA_NUM_OF_PAGE;
+        uint8_t seq_page = seq % DATA_NUM_OF_PAGE;
+        page_start = FLASH_DATA1_ADDR + num_page * PAGE_SIZE;
+        //read
+        flash_read_n_byte(page_start, data_in_flash, sizeof(data_in_flash));
+        //cpy
+        memcpy(data, &data_in_flash[seq_page * SAVE_DATA_SIZE], sizeof(servoDataStru));
+    }
+	
+}
+
 void test_falsh_progrm(void)
 {
 //	uint8_t i =0;

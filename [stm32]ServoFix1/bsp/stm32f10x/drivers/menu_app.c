@@ -576,8 +576,11 @@ void Servo_Write_Memory_CallBack(u8 key)
 void Servo_Read_Memory_CallBack(u8 key)
 {
     static uint8_t num = 0;
-    char buf[] = "  SERVO-DATA-00  ";
-
+    char buf[16] = "  SERVO-DATA-00 ";
+	struct Servo_Data_Stru_ data;
+	uint8_t buf_2[2];
+    uint8_t distribtor, costormer;
+	
     switch(key)
     {
         case KEY_UP:
@@ -642,10 +645,41 @@ void Servo_Read_Memory_CallBack(u8 key)
 
             return;
     }
+	
+	read_servo_data_in_flash_(num, &data);
+    buf_2[0] = data.work_p12 / 1000 % 10;
+    buf_2[1] = data.work_p12 / 100 % 10;
+    distribtor = buf_2[0] * 10 + buf_2[1];
+	if(find_version(distribtor) != 100)
+    {
+		buf_2[0] = data.work_p12  / 10000 % 10 + 1;
+		sprintf(buf, "v1.%d ", buf_2[0]);
+		sprintf(&buf[5], "%s-", get_ver_char(find_version(distribtor)));
+		buf_2[0] = data.work_p12 / 10 % 10;
+		buf_2[1] = data.work_p12 / 1 % 10;
+		costormer = buf_2[0] * 10 + buf_2[1];
+
+		if(costormer >= 21)
+		{
+			sprintf(&buf[13], "00");
+		}
+		else if(costormer >= 10)
+		{
+			sprintf(&buf[13], "%d", costormer);
+		}
+		else
+		{
+			sprintf(&buf[13], "0%d", costormer);
+		}
+    }
+
 
     Lcd_Clr_Scr();
-    buf[13] += num / 10 % 10;
-    buf[14] += num / 1 % 10;
+	if(find_version(distribtor) == 100)
+    {
+		buf[13] += (num+1) / 10 % 10;
+		buf[14] += (num+1) / 1 % 10;
+	}
     put_chars_middle(0, " Read Memory");
     LCD_Write_Str(1, 0, (char*)buf);
 }
@@ -943,7 +977,7 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 void Copy_Data_To_Show(void)
 {
     Setting_item[0].data = servoDataStru.work_p12;
-	Setting_item[0].data = 10120;
+//	Setting_item[0].data = 10120;
     Setting_item[1].data = (servoDataStru.set_p11 - 727.7f) / 72.2f;
     Setting_item[2].data = (servoDataStru.set_p15 - 4.3f) / 5.6f;
     Setting_item[3].data = servoDataStru.work_p6;

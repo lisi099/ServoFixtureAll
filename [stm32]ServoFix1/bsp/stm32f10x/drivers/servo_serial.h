@@ -322,6 +322,7 @@ void uart_send_command(uint8_t id, uint8_t cmd, uint8_t state, uint8_t para_id1,
 
 void save_servo_data_in_flash(uint8_t seq, uint16_t version);
 void read_servo_data_in_flash(uint8_t seq);
+uint8_t read_servo_data_in_flash_(uint8_t seq, struct Servo_Data_Stru_  *data);
 void test_falsh_progrm(void);
 
 void menu_combine_position(uint16_t pos);
