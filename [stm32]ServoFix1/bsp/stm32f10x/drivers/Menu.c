@@ -112,7 +112,7 @@ void ShowList(u8 min, u8 max)
                     break;
                 case SHOW_STRING_VER:
                     buf[0] = pPage->pItem[index].data / 10000 % 10 + 1;
-                    sprintf(str, "V1.%d ", buf[0]);
+                    sprintf(str, "v1.%d ", buf[0]);
 
                     buf[0] = pPage->pItem[index].data / 1000 % 10;
                     buf[1] = pPage->pItem[index].data / 100 % 10;

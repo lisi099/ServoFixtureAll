@@ -52,7 +52,7 @@ struct Item Main_item[] =
 {
     (char*)"Settings",       		&Setting_Page,  	0, 0,   0, SHOW_NULL, 0, 0,
     (char*)"Servo Test",			&Position_Page,     0, 0,   0, SHOW_NULL, 0, 0,
-    (char*)"Information",			&Info_Page,     	0, 0,   0, SHOW_NULL, 0, 0,
+    (char*)"Information",			&Servo_Version_Page1,     	0, 0,   0, SHOW_NULL, 0, 0,
 };
 struct PAGE mainPage = {0, Menu_One_CallBack, Main_item, SIZE_OF_ITEM(Main_item)};
 /************************************************2*********************************************************/
@@ -60,17 +60,17 @@ struct PAGE mainPage = {0, Menu_One_CallBack, Main_item, SIZE_OF_ITEM(Main_item)
 struct Item Setting_item[] =
 {
     (char*)" ",									0,  0,  1,   1, SHOW_STRING_VER, 0, 65535,
-    (char*)"2.Max Power",						0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"3.Boost",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"4.Dead Band",						0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"5.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"6.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
-    (char*)"7.Brake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"8.Center",				&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
-    (char*)"9.Soft Start",						0,  0,  14,  1, SHOW_STRING, 0, 1,
-    (char*)"10.Write Data",			&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
-    (char*)"11.Read Data",			&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
-    (char*)"12.Default",			&Reset_Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"1.Max Power",						0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"2.Boost",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"3.Dead Band",						0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"4.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"5.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
+    (char*)"6.Brake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"7.Center",				&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
+    (char*)"8.Soft Start",						0,  0,  14,  1, SHOW_STRING, 0, 1,
+    (char*)"9.Write Data",			&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"10.Read Data",			&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"11.Default",			&Reset_Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
 };
 
 struct PAGE Setting_Page = {&mainPage, Menu_Two_CallBack, Setting_item, SIZE_OF_ITEM(Setting_item)};
@@ -142,7 +142,7 @@ struct PAGE Host_Bd_Set_Page = {&Lcd_Page, Lcd_Bd_Set_CallBack, Host_Bd_Set_item
 
 struct PAGE Lcd_Upgrade_Page = {&Lcd_Page, Lcd_Upgrade_CallBack, 0, 0};
 //----3
-struct PAGE Servo_Version_Page1 = {&Info_Page, Servo_Version_Page_CallBack, 0, 0};
+struct PAGE Servo_Version_Page1 = {&mainPage, Servo_Version_Page_CallBack, 0, 0};
 
 
 struct Item Brodband_item[] =
@@ -153,7 +153,7 @@ struct Item Brodband_item[] =
     (char*)"PWM:2100us",					&Broadband_servo_Page,  0,  0,  1, SHOW_NUM, 0, 0,
     (char*)"PWM:2500us",					&Broadband_servo_Page,  0,  0,  1, SHOW_NUM, 0, 0,
 };
-struct PAGE Broadband_servo_Page = {&Position_Page, Narrowband_Page_CallBack, Brodband_item, SIZE_OF_ITEM(Brodband_item)};
+struct PAGE Broadband_servo_Page = {&Position_Page, Broadband_Page_CallBack, Brodband_item, SIZE_OF_ITEM(Brodband_item)};
 
 struct Item Narrowband_item[] =
 {
@@ -161,7 +161,7 @@ struct Item Narrowband_item[] =
     (char*)"PWM:750us",						&Narrowband_servo_Page,  0,  0,  1, SHOW_NUM, 0, 0,
     (char*)"PWM:1000us",					&Narrowband_servo_Page,  0,  0,  1, SHOW_NUM, 0, 0,
 };
-struct PAGE Narrowband_servo_Page = {&Position_Page, Broadband_Page_CallBack, Narrowband_item, SIZE_OF_ITEM(Narrowband_item)};
+struct PAGE Narrowband_servo_Page = {&Position_Page, Narrowband_Page_CallBack, Narrowband_item, SIZE_OF_ITEM(Narrowband_item)};
 /************************************************4*********************************************************/
 //----4
 struct PAGE Servo_Write_Memory_Page = {&Data_Save_Page, Servo_Write_Memory_CallBack, 0, 0};
@@ -568,7 +568,7 @@ void Servo_Write_Memory_CallBack(u8 key)
     Lcd_Clr_Scr();
     buf[13] += num / 10 % 10;
     buf[14] += num / 1 % 10;
-    put_chars_middle(0, "Write Memory");
+    put_chars_middle(0, " Write Memory");
     LCD_Write_Str(1, 0, (char*)buf);
 }
 
@@ -646,49 +646,13 @@ void Servo_Read_Memory_CallBack(u8 key)
     Lcd_Clr_Scr();
     buf[13] += num / 10 % 10;
     buf[14] += num / 1 % 10;
-    put_chars_middle(0, "Read Memory");
+    put_chars_middle(0, " Read Memory");
     LCD_Write_Str(1, 0, (char*)buf);
 }
 
 void Servo_Version_Page_CallBack(u8 key)
 {
-	int distribtor, costormer;
-    uint8_t buf[2];
-	char str[16] = { 0 };
-	
-	buf[0] = Setting_item[0].data / 10000 % 10 + 1;
-	sprintf(str, "V1.%d ", buf[0]);
-
-	buf[0] = Setting_item[0].data / 1000 % 10;
-	buf[1] = Setting_item[0].data / 100 % 10;
-	distribtor = buf[0] * 10 + buf[1];
-
-	if(find_version(distribtor) == 100)
-	{
-	sprintf(&str[5], "%s-", "XXX-XXX");
-	}
-	else
-	{
-	sprintf(&str[5], "%s-", get_ver_char(find_version(distribtor)));
-	}
-
-	buf[0] = Setting_item[0].data / 10 % 10;
-	buf[1] = Setting_item[0].data / 1 % 10;
-	costormer = buf[0] * 10 + buf[1];
-
-	if(costormer >= 21)
-	{
-		sprintf(&str[13], "00");
-	}
-	else if(costormer >= 10)
-	{
-		sprintf(&str[13], "%d", costormer);
-	}
-	else
-	{
-		sprintf(&str[13], "0%d", costormer);
-	}
-	
+	char str[16] = "PGC-LCD-6033";
 	switch(key)
     {
         case KEY_UP:
@@ -713,8 +677,7 @@ void Servo_Center_Page_CallBack(u8 key)
 {
     char oper_num[] = "L10 ---0--- R10";
     static uint8_t l_num = 0, r_num = 0;
-    Lcd_Clr_Scr();
-
+    
     switch(key)
     {
         case KEY_Down:
@@ -755,14 +718,17 @@ void Servo_Center_Page_CallBack(u8 key)
 	if(l_num ==0 && r_num==0){
 		oper_num[4] ='-';
 		oper_num[10] ='-';
+		menu_combine_center(0);
 	}
 	else if(r_num ==0 ){
 		oper_num[4] ='<';
 		oper_num[10] ='-';
+		menu_combine_center(-l_num);
 	}
 	else{
 		oper_num[4] ='-';
 		oper_num[10] ='>';
+		menu_combine_center(r_num);
 	}
 
     if(l_num < 10) //1,2
@@ -787,20 +753,9 @@ void Servo_Center_Page_CallBack(u8 key)
         oper_num[14] = '0';
     }
 
+	Lcd_Clr_Scr();
     put_chars_middle(0, "Center");
     put_chars_middle(1, oper_num);
-
-    switch(key)
-    {
-        case KEY_UP:
-            menu_combine_center(r_num);
-            break;
-
-        case KEY_Down:
-            menu_combine_center(-l_num);
-            break;
-    }
-
     menu_combine_position(1500);
 
     if(key == KEY_Return)

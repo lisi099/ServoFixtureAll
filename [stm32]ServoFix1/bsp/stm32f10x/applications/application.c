@@ -204,7 +204,7 @@ static void usb_usart_thread(void* parameter)
     uint8_t size;
 
     usart1_fifo_rx_init();
-    usart1_init(19200);
+    usart1_init(115200);
     usart2_init_rx(19200);
     rt_thread_delay(RT_TICK_PER_SECOND);
 

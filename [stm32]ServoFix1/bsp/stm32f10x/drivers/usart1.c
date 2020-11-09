@@ -19,7 +19,7 @@
 #define COM_PORT_SOURCE         GPIOA
 #define COM_PORT_PIN_TX         GPIO_Pin_9
 #define COM_PORT_PIN_RX         GPIO_Pin_10
-#define COM_BAUDRATE            19200
+#define COM_BAUDRATE            115200
 
 #define         TXD1_BUFFSIZE           36
 #define         RCV1_BUFFSIZE           36
@@ -256,34 +256,16 @@ void USART1_IRQHandler(void)
     if(Rcv1_Flag == 1)
     {
         Rcv1_Flag = 0;
-
-        switch(usart_state)
-        {
-            case USB_SERIAL_DISABLE:
-                //do nothing
-                break;
-
-            case USB_SERIAL_TO_SERVO:
-
-//				if(Rcv1_Counter == 12){
-//					usart2_send_buff(&Rcv1_Buffer[0], 12);
-//				}
-//				else{
-                for(i = 0; i < Rcv1_Counter; i++)
-                {
-                    rt_mq_send(&usart1_r_mq, &Rcv1_Buffer[i], 1);
-                }
-
-//				}
-                break;
-
-            case USB_SERIAL_PROGRAM://program data
-                usart1_length_13_data_receieve();
-                break;
-
-            default:
-                break;
-        }
+		if(Rcv1_Counter == 13 && Rcv1_Buffer[0] ==0x41){
+			usart1_length_13_data_receieve();
+		}
+		else{
+			for(i = 0; i < Rcv1_Counter; i++)
+			{
+				rt_mq_send(&usart1_r_mq, &Rcv1_Buffer[i], 1);
+			}
+		}
+		
     }
 }
 
