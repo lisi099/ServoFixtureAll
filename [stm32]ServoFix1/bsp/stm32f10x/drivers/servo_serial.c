@@ -94,7 +94,7 @@ uint8_t read_servo_data_in_flash_(uint8_t seq, struct Servo_Data_Stru_  *data)
         //cpy
         memcpy(data, &data_in_flash[seq_page * SAVE_DATA_SIZE], sizeof(servoDataStru));
     }
-	
+		return 0;
 }
 
 void test_falsh_progrm(void)

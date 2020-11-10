@@ -9,7 +9,7 @@
  */
 
 #include <rthw.h>
-#include <rtthread.h>s
+#include <rtthread.h>
 
 #include "board.h"
 #include "board_info.h"
