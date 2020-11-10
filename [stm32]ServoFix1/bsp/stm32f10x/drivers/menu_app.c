@@ -331,7 +331,6 @@ void Menu_Three_CallBack(u8 key)
             LCD_Write_Str(0, 0, (char*)"<Writting>...");
             Copy_Data_To_Stru();
             menu_combine_prom_work_parm();
-
             if(menu_combine_verify_work_parm())
             {
                 if(keep(S_SUCCESS) == F_RETURN)
@@ -597,11 +596,11 @@ void Servo_Write_Memory_CallBack(u8 key)
     }
 
     Lcd_Clr_Scr();
-		if(find_version(distribtor) == 100)
+	if(find_version(distribtor) == 100)
     {
-			buf[13] += num / 10 % 10;
-			buf[14] += num / 1 % 10;
-		}
+			buf[13] += (num+1) / 10 % 10;
+			buf[14] += (num+1) / 1 % 10;
+	}
     put_chars_middle(0, " Write Memory");
     LCD_Write_Str(1, 0, (char*)buf);
 }
@@ -1003,19 +1002,29 @@ void Reset_Data_Read_Page_CallBack(u8 key)
         Lcd_Clr_Scr();
         LCD_Write_Str(0, 0, (char*)"<Restoring>...");
         read_servo_data_in_flash(num + 20);
-        rt_thread_delay(RT_TICK_PER_SECOND);
-        keep(S_SUCCESS);
-        ShowParentPage_Num(0);
+	
+		menu_combine_prom_work_parm();
+		if(menu_combine_verify_work_parm())
+		{
+			if(keep(S_SUCCESS) == F_RETURN)
+			{
+				ShowParentPage_Num(0);
+			}
+			else
+			{
+				ShowParentPage_Num(0);
+			}
+		}
+		else{
+			keep(S_FAILED);
+			ShowParentPage_Num(0);
+		}
         fisrt = 0;
         return;
     }
 
-//    buf[9] += num / 10 % 10;
-//    buf[10] += num / 1 % 10;
     Lcd_Clr_Scr();
     char* buf = get_ver_char(num);
-//    put_chars_middle(0, (char*)"Factory Reset");
-//    LCD_Write_Str(1, 0, (char*)buf);
     sprintf(buf_title, "Factory Reset %d", num);
     LCD_Write_Str(0, 0, buf_title);
     LCD_Write_Str(1, 0, buf);

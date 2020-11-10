@@ -333,7 +333,12 @@ void send_debug_param(uint8_t seq, struct Servo_Data_Stru_ *servo_data)
 //    debug_param[10] = MENU_DEBUG_SERVO_PARM10;
     temp_param = *(debug_param + seq);
     temp_param1 = *(&servo_data->debug_p0 + seq);
-    uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DEBUG, SERVO_STATE_COM, temp_param, temp_param1, 0, 0);
+	if(seq <7){
+		uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DEBUG, SERVO_STATE_COM, temp_param, temp_param1, 0, 0);
+	}
+	else{
+		uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_CONFIG, SERVO_STATE_COM, temp_param, temp_param1, 0, 0);
+	}
 }
 
 void menu_combine_prom_work_parm(void)
