@@ -750,45 +750,56 @@ void Servo_Center_Page_CallBack(u8 key)
     case KEY_Down:
         if(l_num == 0 && r_num == 0)
         {
-            l_num++;
-            if(l_num > 10)
-            {
-                l_num = 10;
-            }
+					if(l_num <10){
+						l_num++;
+						servoDataStru.work_p3 = servoDataStru.work_p3 -  28;
+						servoDataStru.work_p4 = servoDataStru.work_p4 -  28;
+						servoDataStru.work_p5 = servoDataStru.work_p5 -  28;
+					}
+
         }
         else if(l_num != 0)
         {
-            l_num++;
-            if(l_num > 10)
-            {
-                l_num = 10;
-            }
+					if(l_num <10){
+						l_num++;
+						servoDataStru.work_p3 = servoDataStru.work_p3 -  28;
+						servoDataStru.work_p4 = servoDataStru.work_p4 -  28;
+						servoDataStru.work_p5 = servoDataStru.work_p5 -  28;
+					}
         }
         else if(r_num != 0)
         {
             r_num--;
+						servoDataStru.work_p3 = servoDataStru.work_p3 -  28;
+						servoDataStru.work_p4 = servoDataStru.work_p4 -  28;
+						servoDataStru.work_p5 = servoDataStru.work_p5 -  28;
         }
         break;
     case KEY_UP:
         if(l_num == 0 && r_num == 0)
         {
-            r_num++;
-            if(r_num > 10)
-            {
-                r_num = 10;
-            }
-        }
-        else if(l_num != 0)
-        {
-            l_num--;
+					if(r_num <10){
+						r_num++;
+						servoDataStru.work_p3 = servoDataStru.work_p3 +  28;
+						servoDataStru.work_p4 = servoDataStru.work_p4 +  28;
+						servoDataStru.work_p5 = servoDataStru.work_p5 +  28;
+					}
         }
         else if(r_num != 0)
         {
-            r_num++;
-            if(r_num > 10)
-            {
-                r_num = 10;
-            }
+					if(r_num <10){
+						r_num++;
+						servoDataStru.work_p3 = servoDataStru.work_p3 +  28;
+						servoDataStru.work_p4 = servoDataStru.work_p4 +  28;
+						servoDataStru.work_p5 = servoDataStru.work_p5 +  28;
+					}
+        }
+				else if(l_num != 0)
+        {
+            l_num--;
+						servoDataStru.work_p3 = servoDataStru.work_p3 +  28;
+						servoDataStru.work_p4 = servoDataStru.work_p4 +  28;
+						servoDataStru.work_p5 = servoDataStru.work_p5 +  28;
         }
         break;
     }
@@ -802,15 +813,17 @@ void Servo_Center_Page_CallBack(u8 key)
     {
         oper_num[4] = '<';
         oper_num[10] = '-';
-        menu_combine_center(-l_num);
+        
+				menu_combine_center(-l_num); //
     }
     else
     {
         oper_num[4] = '-';
         oper_num[10] = '>';
-        menu_combine_center(r_num);
+        menu_combine_center(r_num); //
     }
-
+		
+		//-------
     if(l_num < 10) //1,2
     {
         oper_num[1] = '0';
@@ -836,7 +849,6 @@ void Servo_Center_Page_CallBack(u8 key)
     Lcd_Clr_Scr();
     put_chars_middle(0, "Center");
     put_chars_middle(1, oper_num);
-    menu_combine_position(1500);
 
     if(key == KEY_Return)
     {
