@@ -363,7 +363,7 @@ void menu_combine_prom_work_parm(void)
 	
 		uart_send_clear_command();//
 		rt_thread_delay(SERVO_DELAY_TIME);
-    for(i = 0; i < 16; i++)
+    for(i = 0; i < 14; i++)
     {
         rt_thread_delay(SERVO_DELAY_TIME);
         send_work_param(i, &servo_data);
@@ -649,7 +649,9 @@ uint8_t menu_combine_verify_work_parm(void)
             *buff = (uart_read_datas[9] | (uart_read_datas[8] << 8));
         }
     }
-
+	servoDataStru.work_p14 = servo_data.work_p14;
+	servoDataStru.work_p15 = servo_data.work_p15;
+	servoDataStru.set_p6 = servo_data.set_p6;
     buff1 = (uint8_t*)(&servo_data);
     buff2 = (uint8_t*)(&servoDataStru);
 
