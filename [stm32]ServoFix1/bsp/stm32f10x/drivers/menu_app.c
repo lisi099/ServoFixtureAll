@@ -514,12 +514,12 @@ void Servo_Write_Memory_CallBack(u8 key)
         break;
 
     case KEY_Down:
-        num --;
-
-        if(num > 19)
-        {
-            num = 19;
-        }
+				if(num == 0){
+					num = 19;
+				}
+				else{
+					num --;
+				}
 
         break;
 
@@ -534,12 +534,12 @@ void Servo_Write_Memory_CallBack(u8 key)
         break;
 
     case KEY_Down_L:
-        num --;
-
-        if(num > 19)
-        {
-            num = 19;
-        }
+				if(num == 0){
+					num = 19;
+				}
+				else{
+					num --;
+				}
 
         break;
 
@@ -552,7 +552,7 @@ void Servo_Write_Memory_CallBack(u8 key)
 		Copy_Data_To_Stru();
 	
 		data_version = servoDataStru.work_p12;
-		buf_2[0] = servoDataStru.work_p12 / 10 % 10;
+		buf_2[0] = servoDataStru.work_p12 / 10 % 10; 
 		buf_2[1] = servoDataStru.work_p12 / 1 % 10;
 	
 		data_version -= (buf_2[0] * 10 + buf_2[1]);
@@ -637,13 +637,12 @@ void Servo_Read_Memory_CallBack(u8 key)
         break;
 
     case KEY_Down:
-        num --;
-
-        if(num > 19)
-        {
-            num = 19;
-        }
-
+				if(num == 0){
+					num = 19;
+				}
+				else{
+					num --;
+				}
         break;
 
     case KEY_UP_L:
@@ -657,12 +656,12 @@ void Servo_Read_Memory_CallBack(u8 key)
         break;
 
     case KEY_Down_L:
-        num --;
-
-        if(num > 19)
-        {
-            num = 19;
-        }
+				if(num == 0){
+					num = 19;
+				}
+				else{
+					num --;
+				}
 
         break;
 
@@ -716,16 +715,12 @@ void Servo_Read_Memory_CallBack(u8 key)
             sprintf(&buf[13], "0%d", costormer);
         }
     }
-
+		else{
+				buf[13] += (num + 1) / 10 % 10;
+        buf[14] += (num + 1) / 1 % 10;
+		}
 
     Lcd_Clr_Scr();
-
-    if(find_version(distribtor) == 100)
-    {
-        buf[13] += (num + 1) / 10 % 10;
-        buf[14] += (num + 1) / 1 % 10;
-    }
-
     put_chars_middle(0, " Read Memory");
     LCD_Write_Str(1, 0, (char*)buf);
 }
@@ -937,7 +932,12 @@ void Reset_Data_Read_Page_CallBack(u8 key)
     static uint8_t fisrt = 0;
     int total_num  = get_total_num() - 1;
     char buf_title[17];
-
+		uint16_t distribtor;
+		uint8_t buf_2[2];
+		buf_2[0] = servoDataStru.work_p12 / 1000 % 10;
+    buf_2[1] = servoDataStru.work_p12 / 100 % 10;
+    distribtor = buf_2[0] * 10 + buf_2[1];	
+	
     if(fisrt == 0)
     {
         Lcd_Clr_Scr();
@@ -951,7 +951,6 @@ void Reset_Data_Read_Page_CallBack(u8 key)
     }
 
     fisrt = 1;
-
     Lcd_Clr_Scr();
 
     switch(key)
@@ -1002,12 +1001,18 @@ void Reset_Data_Read_Page_CallBack(u8 key)
         return;
 
     case KEY_Ok:
+				
+				if(get_ver_num(num) != distribtor){
+					Lcd_Clr_Scr();
+					LCD_Write_Str(0, 0, (char*)"<Restoring>...");
+					keep(S_FAILED);
+					break;
+				}					
+		
         Lcd_Clr_Scr();
         LCD_Write_Str(0, 0, (char*)"<Restoring>...");
         read_servo_data_in_flash(num + 20);
-
         menu_combine_prom_work_parm();
-
         if(menu_combine_verify_work_parm())
         {
             if(keep(S_SUCCESS) == F_RETURN)
