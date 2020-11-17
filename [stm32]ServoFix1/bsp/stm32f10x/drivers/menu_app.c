@@ -1007,7 +1007,8 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 					LCD_Write_Str(0, 0, (char*)"<Restoring>...");
 					keep(S_FAILED);
 					break;
-				}					
+				}
+				else{
 		
         Lcd_Clr_Scr();
         LCD_Write_Str(0, 0, (char*)"<Restoring>...");
@@ -1032,6 +1033,7 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 
         fisrt = 0;
         return;
+		}
     }
 
     Lcd_Clr_Scr();
