@@ -467,7 +467,7 @@ void read_config_param(uint8_t seq)
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
 }
 
-
+extern volatile uint16_t current_servo_version_;
 uint8_t menu_combine_fb_work_parm(void)
 {
     uint8_t i = 0;
@@ -556,6 +556,7 @@ uint8_t menu_combine_fb_work_parm(void)
     memcpy(&servoDataStru, &servo_data, sizeof(servo_data));
     Copy_Data_To_Show();
     rt_thread_delay(SERVO_DELAY_TIME_S);
+		current_servo_version_ = servoDataStru.work_p12;
     return 1;
 }
 

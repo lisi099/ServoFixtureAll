@@ -15,6 +15,8 @@
 #define SIZE_OF_ITEM(x) (sizeof(x) / sizeof(struct Item))
 extern struct rt_messagequeue key_mq;
 
+volatile uint16_t current_servo_version_ = 0;
+
 //--0
 extern struct PAGE* pPage;
 //--1
@@ -65,8 +67,8 @@ struct Item Setting_item[] =
     (char*)"1.Max Power",						0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"2.Boost",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"3.Dead Band",						0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"4.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"5.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
+		(char*)"4.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
+    (char*)"5.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"6.Brake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"7.Center",				&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
     (char*)"8.Soft Start",						0,  0,  14,  1, SHOW_STRING, 0, 1,
@@ -313,6 +315,15 @@ void Menu_Two_CallBack(u8 key)
 
 void Menu_Three_CallBack(u8 key)
 {
+		uint16_t distribtor, distribtor1;
+		uint8_t buf_2[2];
+		buf_2[0] = current_servo_version_ / 1000 % 10;
+    buf_2[1] = current_servo_version_ / 100 % 10;
+    distribtor = buf_2[0] * 10 + buf_2[1];
+
+		buf_2[0] = servoDataStru.work_p12 / 1000 % 10;
+    buf_2[1] = servoDataStru.work_p12 / 100 % 10;
+    distribtor1 = buf_2[0] * 10 + buf_2[1];
     switch(key)
     {
     case KEY_UP:
@@ -329,6 +340,15 @@ void Menu_Three_CallBack(u8 key)
     case KEY_Ok:
         if(pPage == &Data_Save_Page && Menu_GetSelItem() == 0)
         {
+				if(distribtor != distribtor1){
+					Lcd_Clr_Scr();
+					LCD_Write_Str(0, 0, (char*)"<Writting>...");
+					keep(S_FAILED);
+					SetMainPage(&Data_Save_Page);
+					ShowPage_Num(pPage, 0);
+					break;
+				}
+				else{
             Lcd_Clr_Scr();
             LCD_Write_Str(0, 0, (char*)"<Writting>...");
             Copy_Data_To_Stru();
@@ -354,6 +374,7 @@ void Menu_Three_CallBack(u8 key)
             }
 
             break;
+					}
         }
         else if(pPage == &Data_Read_Page && Menu_GetSelItem() == 0)
         {
@@ -932,10 +953,12 @@ void Reset_Data_Read_Page_CallBack(u8 key)
     static uint8_t fisrt = 0;
     int total_num  = get_total_num() - 1;
     char buf_title[17];
+		uint8_t ch_value;
+	
 		uint16_t distribtor;
 		uint8_t buf_2[2];
-		buf_2[0] = servoDataStru.work_p12 / 1000 % 10;
-    buf_2[1] = servoDataStru.work_p12 / 100 % 10;
+		buf_2[0] = current_servo_version_ / 1000 % 10;
+    buf_2[1] = current_servo_version_ / 100 % 10;
     distribtor = buf_2[0] * 10 + buf_2[1];	
 	
     if(fisrt == 0)
@@ -952,46 +975,61 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 
     fisrt = 1;
     Lcd_Clr_Scr();
+		
+		if(find_version(distribtor) != 100){
+			num = find_version(distribtor);
+			ch_value = 1;
+		}
+		else{
+			ch_value = 0;
+		}
 
     switch(key)
     {
     case KEY_UP:
+				if(ch_value ==0){
         num ++;
-
         if(num > total_num)
         {
             num = 0;
         }
+			}
 
         break;
 
     case KEY_Down:
+			if(ch_value ==0){
         num --;
 
         if(num > total_num)
         {
             num = total_num;
         }
+			}
 
         break;
 
     case KEY_UP_L:
+			if(ch_value ==0){
         num ++;
 
         if(num > total_num)
         {
             num = 0;
         }
+			}
 
         break;
 
     case KEY_Down_L:
+			if(ch_value ==0){
         num --;
 
         if(num > total_num)
         {
             num = total_num;
         }
+			}
 
         break;
 
@@ -1038,7 +1076,7 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 
     Lcd_Clr_Scr();
     char* buf = get_ver_char(num);
-    sprintf(buf_title, "Factory Reset %d", num);
+    sprintf(buf_title, "Factory Reset");
     LCD_Write_Str(0, 0, buf_title);
     LCD_Write_Str(1, 0, buf);
 }
@@ -1075,8 +1113,8 @@ void Copy_Data_To_Show(void)
     Setting_item[1].data = round_f((servoDataStru.set_p11 - 727.7f) / 72.2f);
     Setting_item[2].data = round_f((servoDataStru.set_p15 - 4.3f) / 5.6f);
     Setting_item[3].data = servoDataStru.work_p6;
-    Setting_item[4].data = servoDataStru.debug_p0;
-    Setting_item[5].data = servoDataStru.debug_p5;
+    Setting_item[4].data = servoDataStru.debug_p5;
+    Setting_item[5].data = servoDataStru.debug_p0;
     Setting_item[6].data = round_f((servoDataStru.debug_p2 + 3.2f) / 4.3f);
     Setting_item[7].data = servoDataStru.set_p14; //
 }
@@ -1091,8 +1129,8 @@ void Copy_Data_To_Stru(void)
     servoDataStru.set_p11 = round_f(Setting_item[1].data * 72.2 + 727.7f); //servo_max_pwm_set
     servoDataStru.set_p15 = round_f(Setting_item[2].data * 5.6f + 4.3f); //servo_work_base_voltage
     servoDataStru.work_p6 = Setting_item[3].data; //servo_zero_zone_set
-    servoDataStru.debug_p0 = Setting_item[4].data; //servo_position_pid_parm_p_set
-    servoDataStru.debug_p5 = Setting_item[5].data; //servo_speed_pid_parm_p_set
+    servoDataStru.debug_p5 = Setting_item[4].data; //servo_position_pid_parm_p_set
+    servoDataStru.debug_p0 = Setting_item[5].data; //servo_speed_pid_parm_p_set
     servoDataStru.debug_p2 = round_f(Setting_item[6].data * 4.3f - 3.2f); //servo_speed_run_sample_k_set
     servoDataStru.set_p14 = Setting_item[7].data;//servo_init_flag_set
 }
