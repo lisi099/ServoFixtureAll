@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include "QStandardItemModel"
 #include "QMessageBox"
+#include "QFileDialog"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -193,7 +195,7 @@ void MainWindow::receieve_bytes(void)
 
 void MainWindow::on_pushButton_open_clicked()
 {
-    if(ui->pushButton_open->text() == QStringLiteral("打开串口")){
+//    if(ui->pushButton_open->text() == QStringLiteral("打开串口")){
 //        serialport_->setPortName(ui->comboBox_name->currentText());
 //        serialport_->setBaudRate(ui->comboBox_baut->currentText().toInt());
 //        serialport_->setDataBits(QSerialPort::Data8);
@@ -212,8 +214,8 @@ void MainWindow::on_pushButton_open_clicked()
 //        else{
 //            QMessageBox::critical(this, tr("Error"), serialport_->errorString());
 //        }
-    }
-    else{
+//    }
+//    else{
 //        if (serialport_->isOpen()){
 //            serialport_->close();
 //            ui->plainTextEdit->appendPlainText(QStringLiteral("串口")+serialport_->portName()+QStringLiteral("已关闭"));
@@ -223,7 +225,16 @@ void MainWindow::on_pushButton_open_clicked()
 //        ui->comboBox_baut->setDisabled(0);
 //        ui->comboBox_channel->setDisabled(0);
 //        ui->comboBox_number->setDisabled(0);
-    }
+//    }
+    QString fileName = QFileDialog::getOpenFileName();
+    int     iSize = sizeof(m_SysParam);
+    char    *buf = new char[iSize+1];
+    bool    bhr = CSysFile::read(fileName,buf,iSize);
+    if( bhr ) memcpy((char*)&m_SysParam,buf,iSize);
+    else qDebug() << "error read file";
+
+    SetUI_NormSteeringEngineParam();
+
 }
 
 void MainWindow::on_pushButton_connect_clicked()
@@ -236,4 +247,116 @@ void MainWindow::on_pushButton_connect_clicked()
         ui->pushButton_connect->setText("Connect");
         serial_open_state_ = false;
     }
+}
+
+//设置界面-常规舵机参数
+void  MainWindow::SetUI_NormSteeringEngineParam()
+{
+    QString str;
+    short fvalue = m_SysParam.m_NormSteeringEngineParam.m_UpperPulseWidthlimit.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_14->setText(str);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_MiddlePulseWidthlimit.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_15->setText(str);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_DownPulseWidthlimit.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_16->setText(str);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_StartingVoltage.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_17->setText(str);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_DrivingFrequency.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_18->setText(str);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_DeadZone.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_19->setText(str);
+
+    //
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_Self_lockingSetting.GetValue();
+//    if(fvalue != 0)
+//        ui->checkBox->setCheckState(Qt::Checked);
+//    else
+//        ui->checkBox->setCheckState(Qt::Unchecked);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_MaximumOutput.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_33->setText(str);
+
+    short  sMaxValue = m_SysParam.m_NormSteeringEngineParam.m_MaximumOutput.GetValue();
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_Locked_rotorProtection.GetValue();
+//    if(fvalue < sMaxValue )
+//        ui->checkBox_2->setCheckState(Qt::Checked);
+//    else
+//        ui->checkBox_2->setCheckState(Qt::Unchecked);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_SignalReset.GetValue();
+//    if(fvalue != 0)
+//        ui->checkBox_3->setCheckState(Qt::Checked);
+//    else
+//        ui->checkBox_3->setCheckState(Qt::Unchecked);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_SteeringGearDirection.GetValue();
+//    if(fvalue != 0)
+//        ui->checkBox_4->setCheckState(Qt::Checked);
+//    else
+//        ui->checkBox_4->setCheckState(Qt::Unchecked);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_ProtectionTime.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_20->setText(str);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_ProtectionOutput.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_21->setText(str);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_UpperLimitOfAngle.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_30->setText(str);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_AngularMidpoint.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_31->setText(str);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_LowerAngleLimit.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_32->setText(str);
+
+    fvalue = m_SysParam.m_NormSteeringEngineParam.m_FrequencySetting.GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_35->setText(str);
+
+    fvalue =m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[0].GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_99->setText(str);
+
+    fvalue =m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[0].GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_101->setText(str);
+
+    fvalue =m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[0].GetValue();
+    str.sprintf("%d",fvalue);
+//    ui->lineEdit_100->setText(str);
+}
+
+void MainWindow::on_pushButton_save_clicked()
+{
+    QFileDialog fileDialog;
+    QString fileName = fileDialog.getSaveFileName(this,"Save File","","bat File(*.bat)");
+    if(fileName == ""){
+        return;
+    }
+    if(!fileName.contains(".bat")) fileName += ".bat";
+//    GetUI_NormSteeringEngineParam();
+//    GetUI_COMMSteeringEngineParam();
+//    GetUI_AdditionalVariable();
+    int  iSize = sizeof(m_SysParam);
+    char *buf = new char[iSize+1];
+    memcpy(buf,(char*)&m_SysParam,iSize);
+    CSysFile::write(fileName,buf,iSize);
 }

@@ -27,10 +27,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    dataprocess.cpp
+    dataprocess.cpp \
+    csysfile.cpp \
+    csysparam.cpp \
+    serial_receive.cpp \
+    serial_send.cpp \
+    serial_send_receive.cpp
 
 HEADERS  += mainwindow.h \
-    dataprocess.h
+    dataprocess.h \
+    csysfile.h \
+    csysparam.h \
+    serial_receive.h \
+    serial_send.h \
+    serial_send_receive.h
 
 FORMS    += mainwindow.ui
 
