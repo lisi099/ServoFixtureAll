@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
     QByteArrayData data[7];
-    char stringdata0[145];
+    char stringdata0[110];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -30,19 +30,17 @@ struct qt_meta_stringdata_MainWindow_t {
 static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_MainWindow = {
     {
 QT_MOC_LITERAL(0, 0, 10), // "MainWindow"
-QT_MOC_LITERAL(1, 11, 18), // "com_detect_timeout"
-QT_MOC_LITERAL(2, 30, 0), // ""
-QT_MOC_LITERAL(3, 31, 26), // "on_pushButton_open_clicked"
-QT_MOC_LITERAL(4, 58, 29), // "on_pushButton_connect_clicked"
-QT_MOC_LITERAL(5, 88, 29), // "SetUI_NormSteeringEngineParam"
-QT_MOC_LITERAL(6, 118, 26) // "on_pushButton_save_clicked"
+QT_MOC_LITERAL(1, 11, 12), // "System_Ticks"
+QT_MOC_LITERAL(2, 24, 0), // ""
+QT_MOC_LITERAL(3, 25, 14), // "Receieve_Bytes"
+QT_MOC_LITERAL(4, 40, 21), // "on_pushButton_clicked"
+QT_MOC_LITERAL(5, 62, 23), // "on_pushButton_3_clicked"
+QT_MOC_LITERAL(6, 86, 23) // "on_pushButton_2_clicked"
 
     },
-    "MainWindow\0com_detect_timeout\0\0"
-    "on_pushButton_open_clicked\0"
-    "on_pushButton_connect_clicked\0"
-    "SetUI_NormSteeringEngineParam\0"
-    "on_pushButton_save_clicked"
+    "MainWindow\0System_Ticks\0\0Receieve_Bytes\0"
+    "on_pushButton_clicked\0on_pushButton_3_clicked\0"
+    "on_pushButton_2_clicked"
 };
 #undef QT_MOC_LITERAL
 
@@ -82,11 +80,11 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         MainWindow *_t = static_cast<MainWindow *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->com_detect_timeout(); break;
-        case 1: _t->on_pushButton_open_clicked(); break;
-        case 2: _t->on_pushButton_connect_clicked(); break;
-        case 3: _t->SetUI_NormSteeringEngineParam(); break;
-        case 4: _t->on_pushButton_save_clicked(); break;
+        case 0: _t->System_Ticks(); break;
+        case 1: _t->Receieve_Bytes(); break;
+        case 2: _t->on_pushButton_clicked(); break;
+        case 3: _t->on_pushButton_3_clicked(); break;
+        case 4: _t->on_pushButton_2_clicked(); break;
         default: ;
         }
     }
