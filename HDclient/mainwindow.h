@@ -26,6 +26,8 @@ public:
 private slots:
     void receieve_bytes(void);
 
+    void receieve_bytes_update(void);
+
     void com_detect_timeout();
 
     void on_pushButton_open_clicked();
@@ -40,18 +42,18 @@ private slots:
 
     void on_pushButton_lcdupgrade_clicked();
 
+    void System_Ticks();
 public:
     CSysParam  m_SysParam;
     uint32_t CRC32Software( uint32_t *pData, uint16_t Length );
     void Update_process(void);
     uint8_t data_prepare(void);
-    void System_Ticks();
+
 
 private:
     Ui::MainWindow *ui;
     QSerialPort *serialport_;
     QStringList init_usart_list_;
-    bool serial_open_state_;
 
     QTimer  *com_detect_timer_;
     QTimer  *timer_1_;

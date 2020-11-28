@@ -27,6 +27,7 @@
 #define CMD_UPDATE      0xc5
 #define CMD_FINISH      0xc7
 #define CMD_ERASE       0xc9
+#define CMD_INFO        0xb1
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -59,7 +60,6 @@ MainWindow::MainWindow(QWidget *parent) :
                 "QPushButton:hover{background-color:blue; color: white;}"
                 "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
                 );
-    ui->pushButton_lcdupgrade->setEnabled(0);
     ui->lineEdit->setStyleSheet("QLineEdit {background-color:white; color:black;}");
     ui->lineEdit_lcdfirmware->setStyleSheet("QLineEdit {background-color:white; color:black;}");
     ui->lineEdit_pos->setStyleSheet("QLineEdit {background-color:white; color:black;}");
@@ -172,7 +172,6 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     serialport_= new QSerialPort();
-    connect(serialport_, SIGNAL(readyRead()), this, SLOT(receieve_bytes()));
 
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
@@ -185,7 +184,6 @@ MainWindow::MainWindow(QWidget *parent) :
             serial1.close();
         }
     }
-    serial_open_state_ = false;
     com_detect_timer_= new QTimer;
     com_detect_timer_->start(1000);
     connect(com_detect_timer_, SIGNAL(timeout()), this, SLOT(com_detect_timeout()));
@@ -195,6 +193,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer_1_, SIGNAL(timeout()), this, SLOT( System_Ticks() ));//处理数据回调函数
     timer_1_->start(1);
 
+    data_send_receive = new serial_send_receive;
+
+    ui->pushButton_connect->setText("Connect");
 }
 
 MainWindow::~MainWindow()
@@ -204,7 +205,7 @@ MainWindow::~MainWindow()
 void MainWindow::com_detect_timeout()
 {
     QStringList usart_list;
-    if(!serial_open_state_){
+    if(!serialport_->isOpen()){
         foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
         {
             QSerialPort serial1;
@@ -231,6 +232,12 @@ void MainWindow::com_detect_timeout()
 void MainWindow::receieve_bytes(void)
 {
     QByteArray temp = serialport_->readAll();
+}
+
+void MainWindow::receieve_bytes_update(void)
+{
+  QByteArray temp = serialport_->readAll();
+  requestData.append(temp);
 }
 
 void MainWindow::on_pushButton_open_clicked()
@@ -281,11 +288,11 @@ void MainWindow::on_pushButton_connect_clicked()
 {
     if(ui->pushButton_connect->text() == "Connect"){
         ui->pushButton_connect->setText("Disconnect");
-        serial_open_state_ = true;
+        connect(serialport_, SIGNAL(readyRead()), this, SLOT(receieve_bytes()));
     }
     else{
         ui->pushButton_connect->setText("Connect");
-        serial_open_state_ = false;
+        disconnect(serialport_, SIGNAL(readyRead()), this, SLOT(receieve_bytes()));
     }
 }
 
@@ -442,42 +449,55 @@ void MainWindow::on_pushButton_lcdfirmware_clicked()
                 break;
             }
             ui->lineEdit_lcdfirmware->setText(filename);
-            ui->pushButton_lcdupgrade->setEnabled(1);
         }
     }
 }
 
 void MainWindow::on_pushButton_lcdupgrade_clicked()
 {
+    if(ui->lineEdit_lcdfirmware->text().isEmpty()){
+        QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Please load firmware");
+        return;
+    }
     QSerialPort *my_serialport = serialport_;
-    my_serialport->clear();
     if (my_serialport->isOpen())
     {
-        my_serialport->close();
-    }
-    disconnect(serialport_, SIGNAL(readyRead()), this, SLOT(receieve_bytes()));
 
-    my_serialport->setPortName(ui->comboBox_com->currentText());
-    my_serialport->setBaudRate(115200);
-    my_serialport->setDataBits(QSerialPort::Data8);
-    my_serialport->setParity(QSerialPort::NoParity);
-    my_serialport->setStopBits(QSerialPort::OneStop);
-    my_serialport->setFlowControl(QSerialPort::NoFlowControl);
-    if(my_serialport->open(QIODevice::ReadWrite))
-    {
-        data_send_receive = new serial_send_receive;
-        connect(my_serialport,SIGNAL(readyRead()),this,SLOT(Receieve_Bytes()));
         system_state = UPDATE_REQUEST;
         crc32_length = 0;
         system_package = 0;
         adress = 0;
         update_send_receieve_finish = 1;
         requestData.clear();
+        disconnect(serialport_, SIGNAL(readyRead()), this, SLOT(receieve_bytes()));
+        connect(my_serialport,SIGNAL(readyRead()),this,SLOT(receieve_bytes_update()));
     }
-    else
-    {
-        QMessageBox::critical(this, QString::fromLocal8Bit("Error"), my_serialport->errorString());
-        return;
+    else{
+        if(ui->comboBox_com->currentIndex() <0){
+            QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Please check connection");
+            return;
+        }
+        my_serialport->setPortName(ui->comboBox_com->currentText());
+        my_serialport->setBaudRate(115200);
+        my_serialport->setDataBits(QSerialPort::Data8);
+        my_serialport->setParity(QSerialPort::NoParity);
+        my_serialport->setStopBits(QSerialPort::OneStop);
+        my_serialport->setFlowControl(QSerialPort::NoFlowControl);
+        if(my_serialport->open(QIODevice::ReadWrite))
+        {
+            system_state = UPDATE_REQUEST;
+            crc32_length = 0;
+            system_package = 0;
+            adress = 0;
+            update_send_receieve_finish = 1;
+            requestData.clear();
+            connect(my_serialport,SIGNAL(readyRead()),this,SLOT(receieve_bytes_update()));
+        }
+        else
+        {
+            QMessageBox::critical(this, QString::fromLocal8Bit("Error"), my_serialport->errorString());
+            return;
+        }
     }
 }
 
@@ -502,6 +522,8 @@ void MainWindow::System_Ticks()
                 {
                     ticks_info = system_tick;
                     uint8_t *version = data_send_receive->serial_receive_data->get_package_data();
+                    qDebug() << version;
+                    system_state = UPDATE_TRAGER;
                     break;
                 }
             }
@@ -571,25 +593,25 @@ void MainWindow::Update_process(void)
                     if (my_serialport->isOpen())
                     {
                         my_serialport->close();
-                        ui->textEdit->append(QString::fromLocal8Bit("连接失败！串口")+my_serialport->portName()+QString::fromLocal8Bit("已关闭"));
+                        ui->textEdit->append(("Connect servo fail! ")+my_serialport->portName());
                     }
-                    ui->pushButton->setEnabled(0);
                     break;
                 }
                 case RECEIEVE_FINISH:
                 {
                     qDebug("[]--request!");
-                    ui->textEdit->append(QString::fromLocal8Bit("连接成功！串口")+my_serialport->portName()+QString::fromLocal8Bit("已打开"));
+                    ui->textEdit->append(("Connect success!")+my_serialport->portName());
                     system_state = UPDATE_REQUEST_FINISH;
-                    ui->pushButton->setEnabled(1);
-                    ui->pushButton_2->setText(QString::fromLocal8Bit("断开"));
+                     ui->textEdit->append(("Begain Upgrade!")+my_serialport->portName());
+//                    ui->pushButton->setEnabled(1);
+//                    ui->pushButton_2->setText(QString::fromLocal8Bit("断开"));
                     break;
                 }
                 default:
                 {
                   if(system_tick %1000 ==0)
                   {
-                    ui->textEdit->append(QString::fromLocal8Bit("连接中......"));
+                    ui->textEdit->append(QString::fromLocal8Bit("Connect..."));
                   }
                 }
             }
@@ -608,7 +630,7 @@ void MainWindow::Update_process(void)
                 {
                     system_state = 0;
                     qDebug("Request_timeout!");
-                    ui->pushButton->setEnabled(0);
+//                    ui->pushButton->setEnabled(0);
                     break;
                 }
                 case RECEIEVE_FINISH:
@@ -628,7 +650,7 @@ void MainWindow::Update_process(void)
                 {
                     system_state = 0;
                     qDebug("Request_timeout!");
-                    ui->pushButton->setEnabled(0);
+//                    ui->pushButton->setEnabled(0);
                     break;
                 }
                 case RECEIEVE_FINISH:
@@ -692,7 +714,7 @@ void MainWindow::Update_process(void)
                 {
                     system_state = 0;
                     qDebug("Request_timeout!");
-                    ui->pushButton->setEnabled(0);
+//                    ui->pushButton->setEnabled(0);
                     break;
                 }
                 case RECEIEVE_FINISH:
@@ -712,10 +734,10 @@ void MainWindow::Update_process(void)
             if (my_serialport->isOpen())
             {
                 my_serialport->close();
-                ui->textEdit->append(QString::fromLocal8Bit("升级完成！串口")+my_serialport->portName()+QString::fromLocal8Bit("已关闭"));
+                ui->textEdit->append(QString::fromLocal8Bit("Upgrade finish！ ")+my_serialport->portName()+(" Close"));
             }
-            ui->pushButton_2->setText(QString::fromLocal8Bit("连接"));
-            ui->pushButton->setEnabled(0);
+//            ui->pushButton_2->setText(QString::fromLocal8Bit("连接"));
+//            ui->pushButton->setEnabled(0);
             break;
         }
     }
