@@ -172,7 +172,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     serialport_= new QSerialPort();
-
+    connect(serialport_,SIGNAL(readyRead()),this,SLOT(receieve_bytes_update()));
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
         QSerialPort serial1;
@@ -229,15 +229,12 @@ void MainWindow::com_detect_timeout()
 
 }
 
-void MainWindow::receieve_bytes(void)
-{
-    QByteArray temp = serialport_->readAll();
-}
 
 void MainWindow::receieve_bytes_update(void)
 {
   QByteArray temp = serialport_->readAll();
   requestData.append(temp);
+  qDebug() << "------" << temp.size();
 }
 
 void MainWindow::on_pushButton_open_clicked()
@@ -287,12 +284,27 @@ void MainWindow::on_pushButton_open_clicked()
 void MainWindow::on_pushButton_connect_clicked()
 {
     if(ui->pushButton_connect->text() == "Connect"){
-        ui->pushButton_connect->setText("Disconnect");
-        connect(serialport_, SIGNAL(readyRead()), this, SLOT(receieve_bytes()));
+        serialport_->setPortName(ui->comboBox_com->currentText());
+        serialport_->setBaudRate(115200);
+        serialport_->setDataBits(QSerialPort::Data8);
+        serialport_->setParity(QSerialPort::NoParity);
+        serialport_->setStopBits(QSerialPort::OneStop);
+        serialport_->setFlowControl(QSerialPort::NoFlowControl);
+        if(serialport_->open(QIODevice::ReadWrite))
+        {
+            ui->pushButton_connect->setText("Disconnect");
+            ui->textEdit->append("Connect Success");
+        }
+        else
+        {
+            QMessageBox::critical(this, QString::fromLocal8Bit("Error"), serialport_->errorString());
+            return;
+        }
     }
     else{
         ui->pushButton_connect->setText("Connect");
-        disconnect(serialport_, SIGNAL(readyRead()), this, SLOT(receieve_bytes()));
+        ui->textEdit->append("Disconnect Success");
+        serialport_->close();
     }
 }
 
@@ -459,18 +471,18 @@ void MainWindow::on_pushButton_lcdupgrade_clicked()
         QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Please load firmware");
         return;
     }
+
     QSerialPort *my_serialport = serialport_;
     if (my_serialport->isOpen())
     {
-
         system_state = UPDATE_REQUEST;
         crc32_length = 0;
         system_package = 0;
         adress = 0;
         update_send_receieve_finish = 1;
         requestData.clear();
-        disconnect(serialport_, SIGNAL(readyRead()), this, SLOT(receieve_bytes()));
-        connect(my_serialport,SIGNAL(readyRead()),this,SLOT(receieve_bytes_update()));
+        ui->pushButton_connect->setDisabled(1);
+
     }
     else{
         if(ui->comboBox_com->currentIndex() <0){
@@ -491,7 +503,7 @@ void MainWindow::on_pushButton_lcdupgrade_clicked()
             adress = 0;
             update_send_receieve_finish = 1;
             requestData.clear();
-            connect(my_serialport,SIGNAL(readyRead()),this,SLOT(receieve_bytes_update()));
+            ui->pushButton_connect->setDisabled(1);
         }
         else
         {
@@ -734,10 +746,10 @@ void MainWindow::Update_process(void)
             if (my_serialport->isOpen())
             {
                 my_serialport->close();
-                ui->textEdit->append(QString::fromLocal8Bit("Upgrade finish！ ")+my_serialport->portName()+(" Close"));
+                ui->textEdit->append(QString::fromLocal8Bit("Upgrade finish! ")+my_serialport->portName()+(" Close"));
             }
-//            ui->pushButton_2->setText(QString::fromLocal8Bit("连接"));
-//            ui->pushButton->setEnabled(0);
+            ui->pushButton_connect->setDisabled(0);
+            ui->pushButton_connect->setText("Connect");
             break;
         }
     }

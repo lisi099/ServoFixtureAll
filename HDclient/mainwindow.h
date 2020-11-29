@@ -24,7 +24,6 @@ public:
 
 
 private slots:
-    void receieve_bytes(void);
 
     void receieve_bytes_update(void);
 

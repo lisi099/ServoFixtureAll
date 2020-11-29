@@ -1062,6 +1062,9 @@ color: rgb(0, 0, 0);</string>
         <height>111</height>
        </rect>
       </property>
+      <property name="styleSheet">
+       <string notr="true">color: rgb(255, 255, 255);</string>
+      </property>
       <property name="title">
        <string>  Update</string>
       </property>
