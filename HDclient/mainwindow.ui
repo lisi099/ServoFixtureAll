@@ -27,7 +27,7 @@
      <string notr="true">background-color: rgb(29, 29, 29);</string>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -755,46 +755,6 @@ color: rgb(0, 0, 0);</string>
      <attribute name="title">
       <string>Servo Test</string>
      </attribute>
-     <widget class="QDial" name="dial">
-      <property name="geometry">
-       <rect>
-        <x>415</x>
-        <y>10</y>
-        <width>261</width>
-        <height>161</height>
-       </rect>
-      </property>
-      <property name="mouseTracking">
-       <bool>false</bool>
-      </property>
-      <property name="autoFillBackground">
-       <bool>false</bool>
-      </property>
-      <property name="minimum">
-       <number>500</number>
-      </property>
-      <property name="maximum">
-       <number>2500</number>
-      </property>
-      <property name="value">
-       <number>1520</number>
-      </property>
-      <property name="invertedAppearance">
-       <bool>false</bool>
-      </property>
-      <property name="invertedControls">
-       <bool>false</bool>
-      </property>
-      <property name="wrapping">
-       <bool>false</bool>
-      </property>
-      <property name="notchTarget">
-       <double>20.000000000000000</double>
-      </property>
-      <property name="notchesVisible">
-       <bool>true</bool>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushButton_3">
       <property name="geometry">
        <rect>
@@ -1006,20 +966,14 @@ color: rgb(0, 0, 0);</string>
        <string>1000us</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_pos">
+     <widget class="GaugeArc" name="gaugeArc">
       <property name="geometry">
        <rect>
-        <x>526</x>
-        <y>143</y>
-        <width>41</width>
-        <height>20</height>
+        <x>450</x>
+        <y>0</y>
+        <width>200</width>
+        <height>200</height>
        </rect>
-      </property>
-      <property name="text">
-       <string>1024</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </widget>
@@ -1258,6 +1212,13 @@ p, li { white-space: pre-wrap; }
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>GaugeArc</class>
+   <extends>QWidget</extends>
+   <header>gaugearc.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

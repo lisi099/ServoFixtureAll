@@ -40,7 +40,8 @@ HEADERS  += mainwindow.h \
     csysparam.h \
     serial_receive.h \
     serial_send.h \
-    serial_send_receive.h
+    serial_send_receive.h \
+    gaugearc.h
 
 FORMS    += mainwindow.ui
 
@@ -48,3 +49,10 @@ DISTFILES +=
 
 RESOURCES += \
     pic.qrc
+
+CONFIG(debug, debug|release){
+LIBS += -L$$PWD/sdk/ -lqucd
+} else {
+LIBS += -L$$PWD/sdk/ -lquc
+}
+

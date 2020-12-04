@@ -35,6 +35,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setFixedSize(708, 425);
+    QColor color(255, 255, 255);
+    ui->gaugeArc->setRange(500, 2500);
+    ui->gaugeArc->setArcColor(color);
+    ui->gaugeArc->setScaleColor(color);
+    ui->gaugeArc->setTextColor(QColor(0, 255, 0));
+    ui->gaugeArc->setScaleNumColor(color);
+    ui->gaugeArc->setScaleMajor(5);
     ui->pushButton_open->setStyleSheet(
                 "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
                 "QPushButton:hover{background-color:blue; color: white;}"
@@ -62,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 );
     ui->lineEdit->setStyleSheet("QLineEdit {background-color:white; color:black;}");
     ui->lineEdit_lcdfirmware->setStyleSheet("QLineEdit {background-color:white; color:black;}");
-    ui->lineEdit_pos->setStyleSheet("QLineEdit {background-color:white; color:black;}");
+//    ui->lineEdit_pos->setStyleSheet("QLineEdit {background-color:white; color:black;}");
     ui->textEdit->setStyleSheet(
                 "QTextEdit {background-color:rgba(29, 29, 29, 100%); color:white; border-width: 2px;  border-color: white;}"
                 );
