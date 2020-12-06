@@ -39,32 +39,49 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->gaugeArc->setRange(500, 2500);
     ui->gaugeArc->setArcColor(color);
     ui->gaugeArc->setScaleColor(color);
-    ui->gaugeArc->setTextColor(QColor(0, 255, 0));
+    ui->gaugeArc->setTextColor(QColor(218, 37, 29));
     ui->gaugeArc->setScaleNumColor(color);
     ui->gaugeArc->setScaleMajor(5);
+    ui->gaugeArc->setPointerColor(QColor(218, 37, 29));
     ui->pushButton_open->setStyleSheet(
                 "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
-                "QPushButton:hover{background-color:blue; color: white;}"
+                "QPushButton:hover{background-color:rgb(128,138, 138); color: white;}"
                 "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
                 );
     ui->pushButton_save->setStyleSheet(
                 "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
-                "QPushButton:hover{background-color:blue; color: white;}"
+                "QPushButton:hover{background-color:rgb(128,138, 138); color: white;}"
                 "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
                 );
+    ui->pushButton_writeData->setStyleSheet(
+                "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
+                "QPushButton:hover{background-color:rgb(128,138, 138); color: white;}"
+                "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
+                );
+    ui->pushButton_readData->setStyleSheet(
+                "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
+                "QPushButton:hover{background-color:rgb(128,138, 138); color: white;}"
+                "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
+                );
+    ui->pushButton_Default->setStyleSheet(
+                "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
+                "QPushButton:hover{background-color:rgb(128,138, 138); color: white;}"
+                "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
+                );
+
     ui->pushButton_connect->setStyleSheet(
-                "QPushButton{background-color:red; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
-                "QPushButton:hover{background-color:blue; color: white;}"
+                "QPushButton{background-color:rgb(218, 37, 29); color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
+                "QPushButton:hover{background-color:rgb(128,138, 138); color: white;}"
                 "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
                 );
     ui->pushButton_lcdfirmware->setStyleSheet(
                 "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
-                "QPushButton:hover{background-color:blue; color: white;}"
+                "QPushButton:hover{background-color:rgb(128,138, 138); color: white;}"
                 "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
                 );
     ui->pushButton_lcdupgrade->setStyleSheet(
                 "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
-                "QPushButton:hover{background-color:blue; color: white;}"
+                "QPushButton:hover{background-color:rgb(128,138, 138); color: white;}"
                 "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
                 );
     ui->lineEdit->setStyleSheet("QLineEdit {background-color:white; color:black;}");
@@ -177,6 +194,28 @@ MainWindow::MainWindow(QWidget *parent) :
     for(int j=0; j<2; j++){
         pItemModel->item(j)->setBackground(QColor(255,255,255));
     }
+
+    QSpinBox *spinbox_ptr[8];
+    spinbox_ptr[0] = ui->spinBox_1;
+    spinbox_ptr[1] = ui->spinBox_2;
+    spinbox_ptr[2] = ui->spinBox_3;
+    spinbox_ptr[3] = ui->spinBox_4;
+    spinbox_ptr[4] = ui->spinBox_5;
+    spinbox_ptr[5] = ui->spinBox_6;
+    spinbox_ptr[6] = ui->spinBox_7;
+    for(int i=0; i<7; i++){
+        spinbox_ptr[i]->setStyleSheet(
+                        "QSpinBox {background-color:black; color: white;}"
+                        "QSpinBox:QAbstractItemView {background-color: white; color: white}"
+                    );
+    }
+    ui->comboBox_s1->setVisible(false);
+    ui->comboBox_s2->setVisible(false);
+    ui->comboBox_s3->setVisible(false);
+    ui->comboBox_s4->setVisible(false);
+    ui->comboBox_s5->setVisible(false);
+    ui->comboBox_s6->setVisible(false);
+    ui->comboBox_s7->setVisible(false);
 
     serialport_= new QSerialPort();
     connect(serialport_,SIGNAL(readyRead()),this,SLOT(receieve_bytes_update()));

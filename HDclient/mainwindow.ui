@@ -27,7 +27,7 @@
      <string notr="true">background-color: rgb(29, 29, 29);</string>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -135,8 +135,8 @@
      <widget class="QComboBox" name="comboBox_s1">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>15</y>
+        <x>150</x>
+        <y>10</y>
         <width>69</width>
         <height>22</height>
        </rect>
@@ -204,8 +204,8 @@ color: rgb(0, 0, 0);</string>
      <widget class="QComboBox" name="comboBox_s2">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>55</y>
+        <x>150</x>
+        <y>50</y>
         <width>69</width>
         <height>22</height>
        </rect>
@@ -269,8 +269,8 @@ color: rgb(0, 0, 0);</string>
      <widget class="QComboBox" name="comboBox_s3">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>95</y>
+        <x>150</x>
+        <y>90</y>
         <width>69</width>
         <height>22</height>
        </rect>
@@ -334,8 +334,8 @@ color: rgb(0, 0, 0);</string>
      <widget class="QComboBox" name="comboBox_s4">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>135</y>
+        <x>150</x>
+        <y>140</y>
         <width>69</width>
         <height>22</height>
        </rect>
@@ -447,7 +447,7 @@ color: rgb(0, 0, 0);</string>
      <widget class="QComboBox" name="comboBox_s6">
       <property name="geometry">
        <rect>
-        <x>570</x>
+        <x>491</x>
         <y>54</y>
         <width>69</width>
         <height>22</height>
@@ -512,7 +512,7 @@ color: rgb(0, 0, 0);</string>
      <widget class="QComboBox" name="comboBox_s5">
       <property name="geometry">
        <rect>
-        <x>570</x>
+        <x>491</x>
         <y>14</y>
         <width>69</width>
         <height>22</height>
@@ -578,9 +578,9 @@ color: rgb(0, 0, 0);</string>
       <property name="geometry">
        <rect>
         <x>570</x>
-        <y>134</y>
+        <y>133</y>
         <width>69</width>
-        <height>22</height>
+        <height>26</height>
        </rect>
       </property>
       <item>
@@ -597,7 +597,7 @@ color: rgb(0, 0, 0);</string>
      <widget class="QComboBox" name="comboBox_s7">
       <property name="geometry">
        <rect>
-        <x>570</x>
+        <x>491</x>
         <y>94</y>
         <width>69</width>
         <height>22</height>
@@ -748,6 +748,97 @@ color: rgb(0, 0, 0);</string>
       </property>
       <property name="text">
        <string>Soft Start</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_1">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>12</y>
+        <width>71</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_2">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>52</y>
+        <width>71</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_3">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>92</y>
+        <width>71</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_4">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>132</y>
+        <width>71</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_6">
+      <property name="geometry">
+       <rect>
+        <x>569</x>
+        <y>52</y>
+        <width>71</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_5">
+      <property name="geometry">
+       <rect>
+        <x>569</x>
+        <y>12</y>
+        <width>71</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBox_7">
+      <property name="geometry">
+       <rect>
+        <x>569</x>
+        <y>92</y>
+        <width>71</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>10</number>
       </property>
      </widget>
     </widget>
@@ -966,7 +1057,7 @@ color: rgb(0, 0, 0);</string>
        <string>1000us</string>
       </property>
      </widget>
-     <widget class="GaugeArc" name="gaugeArc">
+     <widget class="GaugeArc" name="gaugeArc" native="true">
       <property name="geometry">
        <rect>
         <x>450</x>
@@ -1198,6 +1289,45 @@ p, li { white-space: pre-wrap; }
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_Default">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>370</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Default</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_readData">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>370</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string> Read Data</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_writeData">
+    <property name="geometry">
+     <rect>
+      <x>96</x>
+      <y>370</y>
+      <width>81</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>  Write Data</string>
+    </property>
+   </widget>
    <zorder>frame</zorder>
    <zorder>tabWidget</zorder>
    <zorder>pushButton_save</zorder>
@@ -1208,6 +1338,9 @@ p, li { white-space: pre-wrap; }
    <zorder>label</zorder>
    <zorder>lineEdit</zorder>
    <zorder>comboBox_com</zorder>
+   <zorder>pushButton_Default</zorder>
+   <zorder>pushButton_readData</zorder>
+   <zorder>pushButton_writeData</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
