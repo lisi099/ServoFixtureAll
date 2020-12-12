@@ -859,7 +859,7 @@ color: rgb(0, 0, 0);</string>
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
-       <string/>
+       <string>Broad Band</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_4">
@@ -885,7 +885,7 @@ color: rgb(0, 0, 0);</string>
        </rect>
       </property>
       <property name="text">
-       <string/>
+       <string>Narrow Band</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_6">
@@ -899,32 +899,6 @@ color: rgb(0, 0, 0);</string>
       </property>
       <property name="text">
        <string/>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_2">
-      <property name="geometry">
-       <rect>
-        <x>22</x>
-        <y>18</y>
-        <width>81</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Broad Band</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_3">
-      <property name="geometry">
-       <rect>
-        <x>22</x>
-        <y>100</y>
-        <width>81</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Narrow Band</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_4">
@@ -1057,7 +1031,7 @@ color: rgb(0, 0, 0);</string>
        <string>1000us</string>
       </property>
      </widget>
-     <widget class="GaugeArc" name="gaugeArc" native="true">
+     <widget class="GaugeArc" name="gaugeArc">
       <property name="geometry">
        <rect>
         <x>450</x>
@@ -1328,6 +1302,41 @@ p, li { white-space: pre-wrap; }
      <string>  Write Data</string>
     </property>
    </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>282</x>
+      <y>347</y>
+      <width>161</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>PGC-D12</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>D1206G2</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>WH-20KG</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>WH-30KG</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>WH-40KG</string>
+     </property>
+    </item>
+   </widget>
    <zorder>frame</zorder>
    <zorder>tabWidget</zorder>
    <zorder>pushButton_save</zorder>
@@ -1341,6 +1350,7 @@ p, li { white-space: pre-wrap; }
    <zorder>pushButton_Default</zorder>
    <zorder>pushButton_readData</zorder>
    <zorder>pushButton_writeData</zorder>
+   <zorder>listWidget</zorder>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
  </widget>

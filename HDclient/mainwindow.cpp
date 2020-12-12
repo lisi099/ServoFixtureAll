@@ -3,6 +3,9 @@
 #include "QStandardItemModel"
 #include "QMessageBox"
 #include "QFileDialog"
+#include <windows.h>
+#include "servo_protocol.h"
+#include "QListView"
 
 #define ANSWER_TIME_OUT 1000
 
@@ -21,7 +24,6 @@
 
 #define UPDATE_REQUEST_FINISH      10
 
-
 #define CMD_REQUEST     0xc1
 #define CMD_OPENLOCK    0xc3
 #define CMD_UPDATE      0xc5
@@ -29,12 +31,30 @@
 #define CMD_ERASE       0xc9
 #define CMD_INFO        0xb1
 
+const struct Servo_Data_Stru_ factory_para[] =
+{
+//{2100,1500,900,3100,2048,996,2,0,0,1,1,1,4021,1,14,0,0,1500,10,1,1,10,1080,100,20,1020,900,1350,1500,1500,0,50,6,3,8,8,20,1,1,1,1,1,1}, //04021=V1.1 PGC-D12-00.bat"
+{2100,1500,900,3100,2048,996,2,0,0,1,1,1,4021,1,19,0,0,1500,10,1,1,10,1080,100,20,100,900,1350,1500,1500,0,50,6,3,8,8,20,1,1,1,1,1,1}, //04021=V1.1 PGC-D12-00new.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,10100,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //10100=V1.2 D1206G2-00.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,10200,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1050,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //10200=V1.2 WH20KG-00.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,10300,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1050,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //10300=V1.2 WH30KG-00.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,10400,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //10400=V1.2 WH40KG-00.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,10500,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //10500=V1.2 PGC-Drift-00.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,10600,1,14,0,0,1500,10,1,1,10,960,50,20,5,800,1200,1500,1500,0,20,8,1,35,4,20,1,50,1,1,1,1}, //10600=V1.2 PGC-D15-00.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,10700,1,14,0,0,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,8,1,35,4,20,1,50,1,1,1,1}, //10700=V1.2 PGC-R12S-00.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,10800,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //10800=V1.2 PGC-A20-00.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,10900,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //10900=V1.2 PGC-A30-00.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,11000,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //11000=V1.2 PGC-A40-00.bat"
+{2100,1500,900,3100,2048,996,3,0,0,1,1,1,11100,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //11100=V1.2 PGC-A50-00.bat"
+};
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    operate_states_(IDLE)
 {
     ui->setupUi(this);
-    this->setFixedSize(708, 425);
+    this->setFixedSize(708, 450);
     QColor color(255, 255, 255);
     ui->gaugeArc->setRange(500, 2500);
     ui->gaugeArc->setArcColor(color);
@@ -130,6 +150,8 @@ MainWindow::MainWindow(QWidget *parent) :
     for(int i=0; i<8; i++){
         prt[i]->setStyleSheet(
                         "QPushButton {background-color:black; color:white;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
+                        "QPushButton:hover{background-color:rgb(128,138, 138); color: white;}"
+                        "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
                         );
     }
 
@@ -142,8 +164,8 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     QLabel *label_prt[8];
-    label_prt[0] = ui->label_2;
-    label_prt[1] = ui->label_3;
+    label_prt[0] = ui->label_4;
+    label_prt[1] = ui->label_4;
     label_prt[2] = ui->label_4;
     label_prt[3] = ui->label_5;
     for(int i=0; i<4; i++){
@@ -242,6 +264,29 @@ MainWindow::MainWindow(QWidget *parent) :
     data_send_receive = new serial_send_receive;
 
     ui->pushButton_connect->setText("Connect");
+    servoProtocl_ = new servo_protocol(serialport_);
+//    ui->pushButton_3->setStyleSheet(
+//                "QPushButton{background-color:rgb(218, 37, 29); color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
+//                "QPushButton:hover{background-color:rgb(128,138, 138); color: white;}"
+//                "QPushButton:pressed{background-color:rgb(85, 170, 255); border-style: inset; }"
+//                );
+
+    const char *servo_version[] = {"PGC-D12", "D1206G2", "WH-20KG", "WH-30KG", "WH-40KG",
+                             "PGC-DRF", "PGC-D15", "PGC-R12", "PGC-A20",
+                             "PGC-A30", "PGC-A40", "PGC-A50"
+                            };
+    ui->listWidget->clear();
+    for(int i=0; i<11; i++){
+        ui->listWidget->addItem(servo_version[i]);
+    }
+    ui->listWidget->setVisible(false);
+    connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem *)), this,SLOT(items_callback(QListWidgetItem *)));
+}
+
+void MainWindow::items_callback(QListWidgetItem *item)
+{
+    qDebug() << item->text();
+    ui->listWidget->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -272,50 +317,27 @@ void MainWindow::com_detect_timeout()
             }
         }
     }
-
 }
-
 
 void MainWindow::receieve_bytes_update(void)
 {
   QByteArray temp = serialport_->readAll();
   requestData.append(temp);
   qDebug() << "------" << temp.size();
+
+  if(operate_states_ == READ_SERVO_DATA){
+      if(temp.size() == 12){
+        servoProtocl_->receive_uart_data_flag_ = 1;
+        for(int i=0; i<12; i++){
+            servoProtocl_->uart_read_datas[i] = temp[i];
+        }
+      }
+  }
+
 }
 
 void MainWindow::on_pushButton_open_clicked()
 {
-//    if(ui->pushButton_open->text() == QStringLiteral("打开串口")){
-//        serialport_->setPortName(ui->comboBox_name->currentText());
-//        serialport_->setBaudRate(ui->comboBox_baut->currentText().toInt());
-//        serialport_->setDataBits(QSerialPort::Data8);
-//        serialport_->setParity(QSerialPort::NoParity);
-//        serialport_->setStopBits(QSerialPort::OneStop);
-//        serialport_->setFlowControl(QSerialPort::NoFlowControl);
-//        if(serialport_->open(QIODevice::ReadWrite)){
-//            ui->comboBox_name->setDisabled(1);
-//            ui->comboBox_baut->setDisabled(1);
-//            ui->comboBox_channel->setDisabled(1);
-//            ui->comboBox_number->setDisabled(1);
-
-//            ui->pushButton_open->setText(QStringLiteral("关闭串口"));
-//            ui->plainTextEdit->appendPlainText(QStringLiteral("串口")+serialport_->portName()+QStringLiteral("已连接"));
-//        }
-//        else{
-//            QMessageBox::critical(this, tr("Error"), serialport_->errorString());
-//        }
-//    }
-//    else{
-//        if (serialport_->isOpen()){
-//            serialport_->close();
-//            ui->plainTextEdit->appendPlainText(QStringLiteral("串口")+serialport_->portName()+QStringLiteral("已关闭"));
-//        }
-//        ui->pushButton_open->setText(QStringLiteral("打开串口"));
-//        ui->comboBox_name->setDisabled(0);
-//        ui->comboBox_baut->setDisabled(0);
-//        ui->comboBox_channel->setDisabled(0);
-//        ui->comboBox_number->setDisabled(0);
-//    }
     QString fileName = QFileDialog::getOpenFileName();
     int     iSize = sizeof(m_SysParam);
     char    *buf = new char[iSize+1];
@@ -324,7 +346,6 @@ void MainWindow::on_pushButton_open_clicked()
     else qDebug() << "error read file";
 
     SetUI_NormSteeringEngineParam();
-
 }
 
 void MainWindow::on_pushButton_connect_clicked()
@@ -863,4 +884,93 @@ uint32_t MainWindow::CRC32Software( uint32_t *pData, uint16_t Length )
     }
   }
   return nReg;
+}
+
+void MainWindow::band_send(quint16 pwm)
+{
+    ui->gaugeArc->setValue(pwm);
+    if(ui->pushButton_connect->text() != "Connect"){
+        servoProtocl_->uart_send_clear_command();
+        Sleep(SERVO_DELAY_TIME);
+        quint16 servo_unique_address_id = 16;
+        servoProtocl_->uart_send_command(servo_unique_address_id, 0x0A, 0x01, MENU_SERVO_RUN_POSITION_VALUE, pwm, MENU_SERVO_RUN_SPEED_VALUE, 266);
+        Sleep(SERVO_DELAY_TIME);
+        ui->textEdit->append("Send data Success!");
+    }
+    else{
+        ui->textEdit->append("Please connect serial port!");
+    }
+}
+
+void MainWindow::on_pushButton_p1_clicked()
+{
+    band_send(500);
+}
+
+void MainWindow::on_pushButton_p2_clicked()
+{
+    band_send(900);
+}
+
+void MainWindow::on_pushButton_p3_clicked()
+{
+    band_send(1500);
+}
+
+void MainWindow::on_pushButton_p4_clicked()
+{
+    band_send(2100);
+}
+
+void MainWindow::on_pushButton_p5_clicked()
+{
+    band_send(2500);
+}
+
+void MainWindow::on_pushButton_p6_clicked()
+{
+    band_send(500);
+}
+
+void MainWindow::on_pushButton_p7_clicked()
+{
+    band_send(750);
+}
+
+void MainWindow::on_pushButton_p8_clicked()
+{
+    band_send(1000);
+}
+
+void MainWindow::on_pushButton_readData_clicked()
+{
+    if(ui->pushButton_connect->text() == "Connect"){
+        QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Please connect!");
+        return;
+    }
+    operate_states_ = READ_SERVO_DATA;
+    if(!servoProtocl_->menu_combine_fb_work_parm()){
+        return;
+    }
+
+}
+
+void MainWindow::on_pushButton_writeData_clicked()
+{
+    servoProtocl_->menu_combine_prom_work_parm();
+    if(!servoProtocl_->menu_combine_verify_work_parm()){ //erro
+        QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Write data fail!");
+        return;
+    }
+
+}
+
+void MainWindow::on_pushButton_Default_clicked()
+{
+    if(ui->listWidget->isVisible() == true){
+        ui->listWidget->setVisible(false);
+    }
+    else{
+        ui->listWidget->setVisible(true);
+    }
 }

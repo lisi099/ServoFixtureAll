@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     csysparam.cpp \
     serial_receive.cpp \
     serial_send.cpp \
-    serial_send_receive.cpp
+    serial_send_receive.cpp \
+    servo_protocol.cpp
 
 HEADERS  += mainwindow.h \
     dataprocess.h \
@@ -41,7 +42,8 @@ HEADERS  += mainwindow.h \
     serial_receive.h \
     serial_send.h \
     serial_send_receive.h \
-    gaugearc.h
+    gaugearc.h \
+    servo_protocol.h
 
 FORMS    += mainwindow.ui
 

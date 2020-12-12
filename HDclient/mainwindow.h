@@ -7,10 +7,18 @@
 #include "csysfile.h"
 #include "csysparam.h"
 #include "serial_send_receive.h"
+#include "servo_protocol.h"
+#include "QListWidget"
 
 namespace Ui {
 class MainWindow;
 }
+
+enum{
+    IDLE = 0,
+    READ_SERVO_DATA = 1,
+
+};
 
 class MainWindow : public QMainWindow
 {
@@ -20,8 +28,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-
-
+    void band_send(quint16 pwm);
 
 private slots:
 
@@ -42,6 +49,32 @@ private slots:
     void on_pushButton_lcdupgrade_clicked();
 
     void System_Ticks();
+
+
+    void on_pushButton_p1_clicked();
+
+    void on_pushButton_p2_clicked();
+
+    void on_pushButton_p3_clicked();
+
+    void on_pushButton_p4_clicked();
+
+    void on_pushButton_p5_clicked();
+
+    void on_pushButton_p6_clicked();
+
+    void on_pushButton_p7_clicked();
+
+    void on_pushButton_p8_clicked();
+
+    void on_pushButton_readData_clicked();
+
+    void on_pushButton_writeData_clicked();
+
+    void on_pushButton_Default_clicked();
+
+    void items_callback(QListWidgetItem *item);
+
 public:
     CSysParam  m_SysParam;
     uint32_t CRC32Software( uint32_t *pData, uint16_t Length );
@@ -72,6 +105,10 @@ private:
 
     uint32_t        crc32_data[60000];
     uint16_t        crc32_length;
+
+    servo_protocol *servoProtocl_;
+
+    int16_t operate_states_;
 };
 
 #endif // MAINWINDOW_H
