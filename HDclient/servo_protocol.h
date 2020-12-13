@@ -320,7 +320,7 @@ struct Servo_Data_Stru_  //64 byte
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
-#define SERVO_DELAY_TIME 50
+#define SERVO_DELAY_TIME 500
 #define SERVO_DELAY_TIME_S 5
 
 class servo_protocol{

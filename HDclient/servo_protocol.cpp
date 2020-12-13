@@ -309,7 +309,7 @@ void servo_protocol::menu_combine_prom_work_parm(void)
     Sleep(SERVO_DELAY_TIME);
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
 }
-
+#include "QDateTime"
 uint8_t servo_protocol::menu_combine_fb_work_parm(void)
 {
     uint8_t i = 0;
@@ -317,10 +317,15 @@ uint8_t servo_protocol::menu_combine_fb_work_parm(void)
     uint8_t chech_sum;
     int16_t* buff;
     struct Servo_Data_Stru_ servo_data;
-
+//    QDateTime current_date_time = QDateTime::currentDateTime();
+//    QString current_time = current_date_time.toString("yyyyMMdd-hhmmss.zzz");
+//    qDebug("---%s",current_time);
     uart_send_clear_command();
     Sleep(SERVO_DELAY_TIME);
     uart_send_common_command();
+//    current_date_time = QDateTime::currentDateTime();
+//    current_time = current_date_time.toString("yyyyMMdd-hhmmss.zzz");
+//    qDebug("----%s",current_time);
 
     for(i = 0; i < 43; i++)
     {

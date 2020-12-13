@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->gaugeArc->setScaleColor(color);
     ui->gaugeArc->setTextColor(QColor(218, 37, 29));
     ui->gaugeArc->setScaleNumColor(color);
-    ui->gaugeArc->setScaleMajor(5);
+    ui->gaugeArc->setScaleMajor(10);
     ui->gaugeArc->setPointerColor(QColor(218, 37, 29));
     ui->pushButton_open->setStyleSheet(
                 "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
@@ -343,7 +343,9 @@ void MainWindow::on_pushButton_open_clicked()
     char    *buf = new char[iSize+1];
     bool    bhr = CSysFile::read(fileName,buf,iSize);
     if( bhr ) memcpy((char*)&m_SysParam,buf,iSize);
-    else qDebug() << "error read file";
+    else{
+        ui->textEdit->append("Error file format!");
+    }
 
     SetUI_NormSteeringEngineParam();
 }
