@@ -260,7 +260,7 @@ void USART1_IRQHandler(void)
 		if(Rcv1_Counter == 13 && Rcv1_Buffer[0] ==0x41){
 			usart1_length_13_data_receieve();
 		}
-		else if(Rcv1_Counter == 90 && Rcv1_Buffer[0] ==0x5A){
+		else if(Rcv1_Counter == 92 && Rcv1_Buffer[0] ==0x5A){
 			pc_data_state_ =1;
 		}
 		else{

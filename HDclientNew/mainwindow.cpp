@@ -678,6 +678,7 @@ void MainWindow::lcd_Ticks()
             else{
                 qDebug() << "erro process data";
             }
+            lcd_data_.clear();
         }
 
     }

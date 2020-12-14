@@ -1031,7 +1031,7 @@ color: rgb(0, 0, 0);</string>
        <string>1000us</string>
       </property>
      </widget>
-     <widget class="GaugeArc" name="gaugeArc">
+     <widget class="GaugeArc" name="gaugeArc" native="true">
       <property name="geometry">
        <rect>
         <x>450</x>

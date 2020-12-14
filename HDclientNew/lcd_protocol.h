@@ -138,28 +138,35 @@ public:
 
     bool data_process(const QByteArray &data)
     {
-        char *buff = new char(data.size());
-        for(int i=0; i<data.size(); i++){
-            buff[i] = data.at(i);
-        }
-
-        switch(buff[2]){
+        bool res =false;
+//        char *buff = new char(data.size());
+//        qDebug() <<"---psize:" << data.size();
+//        for(int i=0; i<data.size(); i++){
+//            buff[i] = data.at(i);
+//            qDebug() << buff[i];
+//        }
+        const char *buff = data.data();
+        qDebug() << QString::number((uint8_t)buff[2]);
+        switch((uint8_t)buff[2]){
             case CONNECT_CMD-1:
                 memcpy(&servo_data_, &buff[4], sizeof(servo_data_));
                 get_version(servo_data_);
-                break;
-            case DISCONNECT_CMD -1:
+                qDebug() << "CONNECT_CMD -1";
+                res= true;
                 break;
             case READ_CMD -1:
                 memcpy(&servo_data_, &buff[4], sizeof(servo_data_));
                 get_version(servo_data_);
+                res= true;
                 break;
             case WRITE_CMD -1:
+                res= true;
                 break;
             default:
                 break;
         }
-        return false;
+//        delete buff;
+        return res;
     }
 
     void get_version(Servo_Data_Stru_ &data)
