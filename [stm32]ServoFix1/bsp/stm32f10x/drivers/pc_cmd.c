@@ -17,7 +17,7 @@ volatile uint8_t pc_data_state_ =0;
 extern struct Servo_Data_Stru_ servoDataStru;
 
 extern void enter_pc_page(void);
-
+extern void exit_pc_page(void);
 
 uint16_t sum_check(uint8_t *data, uint16_t size)
 {
@@ -56,6 +56,7 @@ void response_read(void)
 		data[DATA_SIZE +4] = (uint8_t)sum;
 		data[DATA_SIZE +5] = (uint8_t)(sum >> 8);
 		usart1_send_buff(data, sizeof(data));
+	
 }
 
 void response_write(uint8_t *data_write)
@@ -93,7 +94,10 @@ void process_pc_data(void)
 	switch(buff[2]){
 		case CONNECT_CMD:
 			response_connect();
+			enter_pc_page();
 			break;
+		case DISCONNECT_CMD:
+			exit_pc_page();
 		case READ_CMD:
 			response_read();
 			break;
