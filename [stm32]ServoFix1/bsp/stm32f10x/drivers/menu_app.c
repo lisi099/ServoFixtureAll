@@ -42,6 +42,8 @@ extern struct PAGE Lcd_Upgrade_Page;
 extern struct PAGE Servo_Write_Memory_Page;
 extern struct PAGE Servo_Read_Memory_Page;
 
+extern struct PAGE Pc_Page;
+
 extern struct Servo_Data_Stru_ servoDataStru;
 struct Servo_Data_Stru_ servo_load_data;
 
@@ -88,24 +90,8 @@ struct Item Position_item[] =
 struct PAGE Position_Page = {&mainPage, Menu_Two_CallBack, Position_item, SIZE_OF_ITEM(Position_item)};
 
 //----2
-//struct Item Info_item[] =
-//{
-//    (char*)"Servo Version",			&Lcd_Version_Page,  0,  0,  1, SHOW_NULL, 0, 0,
-//    (char*)"Lcd Settings",        	&Lcd_Page,  		0, 0,   0, SHOW_NULL, 0, 0,
-//	(char*)"DATA FACTOCY SET",      			&Set_Factory_Page,  0, 0,   0, SHOW_NULL,0,0,
-//};
-//struct PAGE Info_Page = {&mainPage, Menu_Two_CallBack, Info_item, SIZE_OF_ITEM(Info_item)};
 
-//----2
-//struct Item Lcd_item[] =
-//{
-//    (char*)"Servo Bd Set",						&Servo_Bd_Set_Page,  0,  0,  1, SHOW_NUM, 0, 0,
-//    (char*)"Host Bd Set",							&Host_Bd_Set_Page,   0,  0,  1, SHOW_NUM, 0, 0,
-//    (char*)"Lcd Upgrade",							&Lcd_Upgrade_Page,  0,  0,  1, SHOW_NUM, 0, 0,
-//};
-//struct PAGE Lcd_Page = {&Info_Page, Menu_Three_CallBack, Lcd_item, SIZE_OF_ITEM(Lcd_item)};
-
-//struct PAGE Set_Factory_Page = {&Info_Page, Servo_Set_Factory_CallBack, 0, 0};
+struct PAGE Pc_Page = {0, Pc_Page_CallBack, 0, 0};
 /*******************************************************3**************************************************/
 //----3
 struct PAGE Servo_Center_Page = {&Setting_Page, Servo_Center_Page_CallBack, 0, 0};
@@ -125,26 +111,6 @@ struct Item Data_Read_item[] =
 struct PAGE Data_Read_Page = {&Setting_Page, Menu_Three_CallBack, Data_Read_item, SIZE_OF_ITEM(Data_Read_item)};
 //----3
 struct PAGE Reset_Data_Read_Page = {&Setting_Page, Reset_Data_Read_Page_CallBack, 0, 0};
-//----3
-//struct Item Servo_Bd_Set_item[] =
-//{
-//    (char*)"19200",							0,  0,  0,  1, SHOW_NUM, 0, 0,
-//    (char*)"9600",							0,  0,  0,  1, SHOW_NUM, 0, 0,
-//    (char*)"38400",							0,  0,  0,  1, SHOW_NUM, 0, 0,
-//    (char*)"115200",						0,  0,  0,  1, SHOW_NUM, 0, 0,
-//};
-//struct PAGE Servo_Bd_Set_Page = {&Lcd_Page, Servo_Bd_Set_CallBack, Servo_Bd_Set_item, SIZE_OF_ITEM(Servo_Bd_Set_item)};
-//----3
-//struct Item Host_Bd_Set_item[] =
-//{
-//    (char*)"19200",							0,  0,  0,  1, SHOW_NUM, 0, 0,
-//    (char*)"9600",							0,  0,  0,  1, SHOW_NUM, 0, 0,
-//    (char*)"38400",							0,  0,  0,  1, SHOW_NUM, 0, 0,
-//    (char*)"115200",						0,  0,  0,  1, SHOW_NUM, 0, 0,
-//};
-//struct PAGE Host_Bd_Set_Page = {&Lcd_Page, Lcd_Bd_Set_CallBack, Host_Bd_Set_item, SIZE_OF_ITEM(Host_Bd_Set_item)};
-
-//struct PAGE Lcd_Upgrade_Page = {&Lcd_Page, Lcd_Upgrade_CallBack, 0, 0};
 //----3
 struct PAGE Lcd_Version_Page = {&mainPage, Servo_Version_Page_CallBack, 0, 0};
 
@@ -251,6 +217,24 @@ uint8_t keep(uint8_t state)
             }
         }
     }
+}
+
+void Pc_Page_CallBack(u8 key)
+{
+		Lcd_Clr_Scr();
+		LCD_Write_Str(0, 0, (char*)"<Pc Mode>...");
+}
+
+void enter_pc_page(void)
+{
+	pPage = &Pc_Page;
+	Pc_Page_CallBack(0);
+}
+
+void exit_pc_page(void)
+{
+	SetMainPage(&Setting_Page);
+	ShowPage_Num(pPage, 0);
 }
 //-------------------------------------------------------------------
 void Menu_One_CallBack(u8 key)

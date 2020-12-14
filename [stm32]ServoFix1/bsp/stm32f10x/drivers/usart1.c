@@ -21,8 +21,8 @@
 #define COM_PORT_PIN_RX         GPIO_Pin_10
 #define COM_BAUDRATE            115200
 
-#define         TXD1_BUFFSIZE           36
-#define         RCV1_BUFFSIZE           36
+#define         TXD1_BUFFSIZE           128
+#define         RCV1_BUFFSIZE           128
 uint8_t  Txd1_Buffer[TXD1_BUFFSIZE];
 uint8_t  Rcv1_Buffer[RCV1_BUFFSIZE];
 volatile uint32_t Rcv1_Counter;
@@ -225,6 +225,7 @@ void DMA1_Channel4_IRQHandler(void)
   return     :
 *************************************************************/
 extern struct rt_messagequeue usart1_r_mq;
+extern volatile uint8_t pc_data_state_;
 
 void USART1_IRQHandler(void)
 {
@@ -258,6 +259,9 @@ void USART1_IRQHandler(void)
         Rcv1_Flag = 0;
 		if(Rcv1_Counter == 13 && Rcv1_Buffer[0] ==0x41){
 			usart1_length_13_data_receieve();
+		}
+		else if(Rcv1_Counter == 90 && Rcv1_Buffer[0] ==0x5A){
+			pc_data_state_ =1;
 		}
 		else{
 			for(i = 0; i < Rcv1_Counter; i++)

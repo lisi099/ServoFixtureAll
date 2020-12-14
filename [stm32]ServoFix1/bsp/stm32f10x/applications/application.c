@@ -195,13 +195,13 @@ static void menu_process_thread(void* parameter)
         rt_thread_delay(RT_TICK_PER_SECOND / 50);
     }
 }
-
+#include "pc_cmd.h"
 //-----------------------USB与舵机通讯线程----------------------
 static void usb_usart_thread(void* parameter)
 {
-    uint8_t data;
-    uint8_t data_send[12];
-    uint8_t size;
+//    uint8_t data;
+//    uint8_t data_send[12];
+//    uint8_t size;
 
     usart1_fifo_rx_init();
     usart1_init(115200);
@@ -211,78 +211,7 @@ static void usb_usart_thread(void* parameter)
     while(1)
     {
         usart1_length_13_data_process();
-        //
-        size = 0;
-
-        while(1)
-        {
-            if(rt_mq_recv(&usart1_r_mq, &data, 1, RT_WAITING_NO) == RT_EOK)
-            {
-                data_send[size] = data;
-                size++;
-
-                if(size == 12)
-                {
-                    break;
-                }
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        if(size > 0)
-        {
-            while(1)
-            {
-                if(Txd2_Flag == 0)
-                {
-                    break;
-                }
-
-                rt_thread_delay(1);
-            }
-
-            usart2_send_buff(data_send, size);
-        }
-
-        //
-        size = 0;
-
-        while(1)
-        {
-            if(rt_mq_recv(&usart2_r_mq, &data, 1, RT_WAITING_NO) == RT_EOK)
-            {
-                data_send[size] = data;
-                size++;
-
-                if(size == 12)
-                {
-                    break;
-                }
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        if(size > 0)
-        {
-            while(1)
-            {
-                if(usart1_get_tx_flag() == 0)
-                {
-                    break;
-                }
-
-                rt_thread_delay(1);
-            }
-
-            usart1_send_buff(data_send, size);
-        }
-
+				process_pc_data();
         rt_thread_delay(1);
     }
 }

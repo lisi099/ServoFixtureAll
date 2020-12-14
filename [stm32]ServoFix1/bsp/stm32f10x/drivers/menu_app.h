@@ -42,4 +42,6 @@ void Lcd_Bd_Set_CallBack(u8 key);
 
 void Copy_Data_To_Show(void);
 void Copy_Data_To_Stru(void);
+
+void Pc_Page_CallBack(u8 key);
 #endif

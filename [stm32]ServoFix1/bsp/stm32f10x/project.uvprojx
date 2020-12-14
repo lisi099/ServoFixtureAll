@@ -695,6 +695,16 @@
               <FileType>5</FileType>
               <FilePath>.\drivers\usart3.h</FilePath>
             </File>
+            <File>
+              <FileName>pc_cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\pc_cmd.c</FilePath>
+            </File>
+            <File>
+              <FileName>pc_cmd.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\pc_cmd.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
