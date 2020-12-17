@@ -8,7 +8,7 @@
 #include "stm32f10x.h"
 
 void process_pc_data(void);
-
+void process_test_data(void);
 
 
 #endif

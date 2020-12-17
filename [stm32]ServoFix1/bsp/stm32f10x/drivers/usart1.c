@@ -226,6 +226,7 @@ void DMA1_Channel4_IRQHandler(void)
 *************************************************************/
 extern struct rt_messagequeue usart1_r_mq;
 extern volatile uint8_t pc_data_state_;
+extern volatile uint8_t test_data_state_;
 
 void USART1_IRQHandler(void)
 {
@@ -262,6 +263,9 @@ void USART1_IRQHandler(void)
 		}
 		else if(Rcv1_Counter == 92 && Rcv1_Buffer[0] ==0x5A){
 			pc_data_state_ =1;
+		}
+		else if(Rcv1_Counter == 8 && Rcv1_Buffer[0] ==0x5A){
+			test_data_state_ = 1;
 		}
 		else{
 			for(i = 0; i < Rcv1_Counter; i++)

@@ -51,7 +51,7 @@ const struct Servo_Data_Stru_ factory_para[] =
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    operate_states_(IDLE),ticks_(0),cmd_ticks_(0)
+    operate_states_(IDLE),ticks_(0),cmd_ticks_(0),time_out_set_(100)
 {
     ui->setupUi(this);
     this->setFixedSize(708, 450);
@@ -155,13 +155,13 @@ MainWindow::MainWindow(QWidget *parent) :
                         );
     }
 
-    prt[0] = ui->pushButton_i1;
-    prt[1] = ui->pushButton_i2;
-    for(int i=0; i<2; i++){
-        prt[i]->setStyleSheet(
-                        "QPushButton {background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
-                        );
-    }
+//    prt[0] = ui->pushButton_i1;
+//    prt[1] = ui->pushButton_i2;
+//    for(int i=0; i<2; i++){
+//        prt[i]->setStyleSheet(
+//                        "QPushButton {background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
+//                        );
+//    }
 
     QLabel *label_prt[8];
     label_prt[0] = ui->label_4;
@@ -338,15 +338,19 @@ void MainWindow::receieve_bytes_update(void)
 void MainWindow::on_pushButton_open_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName();
-    int     iSize = sizeof(m_SysParam);
+    if(fileName.isEmpty()){
+        return;
+    }
+    int     iSize = sizeof(lcd_protocol_->servo_data_);
     char    *buf = new char[iSize+1];
     bool    bhr = CSysFile::read(fileName,buf,iSize);
-    if( bhr ) memcpy((char*)&m_SysParam,buf,iSize);
+    if (bhr){
+        memcpy((char*)&lcd_protocol_->servo_data_,buf,iSize);
+        ui->textEdit->append("Open file success!");
+    }
     else{
         ui->textEdit->append("Error file format!");
     }
-
-    SetUI_NormSteeringEngineParam();
 }
 
 void MainWindow::on_pushButton_connect_clicked()
@@ -374,105 +378,11 @@ void MainWindow::on_pushButton_connect_clicked()
         }
     }
     else{
+        lcd_protocol_->send_disconnect_data();
         ui->pushButton_connect->setText("Connect");
         ui->textEdit->append("Disconnect Success");
         serialport_->close();
     }
-}
-
-//设置界面-常规舵机参数
-void  MainWindow::SetUI_NormSteeringEngineParam()
-{
-    QString str;
-    short fvalue = m_SysParam.m_NormSteeringEngineParam.m_UpperPulseWidthlimit.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_14->setText(str);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_MiddlePulseWidthlimit.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_15->setText(str);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_DownPulseWidthlimit.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_16->setText(str);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_StartingVoltage.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_17->setText(str);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_DrivingFrequency.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_18->setText(str);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_DeadZone.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_19->setText(str);
-
-    //
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_Self_lockingSetting.GetValue();
-//    if(fvalue != 0)
-//        ui->checkBox->setCheckState(Qt::Checked);
-//    else
-//        ui->checkBox->setCheckState(Qt::Unchecked);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_MaximumOutput.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_33->setText(str);
-
-    short  sMaxValue = m_SysParam.m_NormSteeringEngineParam.m_MaximumOutput.GetValue();
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_Locked_rotorProtection.GetValue();
-//    if(fvalue < sMaxValue )
-//        ui->checkBox_2->setCheckState(Qt::Checked);
-//    else
-//        ui->checkBox_2->setCheckState(Qt::Unchecked);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_SignalReset.GetValue();
-//    if(fvalue != 0)
-//        ui->checkBox_3->setCheckState(Qt::Checked);
-//    else
-//        ui->checkBox_3->setCheckState(Qt::Unchecked);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_SteeringGearDirection.GetValue();
-//    if(fvalue != 0)
-//        ui->checkBox_4->setCheckState(Qt::Checked);
-//    else
-//        ui->checkBox_4->setCheckState(Qt::Unchecked);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_ProtectionTime.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_20->setText(str);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_ProtectionOutput.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_21->setText(str);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_UpperLimitOfAngle.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_30->setText(str);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_AngularMidpoint.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_31->setText(str);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_LowerAngleLimit.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_32->setText(str);
-
-    fvalue = m_SysParam.m_NormSteeringEngineParam.m_FrequencySetting.GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_35->setText(str);
-
-    fvalue =m_SysParam.m_SysLoseParam.servo_position_pid_parm_p_set[0].GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_99->setText(str);
-
-    fvalue =m_SysParam.m_SysLoseParam.servo_speed_pid_parm_p_set[0].GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_101->setText(str);
-
-    fvalue =m_SysParam.m_SysLoseParam.servo_speed_run_sample_k_set[0].GetValue();
-    str.sprintf("%d",fvalue);
-//    ui->lineEdit_100->setText(str);
 }
 
 void MainWindow::on_pushButton_save_clicked()
@@ -483,12 +393,9 @@ void MainWindow::on_pushButton_save_clicked()
         return;
     }
     if(!fileName.contains(".bat")) fileName += ".bat";
-//    GetUI_NormSteeringEngineParam();
-//    GetUI_COMMSteeringEngineParam();
-//    GetUI_AdditionalVariable();
-    int  iSize = sizeof(m_SysParam);
+    int  iSize = sizeof(lcd_protocol_->servo_data_);
     char *buf = new char[iSize+1];
-    memcpy(buf,(char*)&m_SysParam,iSize);
+    memcpy(buf,(char*)&lcd_protocol_->servo_data_,iSize);
     CSysFile::write(fileName,buf,iSize);
 }
 
@@ -618,10 +525,10 @@ void MainWindow::System_Ticks()
 void MainWindow::lcd_Ticks()
 {
     ticks_++;
-//    qDebug() <<ticks_ ;
     if(operate_states_ != IDLE){
-        if(ticks_ - cmd_ticks_ > 100){
-            qDebug() << "time out!";
+        //time out check
+        if(ticks_ - cmd_ticks_ > time_out_set_){
+            qDebug() << "Recv data time out!";
             switch (operate_states_) {
             case READ_SERVO_DATA:
                 QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Read data fail!");
@@ -645,7 +552,7 @@ void MainWindow::lcd_Ticks()
             operate_states_ = IDLE;
             return;
         }
-        //
+        //data check
         if(lcd_data_.size() == (sizeof(Servo_Data_Stru_) +6)){
             if(lcd_protocol_->data_process(lcd_data_)){
                 switch (operate_states_) {
@@ -658,16 +565,16 @@ void MainWindow::lcd_Ticks()
                     ui->spinBox_5->setValue(ui_data_.force);
                     ui->spinBox_6->setValue(ui_data_.brake);
                     ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
-                    ui->textEdit->append("read data success!");
+                    ui->textEdit->append("Read data success!");
                     break;
                 case WRITE_SERVO_DATA:
-                    ui->textEdit->append("write data success!");
+                    ui->textEdit->append("Write data success!");
                     break;
                 case DEFAULT_SERVO_DATA:
-                    ui->textEdit->append("default data success!");
+                    ui->textEdit->append("Default data success!");
                     break;
                 case CONNECT_SERVO_DATA:
-                    ui->textEdit->append("connect servo success!");
+                    ui->textEdit->append("Connect servo success!");
                     ui->pushButton_connect->setText("Disconnect");
                     break;
                 default:
@@ -968,7 +875,7 @@ void MainWindow::band_send(quint16 pwm)
         return;
     }
     ui->gaugeArc->setValue(pwm);
-    //send datas
+    lcd_protocol_->send_test_data(pwm);
 }
 
 void MainWindow::on_pushButton_p1_clicked()
@@ -1021,6 +928,7 @@ void MainWindow::on_pushButton_readData_clicked()
     lcd_protocol_->send_read_data();
     operate_states_ = READ_SERVO_DATA;
     cmd_ticks_ = ticks_;
+    time_out_set_ = 100;
     lcd_data_.clear();
 }
 
@@ -1043,6 +951,7 @@ void MainWindow::on_pushButton_writeData_clicked()
     lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);
     operate_states_ = WRITE_SERVO_DATA;
     cmd_ticks_ = ticks_;
+    time_out_set_ = 500;
     lcd_data_.clear();
 }
 
@@ -1053,8 +962,11 @@ void MainWindow::on_pushButton_Default_clicked()
         return;
     }
     int index = lcd_protocol_->find_version_index();
+    if(index == 1000){
+        QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "The servo not support!");
+    }
     memcmp(&lcd_protocol_->servo_data_, &factory_para[index], sizeof(Servo_Data_Stru_));
-
+    //ui show
     lcd_protocol_->get_data(ui_data_);
     ui->spinBox_1->setValue(ui_data_.max_power);
     ui->spinBox_2->setValue(ui_data_.boost);
@@ -1063,10 +975,10 @@ void MainWindow::on_pushButton_Default_clicked()
     ui->spinBox_5->setValue(ui_data_.force);
     ui->spinBox_6->setValue(ui_data_.brake);
     ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
-    //find version
+    //write data
     lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);
     operate_states_ = DEFAULT_SERVO_DATA;
     cmd_ticks_ = ticks_;
+    time_out_set_ = 500;
     lcd_data_.clear();
-
 }

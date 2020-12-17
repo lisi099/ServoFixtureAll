@@ -210,9 +210,10 @@ static void usb_usart_thread(void* parameter)
 
     while(1)
     {
-        usart1_length_13_data_process();
+				usart1_length_13_data_process();
 				process_pc_data();
-        rt_thread_delay(1);
+				process_test_data();
+				rt_thread_delay(1);
     }
 }
 

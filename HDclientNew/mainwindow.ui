@@ -27,7 +27,7 @@
      <string notr="true">background-color: rgb(29, 29, 29);</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -1031,7 +1031,7 @@ color: rgb(0, 0, 0);</string>
        <string>1000us</string>
       </property>
      </widget>
-     <widget class="GaugeArc" name="gaugeArc" native="true">
+     <widget class="GaugeArc" name="gaugeArc">
       <property name="geometry">
        <rect>
         <x>450</x>
@@ -1046,39 +1046,13 @@ color: rgb(0, 0, 0);</string>
      <attribute name="title">
       <string>Information</string>
      </attribute>
-     <widget class="QPushButton" name="pushButton_i1">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>10</y>
-        <width>201</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>InformationV1.0</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_i2">
-      <property name="geometry">
-       <rect>
-        <x>220</x>
-        <y>10</y>
-        <width>101</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Open</string>
-      </property>
-     </widget>
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>50</y>
-        <width>311</width>
-        <height>111</height>
+        <y>10</y>
+        <width>331</width>
+        <height>151</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -1114,7 +1088,7 @@ color: rgb(0, 0, 0);</string>
        <property name="geometry">
         <rect>
          <x>23</x>
-         <y>48</y>
+         <y>67</y>
          <width>251</width>
          <height>31</height>
         </rect>
@@ -1127,7 +1101,7 @@ color: rgb(0, 0, 0);</string>
        <property name="geometry">
         <rect>
          <x>23</x>
-         <y>84</y>
+         <y>118</y>
          <width>281</width>
          <height>23</height>
         </rect>

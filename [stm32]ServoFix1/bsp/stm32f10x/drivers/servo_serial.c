@@ -647,9 +647,9 @@ uint8_t menu_combine_verify_work_parm(void)
             *buff = (uart_read_datas[9] | (uart_read_datas[8] << 8));
         }
     }
-	servoDataStru.work_p14 = servo_data.work_p14;
-	servoDataStru.work_p15 = servo_data.work_p15;
-	servoDataStru.set_p6 = servo_data.set_p6;
+		servoDataStru.work_p14 = servo_data.work_p14;
+		servoDataStru.work_p15 = servo_data.work_p15;
+		servoDataStru.set_p6 = servo_data.set_p6;
     buff1 = (uint8_t*)(&servo_data);
     buff2 = (uint8_t*)(&servoDataStru);
 

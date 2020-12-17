@@ -45,8 +45,6 @@ private slots:
 
     void on_pushButton_connect_clicked();
 
-    void  SetUI_NormSteeringEngineParam();
-
     void on_pushButton_save_clicked();
 
     void on_pushButton_lcdfirmware_clicked();
@@ -119,6 +117,7 @@ private:
     int16_t operate_states_;
     quint64 ticks_;
     quint64 cmd_ticks_;
+    quint64 time_out_set_;
     QByteArray lcd_data_;
     ui_data ui_data_;
 };

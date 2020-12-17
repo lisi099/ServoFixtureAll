@@ -12,6 +12,7 @@
 #define DISCONNECT_CMD (CONNECT_CMD -0x2)
 #define READ_CMD  0x02
 #define WRITE_CMD  (READ_CMD +0x2)
+#define TEST_CMD  (WRITE_CMD +0x2)
 /******************************************************
 0x5A 0xA5 cmd seq datas checksum_l checksum_h
 *******************************************************/
@@ -263,6 +264,23 @@ public:
             return 1000;
         }
         return version_map_index_.find(distribtor).value();
+    }
+
+    void send_test_data(uint16_t pwm)
+    {
+        uint8_t data[8];
+        memset(data, 0, sizeof(data));
+        data[0] = 0x5A;
+        data[1] = 0xA5;
+        data[2] = TEST_CMD;
+        data[3] = 0x00;
+        data[4] = (uint8_t)pwm;
+        data[5] = (uint8_t)(pwm >> 8);
+        uint16_t sum = sum_check(data, sizeof(data) -2);
+        data[6] = (uint8_t)sum;
+        data[7] = (uint8_t)(sum >> 8);
+        char *data_send = (char *)data;
+        serial_->write(data_send, sizeof(data));
     }
 
 

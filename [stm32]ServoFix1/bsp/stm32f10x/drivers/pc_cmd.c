@@ -14,10 +14,13 @@
 #define DATA_SIZE 86
 
 volatile uint8_t pc_data_state_ =0;
+volatile uint8_t test_data_state_ =0;
+
 extern struct Servo_Data_Stru_ servoDataStru;
 
 extern void enter_pc_page(void);
 extern void exit_pc_page(void);
+extern void menu_combine_position(uint16_t pos);
 
 uint16_t sum_check(uint8_t *data, uint16_t size)
 {
@@ -109,6 +112,17 @@ void process_pc_data(void)
 	}
 	pc_data_state_ = 0;
 	
+}
+
+void process_test_data(void)
+{
+	if(test_data_state_ ==0){
+		return;
+	}
+	uint8_t *buff =usart1_get_rx_ptr();
+	uint16_t pwm = (uint16_t)(buff[4] | (buff[5]<<8));
+	menu_combine_position(pwm);
+	test_data_state_ = 0;
 }
 
 /******************* (C) COPYRIGHT 2016*****END OF FILE****/
