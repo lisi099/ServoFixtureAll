@@ -326,7 +326,7 @@ void MainWindow::receieve_bytes_update(void)
 {
   QByteArray temp = serialport_->readAll();
   qDebug() << "------" << temp.size();
-  if(temp.size() != 12){
+  if(temp.size() != 13){
     lcd_data_.append(temp);
   }
   else{
@@ -346,7 +346,16 @@ void MainWindow::on_pushButton_open_clicked()
     bool    bhr = CSysFile::read(fileName,buf,iSize);
     if (bhr){
         memcpy((char*)&lcd_protocol_->servo_data_,buf,iSize);
+        lcd_protocol_->get_data(ui_data_);
+        ui->spinBox_1->setValue(ui_data_.max_power);
+        ui->spinBox_2->setValue(ui_data_.boost);
+        ui->spinBox_3->setValue(ui_data_.dead_band);
+        ui->spinBox_4->setValue(ui_data_.tension);
+        ui->spinBox_5->setValue(ui_data_.force);
+        ui->spinBox_6->setValue(ui_data_.brake);
+        ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
         ui->textEdit->append("Open file success!");
+
     }
     else{
         ui->textEdit->append("Error file format!");
@@ -367,6 +376,7 @@ void MainWindow::on_pushButton_connect_clicked()
             lcd_protocol_->send_connect_data();
             operate_states_ = CONNECT_SERVO_DATA;
             cmd_ticks_ = ticks_;
+            time_out_set_ = 100;
             lcd_data_.clear();
             qDebug() << cmd_ticks_;
 
@@ -378,10 +388,11 @@ void MainWindow::on_pushButton_connect_clicked()
         }
     }
     else{
+        operate_states_ = DISCONECT_SERVO_DATA;
+        cmd_ticks_ = ticks_;
+        time_out_set_ = 100;
+        lcd_data_.clear();
         lcd_protocol_->send_disconnect_data();
-        ui->pushButton_connect->setText("Connect");
-        ui->textEdit->append("Disconnect Success");
-        serialport_->close();
     }
 }
 
@@ -566,6 +577,8 @@ void MainWindow::lcd_Ticks()
                     ui->spinBox_6->setValue(ui_data_.brake);
                     ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
                     ui->textEdit->append("Read data success!");
+                    lcd_protocol_->get_version(lcd_protocol_->servo_data_);
+                    ui->lineEdit->setText(lcd_protocol_->version_);
                     break;
                 case WRITE_SERVO_DATA:
                     ui->textEdit->append("Write data success!");
@@ -576,6 +589,12 @@ void MainWindow::lcd_Ticks()
                 case CONNECT_SERVO_DATA:
                     ui->textEdit->append("Connect servo success!");
                     ui->pushButton_connect->setText("Disconnect");
+                    break;
+                case DISCONECT_SERVO_DATA:
+
+                    ui->pushButton_connect->setText("Connect");
+                    ui->textEdit->append("Disconnect Success");
+                    serialport_->close();
                     break;
                 default:
                     break;
@@ -951,7 +970,7 @@ void MainWindow::on_pushButton_writeData_clicked()
     lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);
     operate_states_ = WRITE_SERVO_DATA;
     cmd_ticks_ = ticks_;
-    time_out_set_ = 500;
+    time_out_set_ = 1000;
     lcd_data_.clear();
 }
 
@@ -979,6 +998,6 @@ void MainWindow::on_pushButton_Default_clicked()
     lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);
     operate_states_ = DEFAULT_SERVO_DATA;
     cmd_ticks_ = ticks_;
-    time_out_set_ = 500;
+    time_out_set_ = 1000;
     lcd_data_.clear();
 }

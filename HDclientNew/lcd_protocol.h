@@ -163,6 +163,9 @@ public:
             case WRITE_CMD -1:
                 res= true;
                 break;
+             case DISCONNECT_CMD-1:
+                res= true;
+                break;
             default:
                 break;
         }
@@ -286,12 +289,13 @@ public:
 
 private:
     QSerialPort *serial_;
-    QString version_;
+
     QMap<uint16_t, QString> version_map_;
     QMap<uint16_t, uint16_t> version_map_index_;
 
 public:
     Servo_Data_Stru_ servo_data_;
+    QString version_;
 
 };
 

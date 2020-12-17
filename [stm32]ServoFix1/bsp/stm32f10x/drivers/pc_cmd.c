@@ -46,6 +46,21 @@ void response_connect(void)
 		usart1_send_buff(data, sizeof(data));
 }
 
+void response_disconnect(void)
+{
+		uint8_t data[DATA_SIZE +6];
+		memset(data, 0, sizeof(data));
+		data[0] = 0x5A;
+		data[1] = 0xA5;
+		data[2] = DISCONNECT_CMD -1;
+		data[3] = 0x00;
+		memcpy(&data[4], &servoDataStru, DATA_SIZE);
+		uint16_t sum = sum_check(data, sizeof(data) -2);
+		data[DATA_SIZE +4] = (uint8_t)sum;
+		data[DATA_SIZE +5] = (uint8_t)(sum >> 8);
+		usart1_send_buff(data, sizeof(data));
+}
+
 void response_read(void)
 {
 		uint8_t data[DATA_SIZE +6];
@@ -100,7 +115,9 @@ void process_pc_data(void)
 			enter_pc_page();
 			break;
 		case DISCONNECT_CMD:
+			response_disconnect();
 			exit_pc_page();
+			break;
 		case READ_CMD:
 			response_read();
 			break;
