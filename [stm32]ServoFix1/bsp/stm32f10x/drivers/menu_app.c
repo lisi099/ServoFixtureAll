@@ -1024,8 +1024,8 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 
     case KEY_Ok:
 				
-//				if(get_ver_num(num) != distribtor){
-			if(0){
+				if(get_ver_num(num) != distribtor){
+//			if(0){
 					Lcd_Clr_Scr();
 					LCD_Write_Str(0, 0, (char*)"<Restoring>...");
 					keep(S_FAILED);

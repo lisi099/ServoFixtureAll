@@ -55,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setFixedSize(708, 450);
+    setWindowIcon(QIcon(":/logo.ico"));
     QColor color(255, 255, 255);
     ui->gaugeArc->setRange(500, 2500);
     ui->gaugeArc->setArcColor(color);

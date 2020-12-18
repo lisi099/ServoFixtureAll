@@ -52,6 +52,7 @@ DISTFILES +=
 
 RESOURCES += \
     pic.qrc
+RC_ICONS = logo.ico
 
 CONFIG(debug, debug|release){
 LIBS += -L$$PWD/sdk/ -lqucd
