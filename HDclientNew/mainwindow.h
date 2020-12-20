@@ -33,7 +33,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void band_send(quint16 pwm);
+    void band_send(quint16 pwm, bool brod);
 
 private slots:
 

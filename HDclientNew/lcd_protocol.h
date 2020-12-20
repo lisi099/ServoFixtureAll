@@ -29,8 +29,7 @@ struct ui_data{
     int16_t force;
     int16_t brake;
     int16_t soft_start;
-    int16_t l_num;
-    int16_t r_num;
+    int16_t center_num;
 };
 
 class lcd_protocol{
@@ -216,7 +215,7 @@ public:
 
     void set_data(const ui_data &data)
     {
-        int16_t offset = -data.l_num + data.r_num;
+        int16_t offset = data.center_num;
         servo_data_.work_p3 = 3100 + (offset) * 28;
         servo_data_.work_p4 = 2048 + (offset) * 28;
         servo_data_.work_p5 = 996 + (offset) * 28;
@@ -234,19 +233,7 @@ public:
     void get_data(ui_data &data)
     {
         int16_t center = (servo_data_.work_p3 - 3100) / 28;
-        if(center <0){
-            data.l_num = -center;
-            data.r_num = 0;
-
-        }
-        else if(center >0){
-            data.r_num = center;
-            data.l_num = 0;
-        }
-        else{
-            data.l_num = 0;
-            data.r_num = 0;
-        }
+        data.center_num =  center;
         data.version = servo_data_.work_p12;
         data.max_power = round_f((servo_data_.set_p11 - 727.7f) / 72.2f);
         data.boost = round_f((servo_data_.set_p15 - 4.3f) / 5.6f);
@@ -255,6 +242,7 @@ public:
         data.force = servo_data_.debug_p0;
         data.brake = round_f((servo_data_.debug_p2 + 3.2f) / 4.3f);
         data.soft_start = servo_data_.set_p14; //
+        qDebug() << "soft_start" <<data.soft_start;
     }
 
     uint16_t find_version_index(void)

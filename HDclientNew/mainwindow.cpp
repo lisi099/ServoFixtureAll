@@ -54,15 +54,16 @@ MainWindow::MainWindow(QWidget *parent) :
     operate_states_(IDLE),ticks_(0),cmd_ticks_(0),time_out_set_(100)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Power HD");
     this->setFixedSize(708, 450);
     setWindowIcon(QIcon(":/logo.ico"));
     QColor color(255, 255, 255);
-    ui->gaugeArc->setRange(500, 2500);
+    ui->gaugeArc->setRange(-130, 130);
     ui->gaugeArc->setArcColor(color);
     ui->gaugeArc->setScaleColor(color);
     ui->gaugeArc->setTextColor(QColor(218, 37, 29));
     ui->gaugeArc->setScaleNumColor(color);
-    ui->gaugeArc->setScaleMajor(10);
+    ui->gaugeArc->setScaleMajor(13);
     ui->gaugeArc->setPointerColor(QColor(218, 37, 29));
     ui->pushButton_open->setStyleSheet(
                 "QPushButton{background-color:white; color:black;   border-radius: 5px;  border: 2px; groove gray;border-style: outset;}"
@@ -354,7 +355,10 @@ void MainWindow::on_pushButton_open_clicked()
         ui->spinBox_4->setValue(ui_data_.tension);
         ui->spinBox_5->setValue(ui_data_.force);
         ui->spinBox_6->setValue(ui_data_.brake);
-        ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
+        ui->spinBox_7->setValue(ui_data_.center_num);
+        ui->comboBox_s8->setCurrentIndex(!ui_data_.soft_start);
+        lcd_protocol_->get_version(lcd_protocol_->servo_data_);
+        ui->lineEdit->setText(lcd_protocol_->version_);
         ui->textEdit->append("Open file success!");
 
     }
@@ -536,6 +540,8 @@ void MainWindow::System_Ticks()
 
 void MainWindow::lcd_Ticks()
 {
+    static qint64 show_ticks = 0;
+    static quint8 count = 0;
     ticks_++;
     if(operate_states_ != IDLE){
         //time out check
@@ -564,6 +570,27 @@ void MainWindow::lcd_Ticks()
             operate_states_ = IDLE;
             return;
         }
+
+        if(ticks_ - show_ticks >100){
+            show_ticks = ticks_;
+            count++;
+            QString data = "Please wait! It needs 5 seconds to write.";
+            for(int i=0; i<count; i++){
+                data.append('.');
+            }
+            switch (operate_states_) {
+            case WRITE_SERVO_DATA:
+
+                ui->textEdit->append(data);
+                break;
+            case DEFAULT_SERVO_DATA:
+                ui->textEdit->append(data);
+                break;
+            default:
+                break;
+            }
+        }
+
         //data check
         if(lcd_data_.size() == (sizeof(Servo_Data_Stru_) +6)){
             if(lcd_protocol_->data_process(lcd_data_)){
@@ -576,10 +603,11 @@ void MainWindow::lcd_Ticks()
                     ui->spinBox_4->setValue(ui_data_.tension);
                     ui->spinBox_5->setValue(ui_data_.force);
                     ui->spinBox_6->setValue(ui_data_.brake);
-                    ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
-                    ui->textEdit->append("Read data success!");
+                    ui->spinBox_7->setValue(ui_data_.center_num);
+                    ui->comboBox_s8->setCurrentIndex(!ui_data_.soft_start);
                     lcd_protocol_->get_version(lcd_protocol_->servo_data_);
                     ui->lineEdit->setText(lcd_protocol_->version_);
+                    ui->textEdit->append("Read data success!");
                     break;
                 case WRITE_SERVO_DATA:
                     ui->textEdit->append("Write data success!");
@@ -589,10 +617,20 @@ void MainWindow::lcd_Ticks()
                     break;
                 case CONNECT_SERVO_DATA:
                     ui->textEdit->append("Connect servo success!");
+                    lcd_protocol_->get_data(ui_data_);
+                    ui->spinBox_1->setValue(ui_data_.max_power);
+                    ui->spinBox_2->setValue(ui_data_.boost);
+                    ui->spinBox_3->setValue(ui_data_.dead_band);
+                    ui->spinBox_4->setValue(ui_data_.tension);
+                    ui->spinBox_5->setValue(ui_data_.force);
+                    ui->spinBox_6->setValue(ui_data_.brake);
+                    ui->spinBox_7->setValue(ui_data_.center_num);
+                    ui->comboBox_s8->setCurrentIndex(!ui_data_.soft_start);
+                    lcd_protocol_->get_version(lcd_protocol_->servo_data_);
+                    ui->lineEdit->setText(lcd_protocol_->version_);
                     ui->pushButton_connect->setText("Disconnect");
                     break;
                 case DISCONECT_SERVO_DATA:
-
                     ui->pushButton_connect->setText("Connect");
                     ui->textEdit->append("Disconnect Success");
                     serialport_->close();
@@ -608,6 +646,9 @@ void MainWindow::lcd_Ticks()
             lcd_data_.clear();
         }
 
+    }
+    else{
+        count = 0;
     }
 }
 
@@ -888,54 +929,59 @@ uint32_t MainWindow::CRC32Software( uint32_t *pData, uint16_t Length )
   return nReg;
 }
 
-void MainWindow::band_send(quint16 pwm)
+void MainWindow::band_send(quint16 pwm, bool brod)
 {
     if(ui->pushButton_connect->text() == "Connect"){
         QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Please connect!");
         return;
     }
-    ui->gaugeArc->setValue(pwm);
+    if(brod){
+        ui->gaugeArc->setValue((pwm -1500.0)/1000*90);
+    }
+    else{
+        ui->gaugeArc->setValue((pwm -750.0)/250*90);
+    }
     lcd_protocol_->send_test_data(pwm);
 }
 
 void MainWindow::on_pushButton_p1_clicked()
 {
-    band_send(500);
+    band_send(500, true);
 }
 
 void MainWindow::on_pushButton_p2_clicked()
 {
-    band_send(900);
+    band_send(900, true);
 }
 
 void MainWindow::on_pushButton_p3_clicked()
 {
-    band_send(1500);
+    band_send(1500, true);
 }
 
 void MainWindow::on_pushButton_p4_clicked()
 {
-    band_send(2100);
+    band_send(2100, true);
 }
 
 void MainWindow::on_pushButton_p5_clicked()
 {
-    band_send(2500);
+    band_send(2500, true);
 }
 
 void MainWindow::on_pushButton_p6_clicked()
 {
-    band_send(500);
+    band_send(500, false);
 }
 
 void MainWindow::on_pushButton_p7_clicked()
 {
-    band_send(750);
+    band_send(750,false);
 }
 
 void MainWindow::on_pushButton_p8_clicked()
 {
-    band_send(1000);
+    band_send(1000,false);
 }
 
 void MainWindow::on_pushButton_readData_clicked()
@@ -965,6 +1011,7 @@ void MainWindow::on_pushButton_writeData_clicked()
     ui_data_.tension = ui->spinBox_4->value();
     ui_data_.force = ui->spinBox_5->value();
     ui_data_.brake = ui->spinBox_6->value();
+    ui_data_.center_num = ui->spinBox_7->value();
     ui_data_.soft_start = ui->comboBox_s8->currentIndex();
 
     lcd_protocol_->set_data(ui_data_);
@@ -994,6 +1041,7 @@ void MainWindow::on_pushButton_Default_clicked()
     ui->spinBox_4->setValue(ui_data_.tension);
     ui->spinBox_5->setValue(ui_data_.force);
     ui->spinBox_6->setValue(ui_data_.brake);
+    ui->spinBox_7->setValue(ui_data_.center_num);
     ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
     //write data
     lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);

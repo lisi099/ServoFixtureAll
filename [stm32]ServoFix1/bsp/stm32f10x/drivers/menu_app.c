@@ -1101,7 +1101,7 @@ void Copy_Data_To_Show(void)
     Setting_item[4].data = servoDataStru.debug_p5;
     Setting_item[5].data = servoDataStru.debug_p0;
     Setting_item[6].data = round_f((servoDataStru.debug_p2 + 3.2f) / 4.3f);
-    Setting_item[7].data = servoDataStru.set_p14; //
+    Setting_item[8].data = servoDataStru.set_p14; //
 }
 
 void Copy_Data_To_Stru(void)
@@ -1117,6 +1117,6 @@ void Copy_Data_To_Stru(void)
     servoDataStru.debug_p5 = Setting_item[4].data; //servo_position_pid_parm_p_set
     servoDataStru.debug_p0 = Setting_item[5].data; //servo_speed_pid_parm_p_set
     servoDataStru.debug_p2 = round_f(Setting_item[6].data * 4.3f - 3.2f); //servo_speed_run_sample_k_set
-    servoDataStru.set_p14 = Setting_item[7].data;//servo_init_flag_set
+    servoDataStru.set_p14 = Setting_item[8].data;//servo_init_flag_set
 }
 

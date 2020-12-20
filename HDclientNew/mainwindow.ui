@@ -23,11 +23,18 @@
       <height>201</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgb(29, 29, 29);</string>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -48,6 +55,13 @@
         <height>13</height>
        </size>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -64,6 +78,13 @@
         <height>16</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Max Power</string>
       </property>
@@ -76,6 +97,13 @@
         <width>331</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
@@ -93,6 +121,13 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -108,6 +143,13 @@
         <width>331</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
@@ -125,6 +167,13 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -140,6 +189,13 @@
         <width>69</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="styleSheet">
        <string notr="true">background-color: rgb(255, 255, 255);
@@ -210,6 +266,13 @@ color: rgb(0, 0, 0);</string>
         <height>22</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <item>
        <property name="text">
         <string>0</string>
@@ -274,6 +337,13 @@ color: rgb(0, 0, 0);</string>
         <width>69</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <item>
        <property name="text">
@@ -340,6 +410,13 @@ color: rgb(0, 0, 0);</string>
         <height>22</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <item>
        <property name="text">
         <string>0</string>
@@ -405,6 +482,13 @@ color: rgb(0, 0, 0);</string>
         <height>31</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -420,6 +504,13 @@ color: rgb(0, 0, 0);</string>
         <width>331</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
@@ -437,6 +528,13 @@ color: rgb(0, 0, 0);</string>
         <height>31</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -452,6 +550,13 @@ color: rgb(0, 0, 0);</string>
         <width>69</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <item>
        <property name="text">
@@ -518,6 +623,13 @@ color: rgb(0, 0, 0);</string>
         <height>22</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <item>
        <property name="text">
         <string>0</string>
@@ -583,6 +695,13 @@ color: rgb(0, 0, 0);</string>
         <height>26</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <item>
        <property name="text">
         <string>ON</string>
@@ -602,6 +721,13 @@ color: rgb(0, 0, 0);</string>
         <width>69</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <item>
        <property name="text">
@@ -668,6 +794,13 @@ color: rgb(0, 0, 0);</string>
         <height>16</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Boost</string>
       </property>
@@ -680,6 +813,13 @@ color: rgb(0, 0, 0);</string>
         <width>81</width>
         <height>16</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string> Dead Band</string>
@@ -694,6 +834,13 @@ color: rgb(0, 0, 0);</string>
         <height>16</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Tension</string>
       </property>
@@ -706,6 +853,13 @@ color: rgb(0, 0, 0);</string>
         <width>81</width>
         <height>16</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>Force</string>
@@ -720,6 +874,13 @@ color: rgb(0, 0, 0);</string>
         <height>16</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Brake</string>
       </property>
@@ -732,6 +893,13 @@ color: rgb(0, 0, 0);</string>
         <width>81</width>
         <height>16</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>Center</string>
@@ -746,6 +914,13 @@ color: rgb(0, 0, 0);</string>
         <height>16</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Soft Start</string>
       </property>
@@ -758,6 +933,13 @@ color: rgb(0, 0, 0);</string>
         <width>71</width>
         <height>26</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="maximum">
        <number>10</number>
@@ -772,6 +954,13 @@ color: rgb(0, 0, 0);</string>
         <height>26</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="maximum">
        <number>10</number>
       </property>
@@ -784,6 +973,13 @@ color: rgb(0, 0, 0);</string>
         <width>71</width>
         <height>26</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="maximum">
        <number>10</number>
@@ -798,6 +994,13 @@ color: rgb(0, 0, 0);</string>
         <height>26</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="maximum">
        <number>10</number>
       </property>
@@ -810,6 +1013,13 @@ color: rgb(0, 0, 0);</string>
         <width>71</width>
         <height>26</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="maximum">
        <number>10</number>
@@ -824,6 +1034,13 @@ color: rgb(0, 0, 0);</string>
         <height>26</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="maximum">
        <number>10</number>
       </property>
@@ -836,6 +1053,16 @@ color: rgb(0, 0, 0);</string>
         <width>71</width>
         <height>26</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="minimum">
+       <number>-10</number>
       </property>
       <property name="maximum">
        <number>10</number>
@@ -855,6 +1082,13 @@ color: rgb(0, 0, 0);</string>
         <height>31</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
       </property>
@@ -871,6 +1105,13 @@ color: rgb(0, 0, 0);</string>
         <height>31</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string/>
       </property>
@@ -883,6 +1124,13 @@ color: rgb(0, 0, 0);</string>
         <width>391</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>Narrow Band</string>
@@ -897,6 +1145,13 @@ color: rgb(0, 0, 0);</string>
         <height>31</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string/>
       </property>
@@ -909,6 +1164,13 @@ color: rgb(0, 0, 0);</string>
         <width>81</width>
         <height>16</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>PWM</string>
@@ -923,6 +1185,13 @@ color: rgb(0, 0, 0);</string>
         <height>16</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>PWM</string>
       </property>
@@ -935,6 +1204,13 @@ color: rgb(0, 0, 0);</string>
         <width>51</width>
         <height>23</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>500us</string>
@@ -949,6 +1225,13 @@ color: rgb(0, 0, 0);</string>
         <height>23</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>900us</string>
       </property>
@@ -961,6 +1244,13 @@ color: rgb(0, 0, 0);</string>
         <width>51</width>
         <height>23</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>1500us</string>
@@ -975,6 +1265,13 @@ color: rgb(0, 0, 0);</string>
         <height>23</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>2100us</string>
       </property>
@@ -987,6 +1284,13 @@ color: rgb(0, 0, 0);</string>
         <width>51</width>
         <height>23</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>2500us</string>
@@ -1001,6 +1305,13 @@ color: rgb(0, 0, 0);</string>
         <height>23</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>750us</string>
       </property>
@@ -1013,6 +1324,13 @@ color: rgb(0, 0, 0);</string>
         <width>51</width>
         <height>23</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>500us</string>
@@ -1027,6 +1345,13 @@ color: rgb(0, 0, 0);</string>
         <height>23</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>1000us</string>
       </property>
@@ -1034,10 +1359,10 @@ color: rgb(0, 0, 0);</string>
      <widget class="GaugeArc" name="gaugeArc" native="true">
       <property name="geometry">
        <rect>
-        <x>450</x>
+        <x>440</x>
         <y>0</y>
-        <width>200</width>
-        <height>200</height>
+        <width>211</width>
+        <height>191</height>
        </rect>
       </property>
      </widget>
@@ -1055,6 +1380,13 @@ color: rgb(0, 0, 0);</string>
         <height>151</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>微软雅黑</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="styleSheet">
        <string notr="true">color: rgb(255, 255, 255);</string>
       </property>
@@ -1065,10 +1397,17 @@ color: rgb(0, 0, 0);</string>
        <property name="geometry">
         <rect>
          <x>23</x>
-         <y>13</y>
-         <width>91</width>
+         <y>19</y>
+         <width>111</width>
          <height>31</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="text">
         <string>Load firmware</string>
@@ -1077,11 +1416,18 @@ color: rgb(0, 0, 0);</string>
       <widget class="QLineEdit" name="lineEdit_lcdfirmware">
        <property name="geometry">
         <rect>
-         <x>115</x>
-         <y>14</y>
-         <width>161</width>
+         <x>135</x>
+         <y>20</y>
+         <width>181</width>
          <height>31</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
       </widget>
       <widget class="QPushButton" name="pushButton_lcdupgrade">
@@ -1089,9 +1435,16 @@ color: rgb(0, 0, 0);</string>
         <rect>
          <x>23</x>
          <y>67</y>
-         <width>251</width>
+         <width>291</width>
          <height>31</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="text">
         <string> LCD Upgrade</string>
@@ -1102,9 +1455,16 @@ color: rgb(0, 0, 0);</string>
         <rect>
          <x>23</x>
          <y>118</y>
-         <width>281</width>
+         <width>291</width>
          <height>23</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>微软雅黑</family>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="value">
         <number>24</number>
@@ -1122,6 +1482,13 @@ color: rgb(0, 0, 0);</string>
       <height>421</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">background-image: url(:/img/back2.png);</string>
     </property>
@@ -1135,11 +1502,18 @@ color: rgb(0, 0, 0);</string>
    <widget class="QPushButton" name="pushButton_save">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>96</x>
       <y>110</y>
       <width>75</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>save</string>
@@ -1154,6 +1528,13 @@ color: rgb(0, 0, 0);</string>
       <height>23</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
      <string>open</string>
     </property>
@@ -1166,6 +1547,13 @@ color: rgb(0, 0, 0);</string>
       <width>81</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>  Ver.1.0</string>
@@ -1180,22 +1568,36 @@ color: rgb(0, 0, 0);</string>
       <height>71</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="html">
      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'SimSun'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'微软雅黑'; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'SimSun'; font-weight:400;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_connect">
     <property name="geometry">
      <rect>
-      <x>594</x>
+      <x>614</x>
       <y>53</y>
-      <width>71</width>
+      <width>81</width>
       <height>25</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string> Connect</string>
@@ -1210,6 +1612,13 @@ p, li { white-space: pre-wrap; }
       <height>16</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
@@ -1223,18 +1632,32 @@ p, li { white-space: pre-wrap; }
       <x>335</x>
       <y>55</y>
       <width>171</width>
-      <height>20</height>
+      <height>22</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
    </widget>
    <widget class="QComboBox" name="comboBox_com">
     <property name="geometry">
      <rect>
-      <x>511</x>
+      <x>515</x>
       <y>55</y>
-      <width>81</width>
+      <width>91</width>
       <height>22</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_Default">
@@ -1245,6 +1668,13 @@ p, li { white-space: pre-wrap; }
       <width>75</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>Default</string>
@@ -1259,8 +1689,15 @@ p, li { white-space: pre-wrap; }
       <height>23</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
-     <string> Read Data</string>
+     <string>Read Data</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_writeData">
@@ -1272,8 +1709,15 @@ p, li { white-space: pre-wrap; }
       <height>23</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
-     <string>  Write Data</string>
+     <string>Write Data</string>
     </property>
    </widget>
    <widget class="QListWidget" name="listWidget">
@@ -1284,6 +1728,13 @@ p, li { white-space: pre-wrap; }
       <width>161</width>
       <height>71</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <item>
      <property name="text">
