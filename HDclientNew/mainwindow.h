@@ -84,6 +84,7 @@ public:
     uint32_t CRC32Software( uint32_t *pData, uint16_t Length );
     void Update_process(void);
     uint8_t data_prepare(void);
+    QString text_append_string(const char *data);
 
 
 private:
@@ -120,6 +121,7 @@ private:
     quint64 time_out_set_;
     QByteArray lcd_data_;
     ui_data ui_data_;
+    QVector<QString> text_show;
 };
 
 #endif // MAINWINDOW_H

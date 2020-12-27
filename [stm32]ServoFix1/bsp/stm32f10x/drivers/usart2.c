@@ -191,6 +191,7 @@ void usart2_init_tx(uint32_t bd)
     USART_InitTypeDef USART_InitStructure;
     RCC_APB2PeriphClockCmd(COM_PORT_APB2_CLOCK, ENABLE);
     RCC_APB1PeriphClockCmd(COM_PORT_APB1_CLOCK, ENABLE );
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_TX;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -200,6 +201,10 @@ void usart2_init_tx(uint32_t bd)
     GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_RX;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     USART_DeInit(USART2);
     USART_InitStructure.USART_BaudRate = bd;
@@ -216,7 +221,8 @@ void usart2_init_tx(uint32_t bd)
     USART_DMACmd(COM_PORT, USART_DMAReq_Tx, ENABLE);
     USART_DMACmd(COM_PORT, USART_DMAReq_Rx, ENABLE);
     USART_Cmd(COM_PORT, ENABLE);
-
+	
+	GPIO_SetBits(GPIOB, GPIO_Pin_12);
 
     usart2_DMA_config();
     usart2_NVIC_config();
@@ -224,6 +230,8 @@ void usart2_init_tx(uint32_t bd)
     Rcv2_Flag = 0;
     Txd2_Flag = 0;
     usart2_mode = 0;
+	
+	
 }
 
 void usart2_init_rx(uint32_t bd)
@@ -257,7 +265,9 @@ void usart2_init_rx(uint32_t bd)
     USART_DMACmd(COM_PORT, USART_DMAReq_Tx, ENABLE);
     USART_DMACmd(COM_PORT, USART_DMAReq_Rx, ENABLE);
     USART_Cmd(COM_PORT, ENABLE);
-
+	
+	GPIO_ResetBits(GPIOB, GPIO_Pin_12);
+	
     usart2_DMA_config();
     usart2_NVIC_config();
     Rcv2_Counter = 0;
