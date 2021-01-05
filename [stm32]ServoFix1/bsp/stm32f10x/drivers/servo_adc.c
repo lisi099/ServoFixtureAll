@@ -2,21 +2,39 @@
 
 ***************************************************************/
 #include "servo_adc.h"
+#include <rtthread.h>
 
 #define  ADC1_DR_Address    ((u32)0x4001244C)
 
 volatile uint16_t  Adc_Convert_Value[2];
-
+volatile uint8_t  write_read_busy_state_ = 0;
 
 uint8_t get_servo_state(void )
 {
-    if(Adc_Convert_Value[0] >= 3500)
+    if(Adc_Convert_Value[0] >= 3600)
     {
         return 0;
     }
     else
     {
         return 1;
+    }
+}
+
+uint8_t get_servo_state_count(void )
+{
+	if(write_read_busy_state_ == 1){
+		return 2; //busy
+	}
+	rt_thread_delay(RT_TICK_PER_SECOND);
+	
+    if(Adc_Convert_Value[0] >= 3600)
+    {
+        return 0; //servo in
+    }
+    else
+    {
+		return 1;// servo out
     }
 }
 

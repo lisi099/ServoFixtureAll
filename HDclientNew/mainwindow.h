@@ -122,6 +122,7 @@ private:
     QByteArray lcd_data_;
     ui_data ui_data_;
     QVector<QString> text_show;
+    qint16 servo_version_read_;
 };
 
 #endif // MAINWINDOW_H

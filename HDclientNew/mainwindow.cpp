@@ -57,14 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setWindowTitle("Power HD");
     this->setFixedSize(708, 450);
     setWindowIcon(QIcon(":/logo.ico"));
-    QColor color(255, 255, 255);
-    ui->gaugeArc->setRange(-130, 130);
-    ui->gaugeArc->setArcColor(color);
-    ui->gaugeArc->setScaleColor(color);
-    ui->gaugeArc->setTextColor(QColor(218, 37, 29));
-    ui->gaugeArc->setScaleNumColor(color);
-    ui->gaugeArc->setScaleMajor(13);
-    ui->gaugeArc->setPointerColor(QColor(218, 37, 29));
+//    ui->gaugeCircle->setPointerStyle(GaugeCircle::PointerStyle_Indicator);
     ui->textEdit->setDisabled(1);
     ui->tabWidget->setCurrentIndex(0);
     text_show.clear();
@@ -365,6 +358,7 @@ void MainWindow::on_pushButton_open_clicked()
     if (bhr){
         memcpy((char*)&lcd_protocol_->servo_data_,buf,iSize);
         lcd_protocol_->get_data(ui_data_);
+
         ui->spinBox_1->setValue(ui_data_.max_power);
         ui->spinBox_2->setValue(ui_data_.boost);
         ui->spinBox_3->setValue(ui_data_.dead_band);
@@ -375,11 +369,10 @@ void MainWindow::on_pushButton_open_clicked()
         ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
         lcd_protocol_->get_version(lcd_protocol_->servo_data_);
         ui->lineEdit->setText(lcd_protocol_->version_);
-        ui->textEdit->setHtml(text_append_string("Open file <span style=' color:#0000ff;'>success!</span><pre>\r\n</pre>"));
-
+        ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Open file success!</span> <br/>"));
     }
     else{
-        ui->textEdit->setHtml(text_append_string("Open file <span style=' color:#ff0000;'>fail!</span><pre>\r\n</pre>"));
+        ui->textEdit->setHtml(text_append_string("<span style=' color:#ff0000;'>Open file fail!</span> <br/>"));
 
     }
 }
@@ -398,7 +391,7 @@ void MainWindow::on_pushButton_connect_clicked()
             lcd_protocol_->send_connect_data();
             operate_states_ = CONNECT_SERVO_DATA;
             cmd_ticks_ = ticks_;
-            time_out_set_ = 100;
+            time_out_set_ = 300;
             lcd_data_.clear();
             qDebug() << cmd_ticks_;
 
@@ -426,11 +419,22 @@ void MainWindow::on_pushButton_save_clicked()
         return;
     }
     if(!fileName.contains(".bat")) fileName += ".bat";
+
+    ui_data_.max_power =ui->spinBox_1->value();
+    ui_data_.boost = ui->spinBox_2->value();
+    ui_data_.dead_band = ui->spinBox_3->value();
+    ui_data_.tension = ui->spinBox_4->value();
+    ui_data_.force = ui->spinBox_5->value();
+    ui_data_.brake = ui->spinBox_6->value();
+    ui_data_.center_num = ui->spinBox_7->value();
+    ui_data_.soft_start = ui->comboBox_s8->currentIndex();
+
+    lcd_protocol_->set_data(ui_data_);
     int  iSize = sizeof(lcd_protocol_->servo_data_);
     char *buf = new char[iSize+1];
     memcpy(buf,(char*)&lcd_protocol_->servo_data_,iSize);
     CSysFile::write(fileName,buf,iSize);
-    ui->textEdit->setHtml(text_append_string("Save file <span style=' color:#0000ff;'>success!</span><pre>\r\n</pre>"));
+    ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Save file success!</span><br/>"));
 
 }
 
@@ -593,18 +597,30 @@ void MainWindow::lcd_Ticks()
         if(ticks_ - show_ticks >100){
             show_ticks = ticks_;
             count++;
-            QString data = "Please wait! It needs 5 seconds to write.";
+            QString data = "Please wait! It needs seconds to write.";
+            QString data1 = "Please wait! It needs seconds to read.";
+            QString data2 = "Please wait! It needs seconds to connect.";
             for(int i=0; i<count; i++){
                 data.append('.');
+                data1.append('.');
+                data2.append('.');
             }
             switch (operate_states_) {
             case WRITE_SERVO_DATA:
-                data.append("<pre>\r\n</pre>");
+                data.append("<br/>");
                 ui->textEdit->setHtml(text_append_string(data.toLatin1().data()).toLatin1().data());
                 break;
             case DEFAULT_SERVO_DATA:
-                data.append("<pre>\r\n</pre>");
+                data.append("<br/>");
                 ui->textEdit->setHtml(text_append_string(data.toLatin1().data()).toLatin1().data());
+                break;
+            case READ_SERVO_DATA:
+                data1.append("<br/>");
+                ui->textEdit->setHtml(text_append_string(data1.toLatin1().data()).toLatin1().data());
+                break;
+            case CONNECT_SERVO_DATA:
+                data2.append("<br/>");
+                ui->textEdit->setHtml(text_append_string(data2.toLatin1().data()).toLatin1().data());
                 break;
             default:
                 break;
@@ -627,16 +643,17 @@ void MainWindow::lcd_Ticks()
                     ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
                     lcd_protocol_->get_version(lcd_protocol_->servo_data_);
                     ui->lineEdit->setText(lcd_protocol_->version_);
-                    ui->textEdit->setHtml(text_append_string("Read servo <span style=' color:#0000ff;'>success!</span><pre>\r\n</pre>"));
+                    ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Read servo success!</span> <br/>"));
+                    servo_version_read_ = ui_data_.version;
                     break;
                 case WRITE_SERVO_DATA:
-                    ui->textEdit->setHtml(text_append_string("Write servo <span style=' color:#0000ff;'>success!</span><pre>\r\n</pre>"));
+                    ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Write servo success!</span> <br/>"));
                     break;
                 case DEFAULT_SERVO_DATA:
-                    ui->textEdit->setHtml(text_append_string("Default servo <span style=' color:#0000ff;'>success!</span><pre>\r\n</pre>"));
+                    ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Default servo  success!</span> <br/>"));
                     break;
                 case CONNECT_SERVO_DATA:
-                    ui->textEdit->setHtml(text_append_string("Connect servo <span style=' color:#0000ff;'>success!</span><pre>\r\n</pre>"));
+                    ui->textEdit->setHtml(text_append_string("<span style='color:#0080ff'>Connect servo success!</span> <br/>"));
                     lcd_protocol_->get_data(ui_data_);
                     ui->spinBox_1->setValue(ui_data_.max_power);
                     ui->spinBox_2->setValue(ui_data_.boost);
@@ -649,10 +666,11 @@ void MainWindow::lcd_Ticks()
                     lcd_protocol_->get_version(lcd_protocol_->servo_data_);
                     ui->lineEdit->setText(lcd_protocol_->version_);
                     ui->pushButton_connect->setText("Disconnect");
+                    servo_version_read_ = ui_data_.version;
                     break;
                 case DISCONECT_SERVO_DATA:
                     ui->pushButton_connect->setText("Connect");
-                    ui->textEdit->setHtml(text_append_string("Disconnect servo <span style=' color:#0000ff;'>success!</span><pre>\r\n</pre>"));
+                    ui->textEdit->setHtml(text_append_string("<span style='color:#0080ff'>Disconnect servo success!</span> <br/>"));
                     serialport_->close();
                     break;
                 default:
@@ -668,8 +686,15 @@ void MainWindow::lcd_Ticks()
 
     }
     else{
+        if(lcd_data_.size() == (sizeof(Servo_Data_Stru_) +6)){
+            QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Servo disconnect!");
+            ui->pushButton_connect->setText("Connect");
+            serialport_->close();
+            lcd_data_.clear();
+        }
         count = 0;
     }
+    lcd_data_.clear();
 }
 
 /*--------------------------------------------------
@@ -735,16 +760,16 @@ void MainWindow::Update_process(void)
                     if (my_serialport->isOpen())
                     {
                         my_serialport->close();
-                        ui->textEdit->setHtml(text_append_string("Connect servo <span style=' color:#ff0000;'>fail!</span><pre>\r\n</pre>"));
+                        ui->textEdit->setHtml(text_append_string("<span style=' color:#ff0000;'>Connect servo fail!</span><br/>"));
                     }
                     break;
                 }
                 case RECEIEVE_FINISH:
                 {
                     qDebug("[]--request!");
-                    ui->textEdit->setHtml(text_append_string("Connect servo <span style=' color:#0000ff;'>success!</span><pre>\r\n</pre>"));
+                    ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Connect servo success!</span><br/>"));
                     system_state = UPDATE_REQUEST_FINISH;
-                    ui->textEdit->setHtml(text_append_string("Begain update servo <span style=' color:#0000ff;'>success!</span><pre>\r\n</pre>"));
+                    ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Begain update servo success!</span><br/>"));
                     break;
                 }
                 default:
@@ -875,7 +900,7 @@ void MainWindow::Update_process(void)
             if (my_serialport->isOpen())
             {
                 my_serialport->close();
-                ui->textEdit->setHtml(text_append_string("Upgrade servo <span style=' color:#0000ff;'>success!</span><pre>\r\n</pre>"));
+                ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Upgrade servo success!</span><br/>"));
             }
             ui->pushButton_connect->setDisabled(0);
             ui->pushButton_connect->setText("Connect");
@@ -957,32 +982,32 @@ void MainWindow::band_send(quint16 pwm, bool brod)
     if(brod){
         switch(pwm){
         case 500:
-            ui->gaugeArc->setValue(-90);
+            ui->gaugeCircle->setValue(-90);
             break;
         case 900:
-            ui->gaugeArc->setValue(-60);
+            ui->gaugeCircle->setValue(-60);
             break;
         case 1500:
-            ui->gaugeArc->setValue(0);
+            ui->gaugeCircle->setValue(0);
             break;
         case 2100:
-            ui->gaugeArc->setValue(60);
+            ui->gaugeCircle->setValue(60);
             break;
         case 2500:
-            ui->gaugeArc->setValue(90);
+            ui->gaugeCircle->setValue(90);
             break;
         }
     }
     else{
         switch(pwm){
         case 500:
-            ui->gaugeArc->setValue(-60);
+            ui->gaugeCircle->setValue(-60);
             break;
         case 750:
-            ui->gaugeArc->setValue(0);
+            ui->gaugeCircle->setValue(0);
             break;
         case 1000:
-            ui->gaugeArc->setValue(60);
+            ui->gaugeCircle->setValue(60);
             break;
         }
     }
@@ -1039,7 +1064,7 @@ void MainWindow::on_pushButton_readData_clicked()
     lcd_protocol_->send_read_data();
     operate_states_ = READ_SERVO_DATA;
     cmd_ticks_ = ticks_;
-    time_out_set_ = 100;
+    time_out_set_ = 300;
     lcd_data_.clear();
 }
 
@@ -1049,6 +1074,13 @@ void MainWindow::on_pushButton_writeData_clicked()
         QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Please connect!");
         return;
     }
+
+    if(servo_version_read_ != ui_data_.version){
+//        QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Different kinds of servo!");
+        ui->textEdit->setHtml(text_append_string("<span style=' color:#ff0000;'>Different kinds of servo!</span><br/>"));
+        return;
+    }
+
 
     ui_data_.max_power =ui->spinBox_1->value();
     ui_data_.boost = ui->spinBox_2->value();
@@ -1073,9 +1105,16 @@ void MainWindow::on_pushButton_Default_clicked()
         QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "Please connect!");
         return;
     }
-    int index = lcd_protocol_->find_version_index();
+
+    if(servo_version_read_ != ui_data_.version){
+        ui->textEdit->setHtml(text_append_string("<span style=' color:#ff0000;'>Different kinds of servo!</span><br/>"));
+        return;
+    }
+
+    int index = lcd_protocol_->find_version_index(servo_version_read_);
     if(index == 1000){
         QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "The servo not support!");
+        return;
     }
     memcpy(&lcd_protocol_->servo_data_, &factory_para[index], sizeof(Servo_Data_Stru_));
     //ui show

@@ -9,7 +9,7 @@
 
 void process_pc_data(void);
 void process_test_data(void);
-
+void response_disconnect(void);
 
 #endif
 

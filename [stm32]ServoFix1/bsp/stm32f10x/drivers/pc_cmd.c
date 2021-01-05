@@ -5,6 +5,7 @@
 #include "usart1.h"
 #include "string.h"
 #include "servo_serial.h"
+#include <rtthread.h>
 
 #define CONNECT_CMD 0xFE
 #define DISCONNECT_CMD (CONNECT_CMD -0x2)
@@ -15,6 +16,7 @@
 
 volatile uint8_t pc_data_state_ =0;
 volatile uint8_t test_data_state_ =0;
+volatile uint8_t connect_servo_state_ =0;
 
 extern struct Servo_Data_Stru_ servoDataStru;
 
@@ -35,6 +37,7 @@ void response_connect(void)
 {
 		uint8_t data[DATA_SIZE +6];
 		memset(data, 0, sizeof(data));
+		rt_thread_delay(2000);
 		data[0] = 0x5A;
 		data[1] = 0xA5;
 		data[2] = CONNECT_CMD -1;
@@ -65,9 +68,10 @@ void response_read(void)
 {
 		uint8_t data[DATA_SIZE +6];
 		memset(data, 0, sizeof(data));
+		rt_thread_delay(2000);
 		data[0] = 0x5A;
 		data[1] = 0xA5;
-		data[2] = WRITE_CMD -1;
+		data[2] = READ_CMD -1;
 		data[3] = 0x00;
 		memcpy(&data[4], &servoDataStru, DATA_SIZE);
 		uint16_t sum = sum_check(data, sizeof(data) -2);
@@ -111,8 +115,10 @@ void process_pc_data(void)
 	uint8_t *buff =usart1_get_rx_ptr();
 	switch(buff[2]){
 		case CONNECT_CMD:
-			response_connect();
-			enter_pc_page();
+			if(connect_servo_state_){
+				response_connect();
+				enter_pc_page();
+			}
 			break;
 		case DISCONNECT_CMD:
 			response_disconnect();

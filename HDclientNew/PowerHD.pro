@@ -42,13 +42,14 @@ HEADERS  += mainwindow.h \
     serial_receive.h \
     serial_send.h \
     serial_send_receive.h \
-    gaugearc.h \
     servo_protocol.h \
-    lcd_protocol.h
+    lcd_protocol.h \
+    include/gaugecircle.h
 
 FORMS    += mainwindow.ui
 
 DISTFILES +=
+INCLUDEPATH += include
 
 RESOURCES += \
     pic.qrc

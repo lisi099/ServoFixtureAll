@@ -23,6 +23,7 @@ struct Servo_Data_Stru_ servoDataStru;
 
 uint16_t 	servo_unique_address_id_set 	= 16;
 uint16_t 	servo_unique_address_id 		= 16;
+extern volatile uint8_t  write_read_busy_state_;
 //--------------------------------------
 uint8_t data_in_flash[PAGE_SIZE] = {0};
 
@@ -345,6 +346,7 @@ void menu_combine_prom_work_parm(void)
     uint8_t i = 0;
     struct Servo_Data_Stru_ servo_data;
     memcpy(&servo_data, &servoDataStru, sizeof(servo_data));
+	write_read_busy_state_ = 1;
 
     uart_send_clear_command();
 		rt_thread_delay(SERVO_DELAY_TIME);
@@ -386,6 +388,7 @@ void menu_combine_prom_work_parm(void)
     rt_thread_delay(SERVO_DELAY_TIME);
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
 		
+	write_read_busy_state_ = 0;
 //    rt_thread_delay(SERVO_DELAY_TIME);
 //    uart_send_p_command();
 //    rt_thread_delay(SERVO_DELAY_TIME_S);
@@ -468,6 +471,7 @@ void read_config_param(uint8_t seq)
 }
 
 extern volatile uint16_t current_servo_version_;
+extern volatile uint8_t connect_servo_state_;
 uint8_t menu_combine_fb_work_parm(void)
 {
     uint8_t i = 0;
@@ -475,6 +479,7 @@ uint8_t menu_combine_fb_work_parm(void)
     uint8_t chech_sum;
     int16_t* buff;
     struct Servo_Data_Stru_ servo_data;
+	write_read_busy_state_ = 1;
 
     uart_send_clear_command();
     rt_thread_delay(SERVO_DELAY_TIME);
@@ -511,6 +516,7 @@ uint8_t menu_combine_fb_work_parm(void)
 
             if(time_count > 200) //200ms
             {
+				write_read_busy_state_ = 0;
                 return 0; //erro
             }
 
@@ -523,11 +529,13 @@ uint8_t menu_combine_fb_work_parm(void)
 
         if(chech_sum != uart_read_datas[10])
         {
+			write_read_busy_state_ = 0;
             return 0;
         }
 
         if(uart_read_datas[3] != SERVO_STATE_FB)
         {
+			write_read_busy_state_ = 0;
             return 0;
         }
 
@@ -556,7 +564,9 @@ uint8_t menu_combine_fb_work_parm(void)
     memcpy(&servoDataStru, &servo_data, sizeof(servo_data));
     Copy_Data_To_Show();
     rt_thread_delay(SERVO_DELAY_TIME_S);
-		current_servo_version_ = servoDataStru.work_p12;
+	current_servo_version_ = servoDataStru.work_p12;
+	connect_servo_state_ = 1;
+	write_read_busy_state_ = 0;
     return 1;
 }
 
@@ -570,6 +580,7 @@ uint8_t menu_combine_verify_work_parm(void)
     uint8_t time_count;
     uint8_t chech_sum;
     struct Servo_Data_Stru_ servo_data;
+	write_read_busy_state_ = 1;
 
     uart_send_clear_command();
     rt_thread_delay(SERVO_DELAY_TIME);
@@ -606,6 +617,7 @@ uint8_t menu_combine_verify_work_parm(void)
 
             if(time_count > 200) //200ms
             {
+				write_read_busy_state_ = 0;
                 return 0; //erro
             }
 
@@ -618,11 +630,13 @@ uint8_t menu_combine_verify_work_parm(void)
 
         if(chech_sum != uart_read_datas[10])
         {
+			write_read_busy_state_ = 0;
             return 0;
         }
 
         if(uart_read_datas[3] != SERVO_STATE_FB)
         {
+			write_read_busy_state_ = 0;
             return 0;
         }
 
@@ -647,9 +661,9 @@ uint8_t menu_combine_verify_work_parm(void)
             *buff = (uart_read_datas[9] | (uart_read_datas[8] << 8));
         }
     }
-		servoDataStru.work_p14 = servo_data.work_p14;
-		servoDataStru.work_p15 = servo_data.work_p15;
-		servoDataStru.set_p6 = servo_data.set_p6;
+	servoDataStru.work_p14 = servo_data.work_p14;
+	servoDataStru.work_p15 = servo_data.work_p15;
+	servoDataStru.set_p6 = servo_data.set_p6;
     buff1 = (uint8_t*)(&servo_data);
     buff2 = (uint8_t*)(&servoDataStru);
 
@@ -657,6 +671,7 @@ uint8_t menu_combine_verify_work_parm(void)
     {
         if(buff1[j] != buff2[j])
         {
+			write_read_busy_state_ = 0;
             return 0;
         }
     }
@@ -664,6 +679,7 @@ uint8_t menu_combine_verify_work_parm(void)
     rt_thread_delay(SERVO_DELAY_TIME);
     uart_send_p_command();
     rt_thread_delay(SERVO_DELAY_TIME_S);
+	write_read_busy_state_ = 0;
     return 1;
 }
 /******************************************************/

@@ -157,6 +157,7 @@ public:
             case READ_CMD -1:
                 memcpy(&servo_data_, &buff[4], sizeof(servo_data_));
                 get_version(servo_data_);
+                qDebug() << "READ_CMD -1";
                 res= true;
                 break;
             case WRITE_CMD -1:
@@ -250,6 +251,18 @@ public:
         uint8_t buf_2[2], buf[2];
         buf_2[0] = servo_data_.work_p12 / 1000 % 10;
         buf_2[1] = servo_data_.work_p12 / 100 % 10;
+        uint16_t distribtor = buf_2[0] * 10 + buf_2[1];
+        if(!version_map_index_.contains(distribtor)){
+            return 1000;
+        }
+        return version_map_index_.find(distribtor).value();
+    }
+
+    uint16_t find_version_index(int16_t version)
+    {
+        uint8_t buf_2[2], buf[2];
+        buf_2[0] = version / 1000 % 10;
+        buf_2[1] = version / 100 % 10;
         uint16_t distribtor = buf_2[0] * 10 + buf_2[1];
         if(!version_map_index_.contains(distribtor)){
             return 1000;

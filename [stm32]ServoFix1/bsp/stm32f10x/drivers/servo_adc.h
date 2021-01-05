@@ -8,5 +8,5 @@
 
 void adc_configration(void);
 uint8_t get_servo_state(void );
-
+uint8_t get_servo_state_count(void );
 #endif
