@@ -229,6 +229,28 @@ MainWindow::MainWindow(QWidget *parent) :
                         "QSpinBox:QAbstractItemView {background-color: white; color: white}"
                     );
     }
+
+//    ui->tabWidget->setStyleSheet("QTabBar::tab {background-color:rgb(29, 29, 29); color: white;}"
+//                                 "QTabWidget::pane {background-color:rgb(29, 29, 29);}"
+//                                 "QTabWidget::tab-bar {background-color:rgb(29, 29, 29);}"
+////                               "QTabBar::tab {border-color: black; border-radius: 1px; border: 2px; padding: 2px;}"
+//                                 );
+
+
+//    ui->tabWidget->setStyleSheet(
+
+//                                 );
+    ui->tabWidget->setStyleSheet(
+//                                "background-color: rgb(29, 29, 29);"
+                                "QWidget#tab_1 {background-color:rgb(29, 29, 29);}"
+                                "QWidget#tab_2 {background-color:rgb(29, 29, 29);}"
+                                "QWidget#tab_3 {background-color:rgb(29, 29, 29);}"
+                                 "QTabBar::pane {background-color:rgb(29, 29, 29);}"
+                                 "QTabBar::tab {background-color:rgb(29, 29, 29); color:white}"
+                                 "QTabBar::tab:selected {background-color:white; color:black}"
+                                 "QTabWidget::tab-bar {background-color:rgb(29, 29, 29);}"
+                                 );
+
     ui->comboBox_s1->setVisible(false);
     ui->comboBox_s2->setVisible(false);
     ui->comboBox_s3->setVisible(false);
