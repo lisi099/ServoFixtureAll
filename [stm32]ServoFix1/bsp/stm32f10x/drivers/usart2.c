@@ -313,6 +313,7 @@ void usart2_send_buff(uint8_t *pbuffer, uint32_t size)
     {
         size = TXD2_BUFFSIZE;
     }
+	GPIO_ResetBits(GPIOB, GPIO_Pin_12);
 
     memcpy(Txd2_Buffer, pbuffer, size);
     DMA_Cmd (COM_DMA_TX, DISABLE);
@@ -335,7 +336,7 @@ void DMA1_Channel7_IRQHandler(void)
         DMA_ClearFlag(DMA1_FLAG_TC7);
         DMA_Cmd (COM_DMA_TX, DISABLE);
         Txd2_Flag = 0;
-
+		GPIO_SetBits(GPIOB, GPIO_Pin_12);
 //	  USART_ClearFlag(USART2, USART_FLAG_RXNE);
 //	  DMA_Cmd (DMA1_Channel6, ENABLE);
 //	  USART_DMACmd(USART2, USART_DMAReq_Rx, ENABLE);

@@ -15,9 +15,9 @@ LifeCycleDefinitionGUID=
 RevisionNamingSchemeGUID=
 
 [PublishSettings]
-OutputFilePath2=F:\0_NewProject\00_GIT\ServoFixtureAll\[PCB]STM32¶æ»úÒº¾§¼Ð¾ß2.0\.PDF
+OutputFilePath2=F:\0_NewProject\00_GIT\ServoFixtureAll\[PCB]STM32¶æ»úÒº¾§¼Ð¾ß3.0\.PDF
 ReleaseManaged2=0
-OutputBasePath2=F:\0_NewProject\00_GIT\ServoFixtureAll\[PCB]STM32¶æ»úÒº¾§¼Ð¾ß2.0\
+OutputBasePath2=F:\0_NewProject\00_GIT\ServoFixtureAll\[PCB]STM32¶æ»úÒº¾§¼Ð¾ß3.0\
 OutputPathMedia2=
 OutputPathMediaValue2=
 OutputPathOutputer2=[Output Type]
@@ -92,7 +92,7 @@ WmvVideoCodecName4=Windows Media Video V7
 WmvQuality4=80
 
 [GeneratedFilesSettings]
-RelativeOutputPath2=F:\0_NewProject\00_GIT\ServoFixtureAll\[PCB]STM32¶æ»úÒº¾§¼Ð¾ß2.0\.PDF
+RelativeOutputPath2=F:\0_NewProject\00_GIT\ServoFixtureAll\[PCB]STM32¶æ»úÒº¾§¼Ð¾ß3.0\.PDF
 OpenOutputs2=1
 RelativeOutputPath3=
 OpenOutputs3=1
