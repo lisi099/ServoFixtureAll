@@ -75,7 +75,7 @@ void start_page(void)
 
     while(1)
     {
-        if(get_servo_state())
+        if(get_servo_state() | 1)
         {
             Lcd_Clr_Scr();
             put_chars_middle(0, "SERVO");
@@ -281,7 +281,7 @@ static void usart_sw_thread_entry(void* parameter)
         if(Txd2_Flag == 0 && usart2_mode == 0)
         {
             rt_thread_delay(2);
-            usart2_init_rx(bd_set_);
+//            usart2_init_rx(bd_set_);
         }
 
         rt_thread_delay(1);

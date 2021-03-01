@@ -278,24 +278,37 @@ static void usart_sw_thread_entry(void* parameter)
 
     while(1)
     {
-        if(Txd2_Flag == 0 && usart2_mode == 0)
-        {
-            rt_thread_delay(2);
-            usart2_init_rx(bd_set_);
-        }
+//        if(Txd2_Flag == 0 && usart2_mode == 0)
+//        {
+//            rt_thread_delay(2);
+//            usart2_init_rx(bd_set_);
+//			
+//        }
         rt_thread_delay(1);
     }
 }
 #include "tai_servo.h"
 
+
+
 static void tai_servo(void* parameter)
 {
+	usart2_init_pwm();
+	PWM_LOW;
+	for(int i=0; i<5; i++){
+		PWM_HIGH;
+		rt_thread_delay(7);
+		PWM_LOW;
+		rt_thread_delay(100);
+	}
+	
 	usart2_init_rx(115200);
-	rt_thread_delay(1000);
+	adc_configration();
+	rt_thread_delay(10);
 	while(1)
 	{
 		test_send_data();
-		rt_thread_delay(5000);
+		rt_thread_delay(3000);
 	}
 }
 
