@@ -18,15 +18,23 @@ extern volatile uint8_t  Txd2_Flag;
 extern volatile uint8_t  usart2_mode;
 extern volatile uint32_t bd_set_;
 
+<<<<<<< HEAD
 void usart2_init(uint32_t bd);
 void usart2_init_pwm(void);
 void usart2_send_buff1(uint8_t *pbuffer, uint32_t size);
 	
 //void usart2_init(uint32_t bd);
+=======
+
+>>>>>>> e3652cadf308506c800751816ae220c0d5da9f9f
 void usart2_init_tx(uint32_t bd);
 void usart2_init_rx(uint32_t bd);
 void usart2_send_buff(uint8_t *pbuffer, uint32_t size);
 
+void usart2_init_pwm(void);
+
+#define PWM_HIGH() 			GPIO_SetBits(GPIOA, GPIO_Pin_2)
+#define PWM_LOW()				GPIO_ResetBits(GPIOA, GPIO_Pin_2)
 
 
 #define PWM_HIGH	GPIO_SetBits(GPIOA, GPIO_Pin_2)

@@ -293,6 +293,7 @@ static void usart_sw_thread_entry(void* parameter)
 
 static void tai_servo(void* parameter)
 {
+<<<<<<< HEAD
 	usart2_init_pwm();
 	PWM_LOW;
 	for(int i=0; i<5; i++){
@@ -305,6 +306,21 @@ static void tai_servo(void* parameter)
 	usart2_init_rx(115200);
 	adc_configration();
 	rt_thread_delay(10);
+=======
+	
+	usart2_init_pwm();
+	PWM_LOW();
+	rt_thread_delay(100);
+	for(int i=0; i<3; i++){
+		PWM_HIGH();
+		rt_thread_delay(7);
+		PWM_LOW();
+		rt_thread_delay(10);
+	}
+	rt_thread_delay(1000);
+	usart2_init_rx(115200);
+
+>>>>>>> e3652cadf308506c800751816ae220c0d5da9f9f
 	while(1)
 	{
 		test_send_data();
