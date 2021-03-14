@@ -415,7 +415,7 @@ void MainWindow::on_pushButton_connect_clicked()
             cmd_ticks_ = ticks_;
             time_out_set_ = 300;
             lcd_data_.clear();
-            qDebug() << cmd_ticks_;
+            qDebug() <<"cmd_ticks_" << cmd_ticks_;
 
         }
         else

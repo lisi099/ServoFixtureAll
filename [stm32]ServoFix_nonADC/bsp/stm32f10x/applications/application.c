@@ -60,7 +60,8 @@ static void key_scan_thread(void* parameter)
     }
 }
 
-volatile uint8_t init_servo = 0;
+volatile uint8_t init_servo_ = 0;
+extern uint8_t connect_detect(void);
 //-----------------------≤Àµ•¥¶¿Ì-----------------------
 void start_page(void)
 {
@@ -75,7 +76,7 @@ void start_page(void)
 
     while(1)
     {
-        if(get_servo_state())
+        if(connect_detect())
         {
             Lcd_Clr_Scr();
             put_chars_middle(0, "SERVO");
@@ -107,7 +108,7 @@ void start_page(void)
             rt_thread_delay(RT_TICK_PER_SECOND * 2);
             SetMainPage(&Setting_Page);
             ShowPage_Num(pPage, 0);
-			init_servo = 1;
+			init_servo_ = 1;
             break;
         }
         else
@@ -142,7 +143,7 @@ static void menu_process_thread(void* parameter)
     adc_configration();
     lcd_init();
     start_page();
-    while(1)
+    while(1)              
     {
         tempKey = KEY_NONE;
 
@@ -225,6 +226,10 @@ static void servo_detect_thread(void* parameter)
 	rt_thread_delay(RT_TICK_PER_SECOND*5);
     while(1)
     {
+		rt_thread_delay(500);
+		if(init_servo_ ==0){
+			continue;
+		}
 		if(get_servo_state_count() == 0) //servo out
         {
 			if(connect_servo_state_ ==1){
@@ -234,7 +239,7 @@ static void servo_detect_thread(void* parameter)
 			}
 		}
 		else if(get_servo_state_count() == 1){
-			if(init_servo ==1){
+			if(init_servo_ ==1){
 				if(connect_servo_state_ == 0){
 					rt_thread_delay(RT_TICK_PER_SECOND / 2);
 					Lcd_Clr_Scr();
@@ -281,7 +286,7 @@ static void usart_sw_thread_entry(void* parameter)
         if(Txd2_Flag == 0 && usart2_mode == 0)
         {
             rt_thread_delay(2);
-//            usart2_init_rx(bd_set_);
+            usart2_init_rx(bd_set_);
         }
 
         rt_thread_delay(1);
