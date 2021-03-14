@@ -20,6 +20,7 @@ extern volatile uint32_t bd_set_;
 
 
 //void usart2_init(uint32_t bd);
+void usart2_init_pwm(void);
 void usart2_init_tx(uint32_t bd);
 void usart2_init_rx(uint32_t bd);
 void usart2_send_buff(uint8_t *pbuffer, uint32_t size);

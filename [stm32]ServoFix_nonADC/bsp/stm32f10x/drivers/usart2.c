@@ -105,6 +105,23 @@ uint32_t usart2_get_counter(void)
 //
 //	USART_HalfDuplexCmd(USART2, ENABLE);
 //}
+void usart2_init_pwm(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	USART_InitTypeDef USART_InitStructure;
+	RCC_APB2PeriphClockCmd(COM_PORT_APB2_CLOCK, ENABLE);
+	RCC_APB1PeriphClockCmd(COM_PORT_APB1_CLOCK, ENABLE );
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_TX;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_RX;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
+}
 /*************************************************************
   Function   :
   Description:

@@ -577,6 +577,51 @@ uint8_t menu_combine_fb_work_parm(void)
     return 1;
 }
 
+#define PWM_HIGH() 				GPIO_SetBits(GPIOA, GPIO_Pin_2)
+#define PWM_LOW()				GPIO_ResetBits(GPIOA, GPIO_Pin_2)
+uint8_t chech_sum_xor(const uint8_t *data, const uint8_t size)
+{
+	uint8_t sum = data[0];
+	for(int i=1; i<size; i++){
+		sum^= data[i];
+	}
+	return sum;
+}
+
+void test_send_data(void)
+{
+	uint8_t data[11];
+	data[0] = 0x22;
+	data[1] = 0x32;
+	data[2] = 0x00;
+	///addr
+	data[3] = 0x00;
+	data[4] = 0x00;
+	///data
+	data[5] = 0x00;
+	data[6] = 0x00;
+	data[7] = 0x00;
+	data[8] = 0x00;
+	///check sum
+	data[9] = chech_sum_xor(data, 9);
+	///end
+	data[10] = 0xed;
+	usart2_send_buff(data, sizeof(data));
+}
+
+void taiwan_servo_init()
+{
+	usart2_init_pwm();
+	PWM_LOW();
+	for(int i=0; i<5; i++){
+		PWM_HIGH();
+		rt_thread_delay(7);
+		PWM_LOW();
+		rt_thread_delay(10);
+	}
+	usart2_init_rx(115200);
+}
+
 
 uint8_t connect_detect(void)
 {
