@@ -7,8 +7,8 @@
 
 
 #define USART2_DR_Base  (USART2_BASE+0x04)
-#define TXD2_BUFFSIZE           36
-#define RCV2_BUFFSIZE           36
+#define TXD2_BUFFSIZE           136
+#define RCV2_BUFFSIZE           136
 
 extern uint8_t  Txd2_Buffer[TXD2_BUFFSIZE];
 extern uint8_t  Rcv2_Buffer[RCV2_BUFFSIZE];

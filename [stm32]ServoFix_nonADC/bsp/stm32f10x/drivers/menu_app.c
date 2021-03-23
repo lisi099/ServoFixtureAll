@@ -1120,3 +1120,5 @@ void Copy_Data_To_Stru(void)
     servoDataStru.set_p14 = Setting_item[8].data;//servo_init_flag_set
 }
 
+
+
