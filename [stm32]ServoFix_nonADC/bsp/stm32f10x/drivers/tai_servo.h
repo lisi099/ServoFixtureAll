@@ -42,4 +42,6 @@ void get_boost(int8_t *state);
 void set_maxpower(int8_t state);
 void get_maxpower(int8_t *state);
 
+uint8_t is_taiwan_servo(void);
+
 #endif

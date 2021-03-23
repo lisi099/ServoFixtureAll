@@ -364,6 +364,48 @@ void taiwan_servo_init(void)
 	usart2_init_rx(115200);
 }
 
+extern volatile uint8_t receive_uart_data_flag;
 
+uint8_t connect_taiwan(void)
+{
+		uint16_t time_count;
+	
+		receive_uart_data_flag = 0;
+		taiwan_send_read_data();
+		//check response data
+		while(receive_uart_data_flag == 0)
+		{
+			time_count++;
+			if(time_count > 200) //200ms
+			{
+				return 0;
+			}
+			rt_thread_delay(1); //0.001 s
+		}
+		return 1;
+}
+
+uint8_t is_taiwan_servo(void)
+{
+	uint8_t try_count = 3;
+	usart2_init_pwm();
+	PWM_LOW();
+	for(int i=0; i<5; i++){
+		PWM_HIGH();
+		rt_thread_delay(7);
+		PWM_LOW();
+		rt_thread_delay(10);
+	}
+	usart2_init_rx(115200);
+	
+	do{
+		if(connect_taiwan()){
+			return 1;
+		}
+		try_count--;
+	}while(try_count);
+	
+	return 0; //no find servo 
+}
 
 
