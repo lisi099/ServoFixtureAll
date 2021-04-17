@@ -336,5 +336,6 @@ void menu_combine_center(int16_t data);
 //#define 	CUSTOMER_OUT_SPACE		9
 #define 	USER_OUT_SPACE			0
 
+uint8_t read_servo_data_in_flash_taiwan(uint8_t seq, uint8_t * const data);
 
 

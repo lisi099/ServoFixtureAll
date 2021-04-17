@@ -60,4 +60,5 @@ void KeySelItem(u8 key);
 void SelItemOfList(u8 index, char* s);
 
 int find_version(int num);
+int is_version_taiwan(const uint8_t * data);
 #endif

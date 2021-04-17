@@ -10,11 +10,12 @@
 #include "servo_serial.h"
 #include "string.h"
 #include "factory_data.h"
+#include "tai_servo.h"
 
 #define BLINK_TIME 	10
 #define SIZE_OF_ITEM(x) (sizeof(x) / sizeof(struct Item))
 extern struct rt_messagequeue key_mq;
-
+extern volatile uint8_t is_tai_servo_;
 volatile uint16_t current_servo_version_ = 0;
 
 //--0
@@ -69,7 +70,7 @@ struct Item Setting_item[] =
     (char*)"1.Max Power",						0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"2.Boost",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"3.Dead Band",						0,  0,  14,  1, SHOW_NUM, 1, 10,
-		(char*)"4.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
+	(char*)"4.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
     (char*)"5.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"6.Brake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"7.Center",				&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
@@ -505,7 +506,9 @@ void Servo_Write_Memory_CallBack(u8 key)
     struct Servo_Data_Stru_ data;
     uint8_t buf_2[2];
     uint8_t distribtor, costormer;
-
+	uint8_t is_taiwan_distribtor;
+	
+	uint8_t data_taiwan[128];
     switch(key)
     {
     case KEY_UP:
@@ -555,16 +558,20 @@ void Servo_Write_Memory_CallBack(u8 key)
     case KEY_Ok:
         Lcd_Clr_Scr();
 		Copy_Data_To_Stru();
-	
-		data_version = servoDataStru.work_p12;
-		buf_2[0] = servoDataStru.work_p12 / 10 % 10; 
-		buf_2[1] = servoDataStru.work_p12 / 1 % 10;
-	
-		data_version -= (buf_2[0] * 10 + buf_2[1]);
-		data_version += (num +1);
-	
-        LCD_Write_Str(0, 0, (char*)"<Writting>...");
-        save_servo_data_in_flash(num + USER_OUT_SPACE, data_version);
+		if(is_tai_servo_ == 0){
+			data_version = servoDataStru.work_p12;
+			buf_2[0] = servoDataStru.work_p12 / 10 % 10; 
+			buf_2[1] = servoDataStru.work_p12 / 1 % 10;
+			data_version -= (buf_2[0] * 10 + buf_2[1]);
+			data_version += (num +1);
+			LCD_Write_Str(0, 0, (char*)"<Writting>...");
+			save_servo_data_in_flash(num + USER_OUT_SPACE, data_version);
+		}
+		else{
+			data_version = (num +1);
+			LCD_Write_Str(0, 0, (char*)"<Writting>...");
+			save_servo_data_in_flash(num + USER_OUT_SPACE, data_version);
+		}
         rt_thread_delay(RT_TICK_PER_SECOND);
 
         if(keep(S_SUCCESS) == F_RETURN)
@@ -579,42 +586,60 @@ void Servo_Write_Memory_CallBack(u8 key)
 
         return;
     }
+	read_servo_data_in_flash_(num, &data);
+	
+	read_servo_data_in_flash_taiwan(num, data_taiwan);
+	is_taiwan_distribtor = is_version_taiwan(data_taiwan);
+	if(is_taiwan_distribtor){
+		distribtor = (data_taiwan[96] -'0') * 10 + (data_taiwan[97] -'0');
+	}
+	else{
+		buf_2[0] = data.work_p12 / 1000 % 10;
+		buf_2[1] = data.work_p12 / 100 % 10;
+		distribtor = buf_2[0] * 10 + buf_2[1];
+	}
+	
+	if(find_version(distribtor) != 100)
+	{
+		buf_2[0] = data.work_p12  / 10000 % 10 + 1;
+		if(is_taiwan_distribtor){
+			sprintf(buf, "v1.%d ", data_taiwan[95] -'0' +1);
+		}
+		else{
+			sprintf(buf, "v1.%d ", buf_2[0]);
+		}
+		sprintf(&buf[5], "%s-", get_ver_char(find_version(distribtor)));
+		
+		if(is_taiwan_distribtor){
+			costormer = (data_taiwan[98] -'0') *10 + (data_taiwan[99] -'0');
+		}
+		else{
+			buf_2[0] = data.work_p12 / 10 % 10;
+			buf_2[1] = data.work_p12 / 1 % 10;
+			costormer = buf_2[0] * 10 + buf_2[1];
+		}
 
-    read_servo_data_in_flash_(num, &data);
-    buf_2[0] = data.work_p12 / 1000 % 10;
-    buf_2[1] = data.work_p12 / 100 % 10;
-    distribtor = buf_2[0] * 10 + buf_2[1];
+		if(costormer >= 21)
+		{
+			sprintf(&buf[13], "00");
+		}
+		else if(costormer >= 10)
+		{
+			sprintf(&buf[13], "%d", costormer);
+		}
+		else
+		{
+			sprintf(&buf[13], "0%d", costormer);
+		}
+	}
 
-    if(find_version(distribtor) != 100)
-    {
-        buf_2[0] = data.work_p12  / 10000 % 10 + 1;
-        sprintf(buf, "v1.%d ", buf_2[0]);
-        sprintf(&buf[5], "%s-", get_ver_char(find_version(distribtor)));
-        buf_2[0] = data.work_p12 / 10 % 10;
-        buf_2[1] = data.work_p12 / 1 % 10;
-        costormer = buf_2[0] * 10 + buf_2[1];
+	Lcd_Clr_Scr();
 
-        if(costormer >= 21)
-        {
-            sprintf(&buf[13], "00");
-        }
-        else if(costormer >= 10)
-        {
-            sprintf(&buf[13], "%d", costormer);
-        }
-        else
-        {
-            sprintf(&buf[13], "0%d", costormer);
-        }
-    }
-
-    Lcd_Clr_Scr();
-
-    if(find_version(distribtor) == 100)
-    {
-        buf[13] += (num + 1) / 10 % 10;
-        buf[14] += (num + 1) / 1 % 10;
-    }
+	if(find_version(distribtor) == 100)
+	{
+		buf[13] += (num + 1) / 10 % 10;
+		buf[14] += (num + 1) / 1 % 10;
+	}
 
     put_chars_middle(0, " Write Memory");
     LCD_Write_Str(1, 0, (char*)buf);
@@ -628,7 +653,9 @@ void Servo_Read_Memory_CallBack(u8 key)
     struct Servo_Data_Stru_ data;
     uint8_t buf_2[2];
     uint8_t distribtor, costormer;
-
+	
+	uint8_t data_taiwan[128];
+	uint8_t is_taiwan_distribtor;
     switch(key)
     {
     case KEY_UP:
@@ -689,24 +716,40 @@ void Servo_Read_Memory_CallBack(u8 key)
             SetMainPage(&Setting_Page);
             ShowPage_Num(pPage, 0);
         }
-
         return;
     }
-
-    read_servo_data_in_flash_(num, &data);
-    buf_2[0] = data.work_p12 / 1000 % 10;
-    buf_2[1] = data.work_p12 / 100 % 10;
-    distribtor = buf_2[0] * 10 + buf_2[1];
+	read_servo_data_in_flash_taiwan(num, data_taiwan);
+	read_servo_data_in_flash_(num, &data);
+	is_taiwan_distribtor = is_version_taiwan(data_taiwan);
+	if(is_taiwan_distribtor){
+		distribtor = (data_taiwan[96] -'0') * 10 + (data_taiwan[97] -'0');
+	}
+	else{
+		buf_2[0] = data.work_p12 / 1000 % 10;
+		buf_2[1] = data.work_p12 / 100 % 10;
+		distribtor = buf_2[0] * 10 + buf_2[1];
+	}
 
     if(find_version(distribtor) != 100)
     {
-        buf_2[0] = data.work_p12  / 10000 % 10 + 1;
-        sprintf(buf, "v1.%d ", buf_2[0]);
+		if(is_taiwan_distribtor){
+			sprintf(buf, "v1.%d ", data_taiwan[95] -'0' +1);
+		}
+		else{
+			buf_2[0] = data.work_p12  / 10000 % 10 + 1;
+			sprintf(buf, "v1.%d ", buf_2[0]);
+		}
         sprintf(&buf[5], "%s-", get_ver_char(find_version(distribtor)));
-        buf_2[0] = data.work_p12 / 10 % 10;
-        buf_2[1] = data.work_p12 / 1 % 10;
-        costormer = buf_2[0] * 10 + buf_2[1];
-
+		
+		if(is_taiwan_distribtor){
+			costormer = (data_taiwan[98] -'0') *10 + (data_taiwan[99] -'0');
+		}
+		else{
+			buf_2[0] = data.work_p12 / 10 % 10;
+			buf_2[1] = data.work_p12 / 1 % 10;
+			costormer = buf_2[0] * 10 + buf_2[1];
+		}
+				
         if(costormer >= 21)
         {
             sprintf(&buf[13], "00");
@@ -720,10 +763,10 @@ void Servo_Read_Memory_CallBack(u8 key)
             sprintf(&buf[13], "0%d", costormer);
         }
     }
-		else{
-				buf[13] += (num + 1) / 10 % 10;
-        buf[14] += (num + 1) / 1 % 10;
-		}
+	else{
+		buf[13] += (num + 1) / 10 % 10;
+		buf[14] += (num + 1) / 1 % 10;
+	}
 
     Lcd_Clr_Scr();
     put_chars_middle(0, " Read Memory");
@@ -841,7 +884,9 @@ void Servo_Center_Page_CallBack(u8 key)
         oper_num[13] = '1';
         oper_num[14] = '0';
     }
+	if(!is_tai_servo_){
 		menu_combine_center(-l_num + r_num);
+	}
     Lcd_Clr_Scr();
     put_chars_middle(0, "Center");
     put_chars_middle(1, oper_num);
@@ -869,23 +914,28 @@ void Broadband_Page_CallBack(u8 key)
     switch(Menu_GetSelItem())
     {
     case 0:
-        menu_combine_position(500);
+		if(!is_tai_servo_)
+			menu_combine_position(500);
         break;
 
     case 1:
-        menu_combine_position(900);
+		if(!is_tai_servo_)
+			menu_combine_position(900);
         break;
 
     case 2:
-        menu_combine_position(1500);
+		if(!is_tai_servo_)
+			menu_combine_position(1500);
         break;
 
     case 3:
-        menu_combine_position(2100);
+		if(!is_tai_servo_)
+			menu_combine_position(2100);
         break;
 
     case 4:
-        menu_combine_position(2500);
+		if(!is_tai_servo_)
+			menu_combine_position(2500);
         break;
 
     default:
@@ -915,14 +965,17 @@ void Narrowband_Page_CallBack(u8 key)
     switch(Menu_GetSelItem())
     {
     case 0:
+		if(!is_tai_servo_)
         menu_combine_position(500);
         break;
 
     case 1:
+		if(!is_tai_servo_)
         menu_combine_position(750);
         break;
 
     case 2:
+		if(!is_tai_servo_)
         menu_combine_position(1000);
         break;
 
@@ -937,11 +990,11 @@ void Reset_Data_Read_Page_CallBack(u8 key)
     static uint8_t fisrt = 0;
     int total_num  = get_total_num() - 1;
     char buf_title[17];
-		uint8_t ch_value;
-	
-		uint16_t distribtor;
-		uint8_t buf_2[2];
-		buf_2[0] = current_servo_version_ / 1000 % 10;
+	uint8_t ch_value;
+
+	uint16_t distribtor;
+	uint8_t buf_2[2];
+	buf_2[0] = current_servo_version_ / 1000 % 10;
     buf_2[1] = current_servo_version_ / 100 % 10;
     distribtor = buf_2[0] * 10 + buf_2[1];	
 	
@@ -1079,6 +1132,7 @@ int16_t round_f(float data)
 
 void Copy_Data_To_Show(void)
 {
+	if(is_tai_servo_ == 0){
 		int16_t center = (servoDataStru.work_p3 - 3100) / 28;
 		if(center <0){
 			l_num = -center; 
@@ -1093,31 +1147,84 @@ void Copy_Data_To_Show(void)
 				l_num = 0;
 				r_num = 0;
 		}
+		Setting_item[0].data = servoDataStru.work_p12; 
+		Setting_item[1].data = round_f((servoDataStru.set_p11 - 727.7f) / 72.2f);
+		Setting_item[2].data = round_f((servoDataStru.set_p15 - 4.3f) / 5.6f);
+		Setting_item[3].data = servoDataStru.work_p6;
+		Setting_item[4].data = servoDataStru.debug_p5;
+		Setting_item[5].data = servoDataStru.debug_p0;
+		Setting_item[6].data = round_f((servoDataStru.debug_p2 + 3.2f) / 4.3f);
+		Setting_item[8].data = servoDataStru.set_p14; //
+	}
+	else{
+		int8_t center;
+		get_senter(&center);
+		if(center <0){
+			l_num = -center; 
+			r_num = 0;
+		}
+		else if(center >0){
+			r_num = center; 
+			l_num = 0;
+		}
+		else{
+			l_num = 0;
+			r_num = 0;
+		}
+		int8_t get_value;
+		Setting_item[0].data = get_version();
 		
-    Setting_item[0].data = servoDataStru.work_p12;
-    Setting_item[1].data = round_f((servoDataStru.set_p11 - 727.7f) / 72.2f);
-    Setting_item[2].data = round_f((servoDataStru.set_p15 - 4.3f) / 5.6f);
-    Setting_item[3].data = servoDataStru.work_p6;
-    Setting_item[4].data = servoDataStru.debug_p5;
-    Setting_item[5].data = servoDataStru.debug_p0;
-    Setting_item[6].data = round_f((servoDataStru.debug_p2 + 3.2f) / 4.3f);
-    Setting_item[8].data = servoDataStru.set_p14; //
+		get_maxpower(&get_value);	
+		Setting_item[1].data = get_value;//1.max power
+		
+		get_boost(&get_value);	
+		Setting_item[2].data = get_value; //2.Boost
+		
+		get_deadband(&get_value);
+		Setting_item[3].data = get_value;//3.Dead Band
+		
+		get_tension(&get_value);
+		Setting_item[4].data = get_value;//4.Tension
+		
+		get_force(&get_value);
+		Setting_item[5].data = get_value;//5.Force
+		
+		get_brake(&get_value);
+		Setting_item[6].data = get_value;//6.Brake
+		
+		get_soft_start(&get_value);
+		Setting_item[8].data = get_value; //8.Soft Start
+	}
 }
-
+extern void copy_read_data(void);
 void Copy_Data_To_Stru(void)
 {
+	if(is_tai_servo_ == 0){
 		servoDataStru.work_p3 = 3100 + (-l_num + r_num) * 28;
 		servoDataStru.work_p4 = 2048 + (-l_num + r_num) * 28;
 		servoDataStru.work_p5 = 996 + (-l_num + r_num) * 28;
-	
-    servoDataStru.work_p12 = Setting_item[0].data; //version
-    servoDataStru.set_p11 = round_f(Setting_item[1].data * 72.2 + 727.7f); //servo_max_pwm_set
-    servoDataStru.set_p15 = round_f(Setting_item[2].data * 5.6f + 4.3f); //servo_work_base_voltage
-    servoDataStru.work_p6 = Setting_item[3].data; //servo_zero_zone_set
-    servoDataStru.debug_p5 = Setting_item[4].data; //servo_position_pid_parm_p_set
-    servoDataStru.debug_p0 = Setting_item[5].data; //servo_speed_pid_parm_p_set
-    servoDataStru.debug_p2 = round_f(Setting_item[6].data * 4.3f - 3.2f); //servo_speed_run_sample_k_set
-    servoDataStru.set_p14 = Setting_item[8].data;//servo_init_flag_set
+		
+		servoDataStru.work_p12 = Setting_item[0].data; //version
+		servoDataStru.set_p11 = round_f(Setting_item[1].data * 72.2 + 727.7f); //servo_max_pwm_set
+		servoDataStru.set_p15 = round_f(Setting_item[2].data * 5.6f + 4.3f); //servo_work_base_voltage
+		servoDataStru.work_p6 = Setting_item[3].data; //servo_zero_zone_set
+		servoDataStru.debug_p5 = Setting_item[4].data; //servo_position_pid_parm_p_set
+		servoDataStru.debug_p0 = Setting_item[5].data; //servo_speed_pid_parm_p_set
+		servoDataStru.debug_p2 = round_f(Setting_item[6].data * 4.3f - 3.2f); //servo_speed_run_sample_k_set
+		servoDataStru.set_p14 = Setting_item[8].data;//servo_init_flag_set
+	}
+	else{
+		copy_read_data();
+		
+		set_maxpower(Setting_item[1].data);	
+		set_boost(Setting_item[2].data);	
+		set_deadband(Setting_item[3].data);
+		set_tension(Setting_item[4].data);		
+		set_force(Setting_item[5].data);
+		set_brake(Setting_item[6].data);
+		set_senter(-l_num + r_num);
+		set_soft_start(Setting_item[8].data);
+	}
 }
 
 

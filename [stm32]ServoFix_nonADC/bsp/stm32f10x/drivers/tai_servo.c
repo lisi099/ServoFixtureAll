@@ -15,22 +15,56 @@
 #define PWM_HIGH() 				GPIO_SetBits(GPIOA, GPIO_Pin_2)
 #define PWM_LOW()					GPIO_ResetBits(GPIOA, GPIO_Pin_2)
 
-#define MAX_POWER_INDEX 13
+#define MAX_POWER_INDEX 	13
 #define BOOST_INDEX 		79
 #define TENSION_INDEX		81
-#define DEAD_BAND_INDEX	55
+#define DEAD_BAND_INDEX		55
 #define FORCE_INDEX			61
 #define BRAKE_INDEX			65
 #define CENTER_INDEX		43
 #define SOFT_START_INDEX	91
 
-volatile uint8_t is_tai_servo = 0;
+volatile uint8_t is_tai_servo_ = 0;
 static 	uint8_t read_servo_data[136];
+static 	uint8_t write_servo_data[136];
+volatile uint8_t receive_tai_data_flag = 0;
+extern volatile uint8_t receive_uart_data_flag;
+extern volatile uint8_t  write_read_busy_state_;
+extern rt_mutex_t dynamic_mutex;
 
-
-void set_soft_start(uint8_t state)
+uint8_t *get_taiwan_read_data(void)
 {
-	uint8_t *data = read_servo_data;
+	return read_servo_data;
+}
+
+uint8_t *get_taiwan_write_data(void)
+{
+	return write_servo_data;
+}
+
+uint8_t is_same(void)
+{
+	if(memcmp(write_servo_data, read_servo_data, 129) ==0){
+		return 1;
+	}
+	return 0;
+}
+
+void copy_read_data(void)
+{
+	memcpy(write_servo_data, read_servo_data, 129);
+}
+
+void set_read_servo_data(const uint8_t *data)
+{
+	memcpy(read_servo_data, data, 129);
+	receive_tai_data_flag = 1;
+}
+
+
+void set_soft_start(int8_t state)
+{
+	uint8_t *data = write_servo_data;
 	uint16_t *base1 = (uint16_t *)(&data[SOFT_START_INDEX]);
 	uint16_t *base2 = (uint16_t *)(&data[SOFT_START_INDEX+2]);
 	if(state){
@@ -43,7 +77,7 @@ void set_soft_start(uint8_t state)
 	}
 }
 
-void get_soft_start(uint8_t *state)
+void get_soft_start(int8_t *state)
 {
 	uint8_t *data = read_servo_data;
 	//uint16_t *base1 = (uint16_t *)(&data[SOFT_START_INDEX]);
@@ -58,7 +92,7 @@ void get_soft_start(uint8_t *state)
 
 void set_senter(int8_t state)
 {
-	uint8_t *data = read_servo_data;
+	uint8_t *data = write_servo_data;
 	uint16_t *base1 = (uint16_t *)(&data[CENTER_INDEX]);
 	*base1 = 2048 + 28*state;
 }
@@ -72,7 +106,7 @@ void get_senter(int8_t *state)
 
 void set_brake(int8_t state)
 {
-	uint8_t *data = read_servo_data;
+	uint8_t *data = write_servo_data;
 	uint16_t *base1 = (uint16_t *)(&data[BRAKE_INDEX]);
 	*base1 = 20 + state *10;
 }
@@ -86,7 +120,7 @@ void get_brake(int8_t *state)
 
 void set_force(int8_t state)
 {
-	uint8_t *data = read_servo_data;
+	uint8_t *data = write_servo_data;
 	uint16_t *base1 = (uint16_t *)(&data[FORCE_INDEX]);
 	switch(state){
 		case 1:
@@ -160,7 +194,7 @@ void get_force(int8_t *state)
 
 void set_deadband(int8_t state)
 {
-	uint8_t *data = read_servo_data;
+	uint8_t *data = write_servo_data;
 	uint16_t *base1 = (uint16_t *)(&data[DEAD_BAND_INDEX]);
 	*base1 = state;
 }
@@ -174,7 +208,7 @@ void get_deadband(int8_t *state)
 
 void set_tension(int8_t state)
 {
-	uint8_t *data = read_servo_data;
+	uint8_t *data = write_servo_data;
 	uint16_t *base1 = (uint16_t *)(&data[TENSION_INDEX]);
 		switch(state){
 		case 1:
@@ -206,7 +240,7 @@ void get_tension(int8_t *state)
 
 void set_boost(int8_t state)
 {
-	uint8_t *data = read_servo_data;
+	uint8_t *data = write_servo_data;
 	uint16_t *base1 = (uint16_t *)(&data[BOOST_INDEX]);
 	switch(state){
 		case 1:
@@ -280,7 +314,7 @@ void get_boost(int8_t *state)
 
 void set_maxpower(int8_t state)
 {
-	uint8_t *data = read_servo_data;
+	uint8_t *data = write_servo_data;
 	uint16_t *base1 = (uint16_t *)(&data[MAX_POWER_INDEX]);
 	*base1 = 50 + 5 * state;
 }
@@ -288,8 +322,20 @@ void set_maxpower(int8_t state)
 void get_maxpower(int8_t *state)
 {
 	uint8_t *data = read_servo_data;
-	uint16_t *base1 = (uint16_t *)(&data[MAX_POWER_INDEX]);
-	*state =  (*base1 - 50)/5;
+	uint16_t base1 =(uint16_t) data[MAX_POWER_INDEX] | (uint16_t)(data[MAX_POWER_INDEX+1] << 8);
+	*state =  (base1 - 50)/5;
+}
+
+uint16_t get_version(void)
+{
+	uint8_t *data = read_servo_data;
+	uint16_t base1 = 0;
+	base1 = (data[95] -'0') *10000;
+	base1 += (data[96] -'0') *1000;
+	base1 += (data[97] -'0') *100;
+	base1 += (data[98] -'0') *10;
+	base1 += (data[99] -'0') ;
+	return base1;
 }
 
 uint8_t chech_sum_xor(const uint8_t *data, const uint8_t size)
@@ -325,10 +371,9 @@ void taiwan_send_read_data(void)
 void taiwan_send_write_data(void)
 {
 	uint8_t data[124];
-	uint8_t *data_cpy;
 	data[0] = 0x22;
 	data[1] = 0x32;
-	data[2] = 70;
+	data[2] = 110;
 	///addr
 	data[3] = 0x03;
 	data[4] = 0x00;
@@ -341,14 +386,20 @@ void taiwan_send_write_data(void)
 	data[9] = chech_sum_xor(data, 9);
 	///end
 	data[10] = 0xed;
+	usart2_send_buff(data, 11);
+	rt_thread_delay(300);
 	
-	data[11] = 0xDA; 	//head
-	memcpy(&data[12], data_cpy, 110); //data 110byte
-	
-	data[122] = chech_sum_xor(data, 122);	//CS
-	data[123] = 0xED;	//end
-	
-	usart2_send_buff(data, sizeof(data));
+	uint8_t *data_cpy = &write_servo_data[0];
+	memcpy(&data[0], data_cpy, 111); //data 110byte
+	data[95] = 1 + 0x30;	//CS
+	data[96] = 8 + 0x30;	//CS
+	data[97] = 0 + 0x30;	//CS
+	data[98] = 0 + 0x30;	//CS
+	data[99] = 0 + 0x30;	//CS
+	data[111] = chech_sum_xor(data, 111);	//CS
+	data[112] = 0xED;	//end
+	usart2_send_buff(data, 113);
+	rt_thread_delay(800);
 }
 
 void taiwan_servo_init(void)
@@ -364,47 +415,54 @@ void taiwan_servo_init(void)
 	usart2_init_rx(115200);
 }
 
-extern volatile uint8_t receive_uart_data_flag;
-
 uint8_t connect_taiwan(void)
 {
-		uint16_t time_count;
-	
-		receive_uart_data_flag = 0;
-		taiwan_send_read_data();
-		//check response data
-		while(receive_uart_data_flag == 0)
+	uint16_t time_count = 0;
+	write_read_busy_state_ = 1;
+	receive_tai_data_flag = 0;
+	taiwan_send_read_data();
+	//check response data
+	while(receive_tai_data_flag == 0)
+	{
+		time_count++;
+		if(time_count > 500) //200ms
 		{
-			time_count++;
-			if(time_count > 200) //200ms
-			{
-				return 0;
-			}
-			rt_thread_delay(1); //0.001 s
+			write_read_busy_state_ = 0;
+			return 0;
 		}
-		return 1;
+		rt_thread_delay(1); //0.001 s
+	}
+	write_read_busy_state_ = 0;
+	return 1;
 }
+
 
 uint8_t is_taiwan_servo(void)
 {
 	uint8_t try_count = 3;
+	write_read_busy_state_ = 1;
+	rt_mutex_take(dynamic_mutex, RT_WAITING_FOREVER);
 	usart2_init_pwm();
 	PWM_LOW();
 	for(int i=0; i<5; i++){
 		PWM_HIGH();
 		rt_thread_delay(7);
 		PWM_LOW();
-		rt_thread_delay(10);
+		rt_thread_delay(100);
 	}
+	rt_mutex_release(dynamic_mutex);
 	usart2_init_rx(115200);
+	write_read_busy_state_ = 0;
 	
 	do{
 		if(connect_taiwan()){
+			is_tai_servo_ = 1;
 			return 1;
 		}
 		try_count--;
 	}while(try_count);
 	
+	is_tai_servo_ = 0;
 	return 0; //no find servo 
 }
 

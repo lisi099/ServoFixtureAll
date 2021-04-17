@@ -121,6 +121,13 @@ void usart2_init_pwm(void)
 	GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_RX;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
+	GPIO_ResetBits(GPIOB, GPIO_Pin_12);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_SetBits(GPIOB, GPIO_Pin_13);
+	
 }
 /*************************************************************
   Function   :
@@ -282,6 +289,10 @@ void usart2_init_rx(uint32_t bd)
     USART_Cmd(COM_PORT, ENABLE);
 	
 	GPIO_SetBits(GPIOB, GPIO_Pin_12);
+	if(bd == 19200)
+	{
+		GPIO_ResetBits(GPIOB, GPIO_Pin_13);
+	}
 	
     usart2_DMA_config();
     usart2_NVIC_config();
@@ -351,7 +362,7 @@ void DMA1_Channel7_IRQHandler(void)
 *************************************************************/
 extern Usart_State usart_state;
 extern struct rt_messagequeue usart2_r_mq;
-
+extern void set_read_servo_data(const uint8_t *data);
 void USART2_IRQHandler(void)
 {
     uint32_t i;
@@ -436,6 +447,10 @@ void USART2_IRQHandler(void)
             }
         }
     }
+	else if(Rcv2_Counter == 129)
+	{
+		set_read_servo_data(&Rcv2_Buffer[0]);
+	}
 }
 
 

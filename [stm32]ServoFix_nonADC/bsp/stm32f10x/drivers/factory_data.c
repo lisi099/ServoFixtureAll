@@ -26,10 +26,11 @@ const struct Servo_Data_Stru_ factory_para[] =
 
 char *servo_version[] = {"PGC-D12", "D1206G2", "WH-20KG", "WH-30KG", "WH-40KG",
                          "PGC-DRF", "PGC-D15", "PGC-R12", "PGC-A20",
-                         "PGC-A30", "PGC-A40", "PGC-A50"
+                         "PGC-A30", "PGC-A40", "PGC-A50", "PGB-S15", "PGB-S25",
+						 "PGB-S35", "PGB-S50",	"PGC-H15", "PGC-H30",	
                         };
 
-int servo_version_num[] = {40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+int servo_version_num[] = {40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 80, 81, 82, 83, 84, 85};
 
 
 int get_total_num(void)

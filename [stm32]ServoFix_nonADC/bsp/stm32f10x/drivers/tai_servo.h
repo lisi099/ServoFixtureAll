@@ -14,12 +14,16 @@
 #include <rtthread.h>
 #include "usart2.h"
 
+uint8_t *get_taiwan_write_data(void);
+uint8_t *get_taiwan_read_data(void);
+
+void set_read_servo_data(const uint8_t *data);
 
 void taiwan_send_read_data(void);
 void taiwan_servo_init(void);
 
-void set_soft_start(uint8_t state);
-void get_soft_start(uint8_t *state);
+void set_soft_start(int8_t state);
+void get_soft_start(int8_t *state);
 	
 void set_senter(int8_t state);
 void get_senter(int8_t *state);
@@ -43,5 +47,8 @@ void set_maxpower(int8_t state);
 void get_maxpower(int8_t *state);
 
 uint8_t is_taiwan_servo(void);
+uint8_t connect_taiwan(void);
+
+uint16_t get_version(void);
 
 #endif

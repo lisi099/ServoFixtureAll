@@ -22,6 +22,17 @@ void SelItemOfList(u8 index, char* s);
 
 extern struct Servo_Data_Stru_ servoDataStru;
 //--------------------------------------------
+int is_version_taiwan(const uint8_t * data)
+{
+	if(data[96] != '8'){
+		return 0;
+	}
+	if(data[97] > '5' || data[97] < '0'){
+		return 0;
+	}
+	return 1;
+}
+
 int find_version(int num)
 {
     int i;
@@ -34,7 +45,6 @@ int find_version(int num)
             return i;
         }
     }
-
     return 100;
 }
 
@@ -79,7 +89,7 @@ void Menu_SetSelItem(u8 num)
 {
     SelItem = num;
 }
-
+extern volatile uint8_t is_tai_servo_;
 //--------------------------------------------
 void ShowList(u8 min, u8 max)
 {
@@ -111,38 +121,44 @@ void ShowList(u8 min, u8 max)
 					LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
                     break;
                 case SHOW_STRING_VER:
-                    buf[0] = pPage->pItem[index].data / 10000 % 10 + 1;
-                    sprintf(str, "v1.%d ", buf[0]);
+						buf[0] = pPage->pItem[index].data / 10000 % 10 + 1;
+						if(!is_tai_servo_){
+							sprintf(str, "v1.%d ", buf[0]);
+						}
+						else{
+							sprintf(str, "v1.%d ", buf[0]);
+						}
 
-                    buf[0] = pPage->pItem[index].data / 1000 % 10;
-                    buf[1] = pPage->pItem[index].data / 100 % 10;
-                    distribtor = buf[0] * 10 + buf[1];
+						buf[0] = pPage->pItem[index].data / 1000 % 10;
+						buf[1] = pPage->pItem[index].data / 100 % 10;
+						distribtor = buf[0] * 10 + buf[1];
 
-                    if(find_version(distribtor) == 100)
-                    {
-                        sprintf(&str[5], "%s-", "XXX-XXX");
-                    }
-                    else
-                    {
-                        sprintf(&str[5], "%s-", get_ver_char(find_version(distribtor)));
-                    }
+						if(find_version(distribtor) == 100)
+						{
+							sprintf(&str[5], "%s-", "XXX-XXX");
+						}
+						else
+						{
+							sprintf(&str[5], "%s-", get_ver_char(find_version(distribtor)));
+						}
 
-                    buf[0] = pPage->pItem[index].data / 10 % 10;
-                    buf[1] = pPage->pItem[index].data / 1 % 10;
-                    costormer = buf[0] * 10 + buf[1];
+						buf[0] = pPage->pItem[index].data / 10 % 10;
+						buf[1] = pPage->pItem[index].data / 1 % 10;
+						costormer = buf[0] * 10 + buf[1];
 
-                    if(costormer >= 21)
-                    {
-                        sprintf(&str[13], "00");
-                    }
-                    else if(costormer >= 10)
-                    {
-                        sprintf(&str[13], "%d", costormer);
-                    }
-                    else
-                    {
-                        sprintf(&str[13], "0%d", costormer);
-                    }
+						if(costormer >= 21)
+						{
+							sprintf(&str[13], "00");
+						}
+						else if(costormer >= 10)
+						{
+							sprintf(&str[13], "%d", costormer);
+						}
+						else
+						{
+							sprintf(&str[13], "0%d", costormer);
+						}
+					
 					LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
                     break;
                 default:
