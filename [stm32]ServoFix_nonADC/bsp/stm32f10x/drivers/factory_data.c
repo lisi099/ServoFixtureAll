@@ -6,6 +6,7 @@
 
 #include "servo_serial.h"
 #include "string.h"
+#include "factory_data.h"
 
 const struct Servo_Data_Stru_ factory_para[] =
 {
@@ -22,6 +23,16 @@ const struct Servo_Data_Stru_ factory_para[] =
 {2100,1500,900,3100,2048,996,3,0,0,1,1,1,10900,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //10900=V1.2 PGC-A30-00.bat"
 {2100,1500,900,3100,2048,996,3,0,0,1,1,1,11000,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //11000=V1.2 PGC-A40-00.bat"
 {2100,1500,900,3100,2048,996,3,0,0,1,1,1,11100,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //11100=V1.2 PGC-A50-00.bat"
+};
+
+const struct Servo_Tai_Data_ factory_tai_para[]=
+{
+	{100, 1200, 1, 200, 100, 50, 2048, 0},
+	{95, 1100, 1, 130, 175, 35, 2048, 0},
+	{95, 1100, 1, 130, 175, 35, 2048, 0},
+	{95, 1100, 1, 130, 175, 35, 2048, 0},
+	{95, 1100, 1, 130, 175, 35, 2048, 0},
+	{95, 1100, 1, 130, 175, 35, 2018, 0},
 };
 
 char *servo_version[] = {"PGC-D12", "D1206G2", "WH-20KG", "WH-30KG", "WH-40KG",
@@ -52,6 +63,43 @@ int get_ver_num(int num)
 
 void get_factory_data(struct Servo_Data_Stru_ *data, int num)
 {
-
     memcpy(data, &factory_para[num], sizeof(struct Servo_Data_Stru_));
+}
+
+#define MAX_POWER_INDEX 	13
+#define BOOST_INDEX 		79
+#define TENSION_INDEX		81
+#define DEAD_BAND_INDEX		55
+#define FORCE_INDEX			61
+#define BRAKE_INDEX			65
+#define CENTER_INDEX		43
+#define SOFT_START_INDEX	91
+
+void get_tai_factory_data(uint8_t *data, int num)
+{
+	int index = num - sizeof(factory_para)/ sizeof(struct Servo_Data_Stru_);
+	data[MAX_POWER_INDEX] = (uint8_t)(factory_tai_para[index].max_power);
+	data[MAX_POWER_INDEX+1] = (uint8_t)(factory_tai_para[index].max_power >> 8);
+	
+	data[BOOST_INDEX] = (uint8_t)(factory_tai_para[index].boost);
+	data[BOOST_INDEX+1] = (uint8_t)(factory_tai_para[index].boost >> 8);
+
+	data[DEAD_BAND_INDEX] = (uint8_t)(factory_tai_para[index].deadband);
+	data[DEAD_BAND_INDEX+1] = (uint8_t)(factory_tai_para[index].deadband >> 8);
+
+	data[TENSION_INDEX] = (uint8_t)(factory_tai_para[index].tension);
+	data[TENSION_INDEX+1] = (uint8_t)(factory_tai_para[index].tension >> 8);
+
+	data[FORCE_INDEX] = (uint8_t)(factory_tai_para[index].farce);
+	data[FORCE_INDEX+1] = (uint8_t)(factory_tai_para[index].farce >> 8);
+
+	data[BRAKE_INDEX] = (uint8_t)(factory_tai_para[index].brake);
+	data[BRAKE_INDEX+1] = (uint8_t)(factory_tai_para[index].brake >> 8);
+
+	data[CENTER_INDEX] = (uint8_t)(factory_tai_para[index].senter);
+	data[CENTER_INDEX+1] = (uint8_t)(factory_tai_para[index].senter >> 8);
+
+	data[SOFT_START_INDEX] = (uint8_t)(factory_tai_para[index].soft_start);
+	data[SOFT_START_INDEX+1] = (uint8_t)(factory_tai_para[index].soft_start >> 8);
+    
 }

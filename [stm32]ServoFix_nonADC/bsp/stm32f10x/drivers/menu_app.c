@@ -1077,18 +1077,19 @@ void Reset_Data_Read_Page_CallBack(u8 key)
 
     case KEY_Ok:
 				
-				if(get_ver_num(num) != distribtor){
+		if(get_ver_num(num) != distribtor){
 //			if(0){
-					Lcd_Clr_Scr();
-					LCD_Write_Str(0, 0, (char*)"<Restoring>...");
-					keep(S_FAILED);
-					break;
-				}
-				else{
-				num = 1;
+			Lcd_Clr_Scr();
+			LCD_Write_Str(0, 0, (char*)"<Restoring>...");
+			keep(S_FAILED);
+			break;
+		}
+		else{
+//		num = 1;
         Lcd_Clr_Scr();
         LCD_Write_Str(0, 0, (char*)"<Restoring>...");
         read_servo_data_in_flash(num + 20);
+		
         menu_combine_prom_work_parm();
         if(menu_combine_verify_work_parm())
         {
@@ -1215,7 +1216,6 @@ void Copy_Data_To_Stru(void)
 	}
 	else{
 		copy_read_data();
-		
 		set_maxpower(Setting_item[1].data);	
 		set_boost(Setting_item[2].data);	
 		set_deadband(Setting_item[3].data);

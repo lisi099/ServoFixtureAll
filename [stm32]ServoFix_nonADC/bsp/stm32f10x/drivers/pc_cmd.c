@@ -6,6 +6,7 @@
 #include "string.h"
 #include "servo_serial.h"
 #include <rtthread.h>
+#include "tai_servo.h"
 
 #define CONNECT_CMD 0xFE
 #define DISCONNECT_CMD (CONNECT_CMD -0x2)
@@ -17,6 +18,8 @@
 volatile uint8_t pc_data_state_ =0;
 volatile uint8_t test_data_state_ =0;
 volatile uint8_t connect_servo_state_ =0;
+
+extern volatile uint8_t is_tai_servo_;
 
 extern struct Servo_Data_Stru_ servoDataStru;
 
@@ -35,14 +38,25 @@ uint16_t sum_check(uint8_t *data, uint16_t size)
 
 void response_connect(void)
 {
+		struct Servo_Tai_Data_ tai_servo;
 		uint8_t data[DATA_SIZE +6];
 		memset(data, 0, sizeof(data));
 		rt_thread_delay(2000);
 		data[0] = 0x5A;
-		data[1] = 0xA5;
+		if(is_tai_servo_){
+			data[1] = 0xA6;
+			get_tai_stru(&tai_servo);
+		}
+		else{
+			data[1] = 0xA5;
+		}
 		data[2] = CONNECT_CMD -1;
 		data[3] = 0x00;
 		memcpy(&data[4], &servoDataStru, DATA_SIZE);
+		if(is_tai_servo_){
+			memcpy(&data[4], &tai_servo, sizeof(tai_servo));
+		}
+		
 		uint16_t sum = sum_check(data, sizeof(data) -2);
 		data[DATA_SIZE +4] = (uint8_t)sum;
 		data[DATA_SIZE +5] = (uint8_t)(sum >> 8);

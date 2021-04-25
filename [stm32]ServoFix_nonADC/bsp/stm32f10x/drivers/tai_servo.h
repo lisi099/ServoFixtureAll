@@ -13,6 +13,9 @@
 
 #include <rtthread.h>
 #include "usart2.h"
+#include "factory_data.h"
+
+void get_tai_stru(struct Servo_Tai_Data_ *tai_data);
 
 uint8_t *get_taiwan_write_data(void);
 uint8_t *get_taiwan_read_data(void);

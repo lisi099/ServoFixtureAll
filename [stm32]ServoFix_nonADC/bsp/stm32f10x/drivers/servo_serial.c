@@ -80,6 +80,7 @@ void read_servo_data_in_flash(uint8_t seq)
     uint32_t page_start;
     struct Servo_Data_Stru_  *data = &servoDataStru;
 	uint8_t *data_ptr = get_taiwan_read_data();
+	uint8_t *data_w_ptr = get_taiwan_write_data();
 	
     if(seq < 20)
     {
@@ -98,7 +99,14 @@ void read_servo_data_in_flash(uint8_t seq)
     }
     else
     {
-        get_factory_data(data, seq - 20);
+		if(is_tai_servo_ == 0){
+			get_factory_data(data, seq - 20);
+		}
+		else
+		{
+			memcpy(data_w_ptr, data_ptr, 129);
+			get_tai_factory_data(data_w_ptr, seq - 20);
+		}
     }
 
     Copy_Data_To_Show();
@@ -523,16 +531,6 @@ extern volatile uint8_t connect_servo_state_;
 extern uint8_t connect_taiwan(void);
 uint8_t menu_combine_fb_work_parm(void)
 {
-	if(is_tai_servo_)
-	{
-		if(!connect_taiwan()){
-			return 0;
-		}
-		rt_thread_delay(500);
-		Copy_Data_To_Show();
-		return 1;
-	}
-	
     uint8_t i = 0;
     uint8_t time_count;
     uint8_t chech_sum;
@@ -542,6 +540,18 @@ uint8_t menu_combine_fb_work_parm(void)
 		rt_thread_delay(SERVO_DELAY_TIME);
 	}
 	write_read_busy_state_ = 1;
+	
+	if(is_tai_servo_)
+	{
+		if(!connect_taiwan()){
+			write_read_busy_state_ = 0;
+			return 0;
+		}
+		rt_thread_delay(500);
+		Copy_Data_To_Show();
+		write_read_busy_state_ = 0;
+		return 1;
+	}
 
     uart_send_clear_command();
     rt_thread_delay(SERVO_DELAY_TIME);
@@ -674,17 +684,6 @@ extern void taiwan_servo_init(void);
 extern uint8_t is_taiwan_servo(void);
 uint8_t menu_combine_verify_work_parm(void)
 {
-	
-	if(is_tai_servo_){
-		if(!is_taiwan_servo()){
-			return 0;
-		}
-		if(is_same()){
-			return 1;
-		}
-		return 0;
-	}
-	
     uint8_t i = 0;
     uint16_t j = 0;
     int16_t* buff;
@@ -696,6 +695,20 @@ uint8_t menu_combine_verify_work_parm(void)
 		rt_thread_delay(SERVO_DELAY_TIME);
 	}
 	write_read_busy_state_ = 1;
+	
+	if(is_tai_servo_){
+		if(!is_taiwan_servo()){
+			write_read_busy_state_ = 0;
+			return 0;
+		}
+		if(is_same()){
+			write_read_busy_state_ = 0;
+			return 1;
+		}
+		write_read_busy_state_ = 0;
+		return 0;
+	}
+	
 
     uart_send_clear_command();
     rt_thread_delay(SERVO_DELAY_TIME);

@@ -79,11 +79,16 @@ void start_page(void)
     put_chars_middle(0, "Welcome to");
     put_chars_middle(1, "Power HD");
     rt_thread_delay(RT_TICK_PER_SECOND * 2);
-    put_chars(1, 0, "                ");
+//    put_chars(1, 0, "                ");
+	
+	Lcd_Clr_Scr();
+	put_chars(0, 0, "Please Connect");
+	put_chars(1, 0, "Servo");
 	
 	while(servo_detect_flag_ == 0)
 	{
-		rt_thread_delay(10);
+		rt_thread_delay(100);
+
 	}
 	rt_thread_delay(100);
     while(1)
@@ -226,6 +231,7 @@ static void menu_process_thread(void* parameter)
 }
 #include "pc_cmd.h"
 #include "tai_servo.h"
+
 //-----------------------USB与舵机通讯线程----------------------
 extern volatile uint8_t connect_servo_state_;
 extern void exit_pc_page(void);

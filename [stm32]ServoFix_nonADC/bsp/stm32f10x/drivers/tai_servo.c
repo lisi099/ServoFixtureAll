@@ -32,6 +32,20 @@ extern volatile uint8_t receive_uart_data_flag;
 extern volatile uint8_t  write_read_busy_state_;
 extern rt_mutex_t dynamic_mutex;
 
+void get_tai_stru(struct Servo_Tai_Data_ *tai_data)
+{
+	uint8_t *data = read_servo_data;
+	tai_data->boost = (uint16_t)(data[BOOST_INDEX] | data[BOOST_INDEX+1] <<8);
+	tai_data->max_power = (uint16_t)(data[MAX_POWER_INDEX] | data[MAX_POWER_INDEX+1] <<8);
+	tai_data->tension = (uint16_t)(data[TENSION_INDEX] | data[TENSION_INDEX+1] <<8);
+	tai_data->deadband = (uint16_t)(data[DEAD_BAND_INDEX] | data[DEAD_BAND_INDEX+1] <<8);
+	tai_data->farce = (uint16_t)(data[FORCE_INDEX] | data[FORCE_INDEX+1] <<8);
+	tai_data->brake = (uint16_t)(data[BRAKE_INDEX] | data[BRAKE_INDEX+1] <<8);
+	tai_data->senter = (uint16_t)(data[CENTER_INDEX] | data[CENTER_INDEX+1] <<8);
+	tai_data->soft_start = (uint16_t)(data[SOFT_START_INDEX+2] | data[SOFT_START_INDEX+3] <<8);
+	tai_data->version = get_version();
+}
+
 uint8_t *get_taiwan_read_data(void)
 {
 	return read_servo_data;
@@ -414,6 +428,7 @@ void taiwan_servo_init(void)
 	}
 	usart2_init_rx(115200);
 }
+extern volatile uint16_t current_servo_version_;
 
 uint8_t connect_taiwan(void)
 {
@@ -433,9 +448,10 @@ uint8_t connect_taiwan(void)
 		rt_thread_delay(1); //0.001 s
 	}
 	write_read_busy_state_ = 0;
+	current_servo_version_ = get_version();
 	return 1;
 }
-
+extern volatile uint8_t connect_servo_state_;
 
 uint8_t is_taiwan_servo(void)
 {
@@ -456,6 +472,7 @@ uint8_t is_taiwan_servo(void)
 	
 	do{
 		if(connect_taiwan()){
+			connect_servo_state_ = 1;
 			is_tai_servo_ = 1;
 			return 1;
 		}
