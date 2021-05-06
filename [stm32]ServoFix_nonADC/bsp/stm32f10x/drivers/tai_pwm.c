@@ -26,6 +26,7 @@ void produce_pwm(uint16_t pwm) //0.5ms ~ 2.5ms
     rt_mutex_take(dynamic_mutex, RT_WAITING_FOREVER);
     usart2_init_pwm();
     PWM_LOW();
+	rt_thread_delay(100);
 		pwm_finish_flag = 0;
 		TIM3_Int_Init(pwm);
 		while(1)
@@ -49,7 +50,7 @@ void TIM3_Int_Init(uint16_t psc)// 500 ~ 2500
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE); //时钟使能
 
     //定时器TIM3初始化
-    TIM_TimeBaseStructure.TIM_Period = 36 - 1; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值
+    TIM_TimeBaseStructure.TIM_Period = 72 - 1; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值
     TIM_TimeBaseStructure.TIM_Prescaler = psc; //设置用来作为TIMx时钟频率除数的预分频值
     TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; //设置时钟分割:TDTS = Tck_tim
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式

@@ -376,10 +376,10 @@ static void reconnect_taiwan_servo(void* parameter)
     {
         if(reconnect_taiwan_servo_flag_ == 1)
         {
-            if(is_taiwan_servo())
-            {
-                reconnect_taiwan_servo_flag_ = 0;
-            }
+//            if(is_taiwan_servo())
+//            {
+//                reconnect_taiwan_servo_flag_ = 0;
+//            }
         }
         rt_thread_delay(500);
     }
@@ -421,7 +421,7 @@ int rt_application_init(void)
     tid1 = rt_thread_create("key_scan", key_scan_thread, RT_NULL, 512, 19, 5);
     if(tid1 != RT_NULL) rt_thread_startup(tid1);
 
-    tid1 = rt_thread_create("menu_process", menu_process_thread, RT_NULL, 512, 20, 5);
+    tid1 = rt_thread_create("menu_process", menu_process_thread, RT_NULL, 1024, 20, 5);
     if(tid1 != RT_NULL) rt_thread_startup(tid1);
 
     tid1 = rt_thread_create("usb_usart", usb_usart_thread, RT_NULL, 2048, 14, 10);

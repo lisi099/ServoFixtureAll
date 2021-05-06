@@ -58,7 +58,7 @@ uint8_t* get_taiwan_write_data(void)
 
 uint8_t is_same(void)
 {
-    if(memcmp(write_servo_data, read_servo_data, 129) == 0)
+    if(memcmp(write_servo_data, read_servo_data, 110) == 0)
     {
         return 1;
     }

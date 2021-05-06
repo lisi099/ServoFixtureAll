@@ -303,13 +303,21 @@ void Menu_Three_CallBack(u8 key)
 {
     uint16_t distribtor, distribtor1;
     uint8_t buf_2[2];
-    buf_2[0] = current_servo_version_ / 1000 % 10;
-    buf_2[1] = current_servo_version_ / 100 % 10;
-    distribtor = buf_2[0] * 10 + buf_2[1];
+	if(is_tai_servo_){
+		buf_2[0] = current_servo_version_ / 1000 % 10;
+		buf_2[1] = current_servo_version_ / 100 % 10;
+		distribtor = buf_2[0] * 10 + buf_2[1];
+	}
+	else{
+		buf_2[0] = servoDataStru.work_p12 / 1000 % 10;
+		buf_2[1] = servoDataStru.work_p12 / 100 % 10;
+		distribtor = buf_2[0] * 10 + buf_2[1];
+	}
+	uint8_t result;
+	uint8_t count = 0;
 
-    buf_2[0] = servoDataStru.work_p12 / 1000 % 10;
-    buf_2[1] = servoDataStru.work_p12 / 100 % 10;
-    distribtor1 = buf_2[0] * 10 + buf_2[1];
+	int num = find_version(distribtor);
+	
     switch(key)
     {
     case KEY_UP:
@@ -326,7 +334,7 @@ void Menu_Three_CallBack(u8 key)
     case KEY_Ok:
         if(pPage == &Data_Save_Page && Menu_GetSelItem() == 0)
         {
-            if(distribtor != distribtor1)
+            if(num == 100)
             {
                 Lcd_Clr_Scr();
                 LCD_Write_Str(0, 0, (char*)"<Writting>...");
@@ -340,9 +348,19 @@ void Menu_Three_CallBack(u8 key)
                 Lcd_Clr_Scr();
                 LCD_Write_Str(0, 0, (char*)"<Writting>...");
                 Copy_Data_To_Stru();
-                menu_combine_prom_work_parm();
-
-                if(menu_combine_verify_work_parm())
+//				while(1){
+					menu_combine_prom_work_parm();
+					res = menu_combine_verify_work_parm();
+//					if(result){
+//						break;
+//					}
+//					count ++;
+//					if(count >=2 ){
+//						break;
+//					}
+//				}
+				
+                if(result)
                 {
                     if(keep(S_SUCCESS) == F_RETURN)
                     {
@@ -1305,6 +1323,7 @@ void Copy_Data_To_Stru(void)
         set_brake(Setting_item[6].data);
         set_senter(-l_num + r_num);
         set_soft_start(Setting_item[8].data);
+		servoDataStru.work_p12 = current_servo_version_;
     }
 }
 
