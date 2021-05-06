@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.2.0, 2021-04-17T17:49:02. -->
+<!-- Written by QtCreator 4.2.0, 2021-04-18T18:18:39. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
-  <value type="QByteArray">{0ca51463-a485-449d-9b71-c1f820ef71a5}</value>
+  <value type="QByteArray">{6f78917c-d9d7-4f81-b974-b565d0a24d46}</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -286,7 +286,7 @@
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">PowerHD</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">PowerHD2</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/github_dev/ServoFixtureAll/HDclientNew/PowerHD.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:F:/0_NewProject/00_GIT/ServoFixtureAll/HDclientNew1/PowerHD.pro</value>
     <value type="bool" key="QmakeProjectManager.QmakeRunConfiguration.UseLibrarySearchPath">true</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments"></value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">PowerHD.pro</value>
