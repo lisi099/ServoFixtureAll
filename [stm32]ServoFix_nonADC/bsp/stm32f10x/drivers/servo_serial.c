@@ -11,159 +11,29 @@
 #include "menu_app.h"
 #include "factory_data.h"
 #include "tai_servo.h"
+#include "data_base_flash.h"
 
 #define SERVO_DELAY_TIME	50
 #define SERVO_DELAY_TIME_S	5
-#define SAVE_DATA_SIZE		128
-#define DATA_NUM_OF_PAGE 	(PAGE_SIZE/SAVE_DATA_SIZE)
+
+extern volatile uint8_t  write_read_busy_state_;
+extern volatile uint8_t is_tai_servo_;
+extern volatile uint16_t current_servo_version_;
+extern volatile uint8_t connect_servo_state_;
+
+extern void copy_read_data(void);
+extern void taiwan_send_write_data(void);
+extern uint8_t is_same(void);
+extern uint8_t is_taiwan_servo(void);
+extern uint8_t connect_taiwan(void);
 
 uint8_t uart_write_datas[12];
 uint8_t uart_read_datas[12];
 volatile uint8_t receive_uart_data_flag = 0;
 struct Servo_Data_Stru_ servoDataStru;
-
-uint16_t 	servo_unique_address_id_set 	= 16;
 uint16_t 	servo_unique_address_id 		= 16;
-extern volatile uint8_t  write_read_busy_state_;
-extern volatile uint8_t is_tai_servo_;
 
-void copy_read_data(void);
-//--------------------------------------
-uint8_t data_in_flash[PAGE_SIZE] = {0};
-
-uint8_t taiwan_servo_data[128];
-void save_servo_data_in_flash(uint8_t seq, uint16_t version)
-{
-    uint32_t page_start;
-    uint32_t* data;
-    uint32_t i = 0;
-
-    struct Servo_Data_Stru_ servo_data;
-
-    uint8_t* data_ptr = get_taiwan_write_data();
-    if(is_tai_servo_ == 0)
-    {
-        memcpy(&servo_data, &servoDataStru, sizeof(servo_data));
-        servo_data.work_p12 = version;
-    }
-    else
-    {
-        memcpy(&taiwan_servo_data, data_ptr, sizeof(taiwan_servo_data));
-        taiwan_servo_data[98] = version / 10 % 10 + 0x30;
-        taiwan_servo_data[99] = version % 10 + 0x30;
-    }
-
-    uint8_t num_page = seq / DATA_NUM_OF_PAGE;
-    uint8_t seq_page = seq % DATA_NUM_OF_PAGE;
-
-    page_start = FLASH_DATA1_ADDR + num_page * PAGE_SIZE;
-    //read
-    flash_read_n_byte(page_start, data_in_flash, sizeof(data_in_flash));
-    //erase
-    erase_flash_part(page_start, page_start + PAGE_SIZE);
-    //data
-    if(is_tai_servo_ == 0)
-    {
-        memcpy(&data_in_flash[seq_page * SAVE_DATA_SIZE], &servo_data, sizeof(servo_data));
-    }
-    else
-    {
-        memcpy(&data_in_flash[seq_page * SAVE_DATA_SIZE], taiwan_servo_data, sizeof(taiwan_servo_data));
-    }
-    //program
-    for(i = 0; i < PAGE_SIZE;)
-    {
-        data = (uint32_t*)&data_in_flash[i];
-        flash_write_one_word(page_start + i,  *data);
-        i += 4;
-    }
-}
-
-void read_servo_data_in_flash(uint8_t seq)
-{
-    uint32_t page_start;
-    struct Servo_Data_Stru_  *data = &servoDataStru;
-    uint8_t* data_ptr = get_taiwan_read_data();
-    uint8_t* data_w_ptr = get_taiwan_write_data();
-
-    if(seq < 20)
-    {
-        uint8_t num_page = seq / DATA_NUM_OF_PAGE;
-        uint8_t seq_page = seq % DATA_NUM_OF_PAGE;
-        page_start = FLASH_DATA1_ADDR + num_page * PAGE_SIZE;
-        //read
-        flash_read_n_byte(page_start, data_in_flash, sizeof(data_in_flash));
-        //cpy
-        if(is_tai_servo_ == 0)
-        {
-            memcpy(data, &data_in_flash[seq_page * SAVE_DATA_SIZE], sizeof(servoDataStru));
-        }
-        else
-        {
-            memcpy(data_ptr, &data_in_flash[seq_page * SAVE_DATA_SIZE], 128);
-        }
-    }
-    else
-    {
-        if(is_tai_servo_ == 0)
-        {
-            get_factory_data(data, seq - 20);
-        }
-        else
-        {
-            memcpy(data_w_ptr, data_ptr, 129);
-            get_tai_factory_data(data_w_ptr, seq - 20);
-        }
-    }
-
-    Copy_Data_To_Show();
-}
-
-uint8_t read_servo_data_in_flash_(uint8_t seq, struct Servo_Data_Stru_  *data)
-{
-    uint32_t page_start;
-    if(seq < 20)
-    {
-        uint8_t num_page = seq / DATA_NUM_OF_PAGE;
-        uint8_t seq_page = seq % DATA_NUM_OF_PAGE;
-        page_start = FLASH_DATA1_ADDR + num_page * PAGE_SIZE;
-        //read
-        flash_read_n_byte(page_start, data_in_flash, sizeof(data_in_flash));
-        //cpy
-        memcpy(data, &data_in_flash[seq_page * SAVE_DATA_SIZE], sizeof(servoDataStru));
-    }
-    return 0;
-}
-
-uint8_t read_servo_data_in_flash_taiwan(uint8_t seq, uint8_t* const data)
-{
-    uint32_t page_start;
-    if(seq < 20)
-    {
-        uint8_t num_page = seq / DATA_NUM_OF_PAGE;
-        uint8_t seq_page = seq % DATA_NUM_OF_PAGE;
-        page_start = FLASH_DATA1_ADDR + num_page * PAGE_SIZE;
-        //read
-        flash_read_n_byte(page_start, data_in_flash, sizeof(data_in_flash));
-        //cpy
-        memcpy(data, &data_in_flash[seq_page * SAVE_DATA_SIZE], 128);
-    }
-    return 0;
-}
-
-void test_falsh_progrm(void)
-{
-//	uint8_t i =0;
-//
-//	for(i=0; i<5; i++){
-//		save_servo_data_in_flash(i);
-//	}
-//	for(i=0; i<5; i++){
-//		read_servo_data_in_flash(i, &servoDataReadStru[i]);
-//	}
-}
-
-//-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------
 void uart_receive_data(uint8_t data)
 {
     static  uint8_t uart_receive_state = 0;
@@ -178,25 +48,18 @@ void uart_receive_data(uint8_t data)
             data_pos = 0;
             uart_read_datas[data_pos++] = data;
         }
-
         break;
-
     case 1:
         uart_read_datas[data_pos++] = data;
-
         if(data_pos >= 12)
         {
             uart_receive_state = 0;
-
-//				if((uart_read_datas[11] ==0xFE) && (data_pos ==12) && (receive_uart_data_flag==0)){
             if((uart_read_datas[11] == 0xFE) && (data_pos == 12))
             {
                 receive_uart_data_flag = 1;
             }
         }
-
         break;
-
     default:
         break;
     }
@@ -226,17 +89,8 @@ void uart_send_command(uint8_t id, uint8_t cmd, uint8_t state, uint8_t para_id1,
 
 void uart_send_clear_command(void)
 {
+		memset(uart_write_datas, 0x55, 12);
     uart_write_datas[0]		= 0xfa;
-    uart_write_datas[1] 	= 0x55;
-    uart_write_datas[2] 	= 0x55;
-    uart_write_datas[3] 	= 0x55;
-    uart_write_datas[4] 	= 0x55;
-    uart_write_datas[5] 	= 0x55;
-    uart_write_datas[6]  	= 0x55;
-    uart_write_datas[7] 	= 0x55;
-    uart_write_datas[8] 	= 0x55;
-    uart_write_datas[9] 	= 0x55;
-    uart_write_datas[10] 	= 0x55;
     uart_write_datas[11] 	= 0xfe;
     usart2_send_buff(uart_write_datas, sizeof(uart_write_datas));
     memset(uart_write_datas, 0, sizeof(uart_write_datas));
@@ -244,16 +98,11 @@ void uart_send_clear_command(void)
 
 void uart_send_common_command(void)
 {
+		memset(uart_write_datas, 0, 12);
     uart_write_datas[0]		= 0xfa;
     uart_write_datas[1] 	= 0x10;
     uart_write_datas[2] 	= 0x12;
     uart_write_datas[3] 	= 0x01;
-    uart_write_datas[4] 	= 0x00;
-    uart_write_datas[5] 	= 0x00;
-    uart_write_datas[6]  	= 0x00;
-    uart_write_datas[7] 	= 0x00;
-    uart_write_datas[8] 	= 0x00;
-    uart_write_datas[9] 	= 0x00;
     uart_write_datas[10] 	= 0x13;
     uart_write_datas[11] 	= 0xfe;
     usart2_send_buff(uart_write_datas, sizeof(uart_write_datas));
@@ -262,16 +111,11 @@ void uart_send_common_command(void)
 
 void uart_send_p_command(void)
 {
+		memset(uart_write_datas, 0, 12);
     uart_write_datas[0]		= 0xfa;
     uart_write_datas[1] 	= 0x10;
     uart_write_datas[2] 	= 0x10;
     uart_write_datas[3] 	= 0x01;
-    uart_write_datas[4] 	= 0x00;
-    uart_write_datas[5] 	= 0x00;
-    uart_write_datas[6]  	= 0x00;
-    uart_write_datas[7] 	= 0x00;
-    uart_write_datas[8] 	= 0x00;
-    uart_write_datas[9] 	= 0x00;
     uart_write_datas[10] 	= 0x11;
     uart_write_datas[11] 	= 0xfe;
     usart2_send_buff(uart_write_datas, sizeof(uart_write_datas));
@@ -305,12 +149,8 @@ void menu_combine_position(uint16_t pos)
 {
     uart_send_clear_command();
     rt_thread_delay(SERVO_DELAY_TIME);
-
     uart_send_command(servo_unique_address_id, 0x0A, 0x01, MENU_SERVO_RUN_POSITION_VALUE, pos, MENU_SERVO_RUN_SPEED_VALUE, 266);
     rt_thread_delay(SERVO_DELAY_TIME);
-
-//    uart_send_p_command();
-//    rt_thread_delay(SERVO_DELAY_TIME);
 }
 
 void send_work_param(uint8_t seq, struct Servo_Data_Stru_ *servo_data)
@@ -395,7 +235,6 @@ void send_debug_param(uint8_t seq, struct Servo_Data_Stru_ *servo_data)
         uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_CONFIG, SERVO_STATE_COM, temp_param, temp_param1, 0, 0);
     }
 }
-extern void taiwan_send_write_data(void);
 
 void menu_combine_prom_work_parm(void)
 {
@@ -441,7 +280,6 @@ void menu_combine_prom_work_parm(void)
         send_setup_param(i, &servo_data);
     }
 
-
     rt_thread_delay(SERVO_DELAY_TIME);
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_WORK_PARM, 0, 0, 0);
     rt_thread_delay(SERVO_DELAY_TIME);
@@ -456,9 +294,6 @@ void menu_combine_prom_work_parm(void)
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
 
     write_read_busy_state_ = 0;
-//    rt_thread_delay(SERVO_DELAY_TIME);
-//    uart_send_p_command();
-//    rt_thread_delay(SERVO_DELAY_TIME_S);
 }
 
 
@@ -537,9 +372,45 @@ void read_config_param(uint8_t seq)
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
 }
 
-extern volatile uint16_t current_servo_version_;
-extern volatile uint8_t connect_servo_state_;
-extern uint8_t connect_taiwan(void);
+uint8_t connect_detect(void)
+{
+    uint8_t time_count;
+
+    usart2_init_rx(19200);
+
+    while(write_read_busy_state_ == 1)
+    {
+        rt_thread_delay(SERVO_DELAY_TIME);
+    }
+    write_read_busy_state_ = 1;
+
+    receive_uart_data_flag = 0;
+
+    uart_send_clear_command();
+    rt_thread_delay(SERVO_DELAY_TIME);
+
+    uart_send_common_command();
+    rt_thread_delay(SERVO_DELAY_TIME);
+
+    read_work_param(0);
+    rt_thread_delay(SERVO_DELAY_TIME);
+
+    read_work_param(1);
+    while(receive_uart_data_flag == 0)
+    {
+        time_count++;
+        if(time_count > 200) //200ms
+        {
+            write_read_busy_state_ = 0;
+            return 0; //erro
+        }
+        rt_thread_delay(1); //0.001 s
+    }
+
+    write_read_busy_state_ = 0;
+    return 1;
+}
+
 uint8_t menu_combine_fb_work_parm(void)
 {
     uint8_t i = 0;
@@ -655,47 +526,6 @@ uint8_t menu_combine_fb_work_parm(void)
     return 1;
 }
 
-uint8_t connect_detect(void)
-{
-    uint8_t time_count;
-
-    usart2_init_rx(19200);
-
-    while(write_read_busy_state_ == 1)
-    {
-        rt_thread_delay(SERVO_DELAY_TIME);
-    }
-    write_read_busy_state_ = 1;
-
-    receive_uart_data_flag = 0;
-
-    uart_send_clear_command();
-    rt_thread_delay(SERVO_DELAY_TIME);
-
-    uart_send_common_command();
-    rt_thread_delay(SERVO_DELAY_TIME);
-
-    read_work_param(0);
-    rt_thread_delay(SERVO_DELAY_TIME);
-
-    read_work_param(1);
-    while(receive_uart_data_flag == 0)
-    {
-        time_count++;
-        if(time_count > 200) //200ms
-        {
-            write_read_busy_state_ = 0;
-            return 0; //erro
-        }
-        rt_thread_delay(1); //0.001 s
-    }
-
-    write_read_busy_state_ = 0;
-    return 1;
-}
-extern uint8_t is_same(void);
-extern void taiwan_servo_init(void);
-extern uint8_t is_taiwan_servo(void);
 uint8_t menu_combine_verify_work_parm(void)
 {
     uint8_t i = 0;
@@ -726,7 +556,6 @@ uint8_t menu_combine_verify_work_parm(void)
         write_read_busy_state_ = 0;
         return 0;
     }
-
 
     uart_send_clear_command();
     rt_thread_delay(SERVO_DELAY_TIME);

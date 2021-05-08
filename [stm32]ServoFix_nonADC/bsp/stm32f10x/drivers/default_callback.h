@@ -8,14 +8,12 @@
  * 2009-01-05     Bernard      the first version
  */
 
-#ifndef __TAI_PWM_H__
-#define __TAI_PWM_H__
-
+#ifndef __DEFAULT_CALLBACK_H__
+#define __DEFAULT_CALLBACK_H__
+#include <stm32f10x.h>
 #include <rtthread.h>
-#include "usart2.h"
 
-void produce_pwm(uint16_t pwm);
-void produce_pwm_count(uint16_t pwm, uint8_t count);
 
+void Reset_Data_Read_Page_CallBack(u8 key);
 
 #endif

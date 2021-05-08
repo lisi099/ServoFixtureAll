@@ -18,13 +18,22 @@ extern volatile uint8_t  Txd2_Flag;
 extern volatile uint8_t  usart2_mode;
 extern volatile uint32_t bd_set_;
 
-
-//void usart2_init(uint32_t bd);
 void usart2_init_pwm(void);
 void usart2_init_tx(uint32_t bd);
 void usart2_init_rx(uint32_t bd);
 void usart2_send_buff(uint8_t *pbuffer, uint32_t size);
 
+enum{
+	TX_MODE =0,
+	RX_MODE =1,
+	
+};
+
+enum{
+	TX_FINISH = 0,
+	TX_START = 1,
+	
+};
 
 
 #endif

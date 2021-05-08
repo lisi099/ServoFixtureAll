@@ -11,6 +11,7 @@
 #include <stm32f10x.h>
 #include "tai_servo.h"
 #include "string.h"
+#include "tai_pwm.h"
 
 #define PWM_HIGH() 				GPIO_SetBits(GPIOA, GPIO_Pin_2)
 #define PWM_LOW()					GPIO_ResetBits(GPIOA, GPIO_Pin_2)
@@ -30,7 +31,9 @@ static 	uint8_t write_servo_data[136];
 volatile uint8_t receive_tai_data_flag = 0;
 extern volatile uint8_t receive_uart_data_flag;
 extern volatile uint8_t  write_read_busy_state_;
-extern rt_mutex_t dynamic_mutex;
+extern rt_mutex_t servo_mutex;
+extern volatile uint16_t current_servo_version_;
+extern volatile uint8_t connect_servo_state_;
 
 void get_tai_stru(struct Servo_Tai_Data_ *tai_data)
 {
@@ -448,20 +451,6 @@ void taiwan_send_write_data(void)
     rt_thread_delay(800);
 }
 
-void taiwan_servo_init(void)
-{
-    usart2_init_pwm();
-    PWM_LOW();
-    for(int i = 0; i < 5; i++)
-    {
-        PWM_HIGH();
-        rt_thread_delay(7);
-        PWM_LOW();
-        rt_thread_delay(10);
-    }
-    usart2_init_rx(115200);
-}
-extern volatile uint16_t current_servo_version_;
 
 uint8_t connect_taiwan(void)
 {
@@ -484,26 +473,16 @@ uint8_t connect_taiwan(void)
     current_servo_version_ = get_version();
     return 1;
 }
-extern volatile uint8_t connect_servo_state_;
 
 uint8_t is_taiwan_servo(void)
 {
     uint8_t try_count = 3;
     write_read_busy_state_ = 1;
-    rt_mutex_take(dynamic_mutex, RT_WAITING_FOREVER);
-    usart2_init_pwm();
-    PWM_LOW();
-    for(int i = 0; i < 5; i++)
-    {
-        PWM_HIGH();
-        rt_thread_delay(7);
-        PWM_LOW();
-        rt_thread_delay(100);
-    }
-    rt_mutex_release(dynamic_mutex);
-    usart2_init_rx(115200);
+	
+		produce_pwm_count(7000, 2);
+	
     write_read_busy_state_ = 0;
-
+	
     do
     {
         if(connect_taiwan())

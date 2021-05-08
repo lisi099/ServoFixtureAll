@@ -4,7 +4,6 @@
 ***************************************************************/
 #include "usart1.h"
 #include "usart2.h"
-#include "usart3.h"
 #include "string.h"
 #include "usart1_package.h"
 #include <rtthread.h>
@@ -28,8 +27,6 @@ uint8_t  Rcv1_Buffer[RCV1_BUFFSIZE];
 volatile uint32_t Rcv1_Counter;
 volatile uint8_t  Rcv1_Flag;
 volatile uint8_t  Txd1_Flag;
-
-Usart_State usart_state = USB_SERIAL_DISABLE;
 
 uint32_t data_count_rx = 0;
 uint32_t data_count_tx = 0;
@@ -125,7 +122,7 @@ static void usart1_DMA_config(void)
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(COM_DMA_TX, &DMA_InitStructure);
     DMA_ITConfig(COM_DMA_TX, DMA_IT_TC, ENABLE);
-    DMA_Cmd (COM_DMA_TX, DISABLE);
+    DMA_Cmd(COM_DMA_TX, DISABLE);
 
     DMA_DeInit(COM_DMA_RX);
     DMA_InitStructure.DMA_PeripheralBaseAddr = COM_PORT_DR_Base;
@@ -141,7 +138,7 @@ static void usart1_DMA_config(void)
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(COM_DMA_RX, &DMA_InitStructure);
     DMA_ITConfig(COM_DMA_RX, DMA_IT_TC, DISABLE);
-    DMA_Cmd (COM_DMA_RX, ENABLE);
+    DMA_Cmd(COM_DMA_RX, ENABLE);
 }
 /*************************************************************
   Function   :
@@ -186,7 +183,7 @@ void usart1_init(uint32_t bd)
   Input      :
   return     :
 *************************************************************/
-void usart1_send_buff(uint8_t *pbuffer, uint32_t size)
+void usart1_send_buff(uint8_t* pbuffer, uint32_t size)
 {
     data_count_tx += size;
 
@@ -196,10 +193,10 @@ void usart1_send_buff(uint8_t *pbuffer, uint32_t size)
     }
 
     memcpy(Txd1_Buffer, pbuffer, size);
-    DMA_Cmd (COM_DMA_TX, DISABLE);
-    COM_DMA_TX->CMAR =  (u32)Txd1_Buffer;
+    DMA_Cmd(COM_DMA_TX, DISABLE);
+    COM_DMA_TX->CMAR = (u32)Txd1_Buffer;
     COM_DMA_TX->CNDTR = size;
-    DMA_Cmd (COM_DMA_TX, ENABLE);
+    DMA_Cmd(COM_DMA_TX, ENABLE);
     Txd1_Flag    = 1;
 }
 /*************************************************************
@@ -214,7 +211,7 @@ void DMA1_Channel4_IRQHandler(void)
     {
         DMA_ClearITPendingBit(DMA1_IT_GL4);
         DMA_ClearFlag(DMA1_FLAG_TC4);
-        DMA_Cmd (COM_DMA_TX, DISABLE);
+        DMA_Cmd(COM_DMA_TX, DISABLE);
         Txd1_Flag = 0;
     }
 }
@@ -224,7 +221,6 @@ void DMA1_Channel4_IRQHandler(void)
   Input      :
   return     :
 *************************************************************/
-extern struct rt_messagequeue usart1_r_mq;
 extern volatile uint8_t pc_data_state_;
 extern volatile uint8_t test_data_state_;
 
@@ -243,10 +239,10 @@ void USART1_IRQHandler(void)
             data_count_rx += Rcv1_Counter;
         }
 
-        DMA_Cmd (COM_DMA_RX, DISABLE);
-        COM_DMA_RX->CMAR =  (u32)Rcv1_Buffer;
+        DMA_Cmd(COM_DMA_RX, DISABLE);
+        COM_DMA_RX->CMAR = (u32)Rcv1_Buffer;
         COM_DMA_RX->CNDTR =  RCV1_BUFFSIZE;
-        DMA_Cmd (COM_DMA_RX, ENABLE);
+        DMA_Cmd(COM_DMA_RX, ENABLE);
     }
 
     if(USART_GetFlagStatus(COM_PORT, USART_FLAG_ORE) == SET)
@@ -258,22 +254,19 @@ void USART1_IRQHandler(void)
     if(Rcv1_Flag == 1)
     {
         Rcv1_Flag = 0;
-		if(Rcv1_Counter == 13 && Rcv1_Buffer[0] ==0x41){
-			usart1_length_13_data_receieve();
-		}
-		else if(Rcv1_Counter == 92 && Rcv1_Buffer[0] ==0x5A){
-			pc_data_state_ =1;
-		}
-		else if(Rcv1_Counter == 8 && Rcv1_Buffer[0] ==0x5A){
-			test_data_state_ = 1;
-		}
-		else{
-			for(i = 0; i < Rcv1_Counter; i++)
-			{
-				rt_mq_send(&usart1_r_mq, &Rcv1_Buffer[i], 1);
-			}
-		}
-		
+        if(Rcv1_Counter == 13 && Rcv1_Buffer[0] == 0x41)
+        {
+            usart1_length_13_data_receieve();
+        }
+        else if(Rcv1_Counter == 92 && Rcv1_Buffer[0] == 0x5A)
+        {
+            pc_data_state_ = 1;
+        }
+        else if(Rcv1_Counter == 8 && Rcv1_Buffer[0] == 0x5A)
+        {
+            test_data_state_ = 1;
+        }
+
     }
 }
 

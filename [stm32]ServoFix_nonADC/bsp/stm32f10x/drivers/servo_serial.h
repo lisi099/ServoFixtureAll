@@ -2,6 +2,9 @@
 
 
 ***************************************************************/
+#ifndef __SERVO_SERIAL_H__
+#define __SERVO_SERIAL_H__
+
 #include "stm32f10x.h"
 ////////////////////////////////////////////////////////////////////////////////////////
 //通讯包数据格式：
@@ -320,10 +323,6 @@ struct Servo_Data_Stru_  //64 byte
 void uart_receive_data(uint8_t data);
 void uart_send_command(uint8_t id, uint8_t cmd, uint8_t state, uint8_t para_id1, uint16_t para1, uint8_t para_id2, uint16_t para2);
 
-void save_servo_data_in_flash(uint8_t seq, uint16_t version);
-void read_servo_data_in_flash(uint8_t seq);
-uint8_t read_servo_data_in_flash_(uint8_t seq, struct Servo_Data_Stru_  *data);
-void test_falsh_progrm(void);
 
 void menu_combine_position(uint16_t pos);
 uint8_t menu_combine_fb_work_parm(void);
@@ -332,10 +331,7 @@ void menu_combine_prom_work_parm(void);
 uint8_t menu_combine_verify_work_parm(void);
 void menu_combine_center(int16_t data);
 
-//#define 	FACTORY_OUT_SPACE			0
-//#define 	CUSTOMER_OUT_SPACE		9
 #define 	USER_OUT_SPACE			0
 
-uint8_t read_servo_data_in_flash_taiwan(uint8_t seq, uint8_t * const data);
-
+#endif
 

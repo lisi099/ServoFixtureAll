@@ -16,29 +16,60 @@
 #define PWM_LOW()					GPIO_ResetBits(GPIOA, GPIO_Pin_2)
 
 volatile uint8_t 					pwm_finish_flag = 0;
-extern rt_mutex_t dynamic_mutex;
+extern rt_mutex_t servo_mutex;
 
 void TIM3_Int_Init(uint16_t psc);// 500 ~ 2500
 
 void produce_pwm(uint16_t pwm) //0.5ms ~ 2.5ms
 {
     rt_thread_delay(100);
-    rt_mutex_take(dynamic_mutex, RT_WAITING_FOREVER);
+    rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
     usart2_init_pwm();
     PWM_LOW();
-	rt_thread_delay(100);
-		pwm_finish_flag = 0;
-		TIM3_Int_Init(pwm);
-		while(1)
-		{
-			if(pwm_finish_flag){
-				break;
-			}
-			rt_thread_delay(10);
-		}
     rt_thread_delay(100);
-    rt_mutex_release(dynamic_mutex);
+    pwm_finish_flag = 0;
+    TIM3_Int_Init(pwm);
+    while(1)
+    {
+        if(pwm_finish_flag)
+        {
+            break;
+        }
+        rt_thread_delay(10);
+    }
+    rt_thread_delay(100);
     usart2_init_rx(115200);
+		rt_mutex_release(servo_mutex);
+}
+
+void produce_pwm_count(uint16_t pwm, uint8_t count) //0.5ms ~ 2.5ms
+{
+		uint8_t p_count = 0;
+    rt_thread_delay(100);
+    rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
+    usart2_init_pwm();
+    PWM_LOW();
+    rt_thread_delay(100);
+    pwm_finish_flag = 0;
+    TIM3_Int_Init(pwm);
+    while(1)
+    {
+        if(pwm_finish_flag)
+        {
+						rt_thread_delay(10);
+						pwm_finish_flag = 0;
+						p_count ++;
+						TIM3->CNT = 0;
+						TIM_Cmd(TIM3, ENABLE);
+						if(p_count >= count){
+							break;
+						}
+        }
+        rt_thread_delay(10);
+    }
+    rt_thread_delay(100);
+    usart2_init_rx(115200);
+		rt_mutex_release(servo_mutex);
 }
 
 
@@ -63,11 +94,10 @@ void TIM3_Int_Init(uint16_t psc)// 500 ~ 2500
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;  //从优先级3级
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
     NVIC_Init(&NVIC_InitStructure);  //初始化NVIC寄存器
-	
-		TIM3->CNT = 0;
 
+    TIM3->CNT = 0;
     TIM_Cmd(TIM3, ENABLE);  //使能TIMx
-		PWM_HIGH();
+    PWM_HIGH();
 }
 
 //定时器3中断服务程序
@@ -77,7 +107,9 @@ void TIM3_IRQHandler(void)   //TIM3中断
     {
         TIM_ClearITPendingBit(TIM3, TIM_IT_Update);    //清除TIMx更新中断标志
     }
-		PWM_LOW();
-		pwm_finish_flag = 1;
-		TIM_Cmd(TIM3, DISABLE);  //使能TIMx
+    PWM_LOW();
+    pwm_finish_flag = 1;
+    TIM_Cmd(TIM3, DISABLE);  //使能TIMx
 }
+
+//-----------------------end of file-------------------------------------------------------

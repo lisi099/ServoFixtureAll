@@ -10,12 +10,13 @@
       <TargetName>rtthread-stm32</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060422::V5.06 update 4 (build 422)::ARMCC</pCCUsed>
+      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
+      <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F103C8</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F1xx_DFP.2.1.0</PackID>
+          <PackID>Keil.STM32F1xx_DFP.2.3.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x5000) IROM(0x08000000,0x10000) CPUTYPE("Cortex-M3") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -659,6 +660,56 @@
               <FileType>5</FileType>
               <FilePath>.\drivers\menu_app.h</FilePath>
             </File>
+            <File>
+              <FileName>servo_test_callback.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\servo_test_callback.c</FilePath>
+            </File>
+            <File>
+              <FileName>servo_test_callback.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\servo_test_callback.h</FilePath>
+            </File>
+            <File>
+              <FileName>default_callback.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\default_callback.c</FilePath>
+            </File>
+            <File>
+              <FileName>default_callback.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\default_callback.h</FilePath>
+            </File>
+            <File>
+              <FileName>keep_callback.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\keep_callback.c</FilePath>
+            </File>
+            <File>
+              <FileName>keep_callback.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\keep_callback.h</FilePath>
+            </File>
+            <File>
+              <FileName>memory_callback.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\memory_callback.c</FilePath>
+            </File>
+            <File>
+              <FileName>memory_callback.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\memory_callback.h</FilePath>
+            </File>
+            <File>
+              <FileName>servo_rw_callback.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\servo_rw_callback.c</FilePath>
+            </File>
+            <File>
+              <FileName>servo_rw_callback.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\servo_rw_callback.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -683,16 +734,6 @@
               <FileName>usart2.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\drivers\usart2.h</FilePath>
-            </File>
-            <File>
-              <FileName>usart3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\drivers\usart3.c</FilePath>
-            </File>
-            <File>
-              <FileName>usart3.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\drivers\usart3.h</FilePath>
             </File>
             <File>
               <FileName>pc_cmd.c</FileName>
@@ -773,6 +814,16 @@
               <FileName>tai_pwm.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\drivers\tai_pwm.h</FilePath>
+            </File>
+            <File>
+              <FileName>data_base_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\data_base_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>data_base_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\drivers\data_base_flash.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -874,5 +925,11 @@
       </Groups>
     </Target>
   </Targets>
+
+  <RTE>
+    <apis/>
+    <components/>
+    <files/>
+  </RTE>
 
 </Project>

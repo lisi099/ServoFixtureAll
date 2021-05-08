@@ -8,14 +8,12 @@
  * 2009-01-05     Bernard      the first version
  */
 
-#ifndef __TAI_PWM_H__
-#define __TAI_PWM_H__
-
+#ifndef __SERVO_RW_CALLBACK_H__
+#define __SERVO_RW_CALLBACK_H__
+#include <stm32f10x.h>
 #include <rtthread.h>
-#include "usart2.h"
 
-void produce_pwm(uint16_t pwm);
-void produce_pwm_count(uint16_t pwm, uint8_t count);
-
+uint8_t servo_write_callback(void);
+uint8_t servo_read_callback(void);
 
 #endif

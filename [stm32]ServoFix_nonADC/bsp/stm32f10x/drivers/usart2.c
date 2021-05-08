@@ -7,7 +7,6 @@
 #include "servo_serial.h"
 #include "string.h"
 #include "usart1.h"
-#include "usart3.h"
 #include <rtthread.h>
 
 #define COM_PORT_DR_Base        (USART2_BASE+0x04)
@@ -31,8 +30,10 @@ volatile uint32_t Rcv2_Counter;
 volatile uint8_t  Rcv2_Flag;
 volatile uint8_t  Txd2_Flag;
 
-volatile uint8_t  usart2_mode = 0;
+volatile uint8_t  usart2_mode = TX_MODE;
 volatile uint32_t bd_set_ = COM_BAUDRATE;
+
+extern rt_mutex_t servo_mutex;
 
 /*************************************************************
   Function   :
@@ -70,64 +71,28 @@ uint32_t usart2_get_counter(void)
   Input      :
   return     :
 *************************************************************/
-//void usart2_config(uint32_t bd)
-//{
-//    GPIO_InitTypeDef GPIO_InitStructure;
-//    USART_InitTypeDef USART_InitStructure;
-//    RCC_APB2PeriphClockCmd(COM_PORT_APB2_CLOCK, ENABLE);
-//    RCC_APB1PeriphClockCmd(COM_PORT_APB1_CLOCK, ENABLE );
-//
-//    GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_TX;
-////    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-//    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//    GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
-
-////    GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_RX;
-////    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-////    GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
-
-//	USART_DeInit(USART2);
-//    USART_InitStructure.USART_BaudRate = bd;
-//    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-//    USART_InitStructure.USART_StopBits = USART_StopBits_1;
-//    USART_InitStructure.USART_Parity = USART_Parity_No ;
-//    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-//    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-//    USART_Init(COM_PORT, &USART_InitStructure);
-
-//    USART_ITConfig(COM_PORT, USART_IT_IDLE, ENABLE);
-//    USART_ITConfig(COM_PORT, USART_IT_TXE, DISABLE);
-//    USART_ITConfig(COM_PORT, USART_IT_RXNE, DISABLE);
-//    USART_DMACmd(COM_PORT, USART_DMAReq_Tx, ENABLE);
-//    USART_DMACmd(COM_PORT, USART_DMAReq_Rx, ENABLE);
-//    USART_Cmd(COM_PORT, ENABLE);
-//
-//	USART_HalfDuplexCmd(USART2, ENABLE);
-//}
 void usart2_init_pwm(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	USART_InitTypeDef USART_InitStructure;
-	RCC_APB2PeriphClockCmd(COM_PORT_APB2_CLOCK, ENABLE);
-	RCC_APB1PeriphClockCmd(COM_PORT_APB1_CLOCK, ENABLE );
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    GPIO_InitTypeDef GPIO_InitStructure;
+    RCC_APB2PeriphClockCmd(COM_PORT_APB2_CLOCK, ENABLE);
+    RCC_APB1PeriphClockCmd(COM_PORT_APB1_CLOCK, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
-	GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_TX;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_TX;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
 
-	GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_RX;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
-	GPIO_ResetBits(GPIOB, GPIO_Pin_12);
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	GPIO_SetBits(GPIOB, GPIO_Pin_13);
-	
+    GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_RX;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
+    GPIO_ResetBits(GPIOB, GPIO_Pin_12); //输出信号
+		GPIO_SetBits(COM_PORT_SOURCE, COM_PORT_PIN_TX);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    GPIO_SetBits(GPIOB, GPIO_Pin_13); // 上拉电阻起效
 }
 /*************************************************************
   Function   :
@@ -154,7 +119,7 @@ void usart2_DMA_config(void)
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(COM_DMA_TX, &DMA_InitStructure);
     DMA_ITConfig(COM_DMA_TX, DMA_IT_TC, ENABLE);
-    DMA_Cmd (COM_DMA_TX, DISABLE);
+    DMA_Cmd(COM_DMA_TX, DISABLE);
 
     DMA_DeInit(COM_DMA_RX);
     DMA_InitStructure.DMA_PeripheralBaseAddr = COM_PORT_DR_Base;
@@ -170,7 +135,7 @@ void usart2_DMA_config(void)
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(COM_DMA_RX, &DMA_InitStructure);
     DMA_ITConfig(COM_DMA_RX, DMA_IT_TC, DISABLE);
-    DMA_Cmd (COM_DMA_RX, ENABLE);
+    DMA_Cmd(COM_DMA_RX, ENABLE);
 }
 /*************************************************************
   Function   :
@@ -200,22 +165,13 @@ void usart2_NVIC_config(void)
   Input      :
   return     :
 *************************************************************/
-//void usart2_init(uint32_t bd)
-//{
-//   usart2_config(bd);
-//   usart2_DMA_config();
-//   usart2_NVIC_config();
-//   Rcv2_Counter = 0;
-//   Rcv2_Flag = 0;
-//   Txd2_Flag = 0;
-//}
 void usart2_init_tx(uint32_t bd)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
     RCC_APB2PeriphClockCmd(COM_PORT_APB2_CLOCK, ENABLE);
-    RCC_APB1PeriphClockCmd(COM_PORT_APB1_CLOCK, ENABLE );
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+    RCC_APB1PeriphClockCmd(COM_PORT_APB1_CLOCK, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_TX;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -225,8 +181,8 @@ void usart2_init_tx(uint32_t bd)
     GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_RX;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -245,15 +201,15 @@ void usart2_init_tx(uint32_t bd)
     USART_DMACmd(COM_PORT, USART_DMAReq_Tx, ENABLE);
     USART_DMACmd(COM_PORT, USART_DMAReq_Rx, ENABLE);
     USART_Cmd(COM_PORT, ENABLE);
-	
-	GPIO_ResetBits(GPIOB, GPIO_Pin_12);
+
+    GPIO_ResetBits(GPIOB, GPIO_Pin_12);
 
     usart2_DMA_config();
     usart2_NVIC_config();
     Rcv2_Counter = 0;
     Rcv2_Flag = 0;
-    Txd2_Flag = 0;
-    usart2_mode = 0;
+    Txd2_Flag = TX_FINISH;
+    usart2_mode = TX_MODE;
 }
 
 void usart2_init_rx(uint32_t bd)
@@ -261,7 +217,7 @@ void usart2_init_rx(uint32_t bd)
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
     RCC_APB2PeriphClockCmd(COM_PORT_APB2_CLOCK, ENABLE);
-    RCC_APB1PeriphClockCmd(COM_PORT_APB1_CLOCK, ENABLE );
+    RCC_APB1PeriphClockCmd(COM_PORT_APB1_CLOCK, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_TX;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
@@ -287,19 +243,20 @@ void usart2_init_rx(uint32_t bd)
     USART_DMACmd(COM_PORT, USART_DMAReq_Tx, ENABLE);
     USART_DMACmd(COM_PORT, USART_DMAReq_Rx, ENABLE);
     USART_Cmd(COM_PORT, ENABLE);
-	
-	GPIO_SetBits(GPIOB, GPIO_Pin_12);
-	if(bd == 19200)
-	{
-		GPIO_ResetBits(GPIOB, GPIO_Pin_13);
-	}
-	
+
+    GPIO_SetBits(GPIOB, GPIO_Pin_12);
+    if(bd == 19200){
+        GPIO_ResetBits(GPIOB, GPIO_Pin_13);
+    }
+		else{
+				GPIO_SetBits(GPIOB, GPIO_Pin_13);
+		}
     usart2_DMA_config();
     usart2_NVIC_config();
     Rcv2_Counter = 0;
     Rcv2_Flag = 0;
-    Txd2_Flag = 0;
-    usart2_mode = 1;
+    Txd2_Flag = TX_FINISH;
+    usart2_mode = RX_MODE;
     bd_set_ = bd;
 }
 /*************************************************************
@@ -308,16 +265,10 @@ void usart2_init_rx(uint32_t bd)
   Input      :
   return     :
 *************************************************************/
-void usart2_send_buff(uint8_t *pbuffer, uint32_t size)
+void usart2_send_buff(uint8_t* pbuffer, uint32_t size)
 {
-//	int i;
-//	DMA_Cmd (DMA1_Channel6, DISABLE);
-//	USART_DMACmd(USART2, USART_DMAReq_Rx, DISABLE);
-//	USART_TX_HIGH;
-//	for(i =0; i<5000; i++){
-//		;
-//	}
-    if(usart2_mode == 1)
+		rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
+    if(usart2_mode == RX_MODE)
     {
         usart2_init_tx(bd_set_);
     }
@@ -328,11 +279,12 @@ void usart2_send_buff(uint8_t *pbuffer, uint32_t size)
     }
 
     memcpy(Txd2_Buffer, pbuffer, size);
-    DMA_Cmd (COM_DMA_TX, DISABLE);
-    COM_DMA_TX->CMAR =  (u32)Txd2_Buffer;
+    DMA_Cmd(COM_DMA_TX, DISABLE);
+    COM_DMA_TX->CMAR = (u32)Txd2_Buffer;
     COM_DMA_TX->CNDTR = size;
-    DMA_Cmd (COM_DMA_TX, ENABLE);
-    Txd2_Flag    = 1;
+    DMA_Cmd(COM_DMA_TX, ENABLE);
+    Txd2_Flag    = TX_START;
+		rt_mutex_release(servo_mutex);
 }
 /*************************************************************
   Function   :
@@ -346,12 +298,8 @@ void DMA1_Channel7_IRQHandler(void)
     {
         DMA_ClearITPendingBit(DMA1_IT_GL7);
         DMA_ClearFlag(DMA1_FLAG_TC7);
-        DMA_Cmd (COM_DMA_TX, DISABLE);
-        Txd2_Flag = 0;
-
-//	  USART_ClearFlag(USART2, USART_FLAG_RXNE);
-//	  DMA_Cmd (DMA1_Channel6, ENABLE);
-//	  USART_DMACmd(USART2, USART_DMAReq_Rx, ENABLE);
+        DMA_Cmd(COM_DMA_TX, DISABLE);
+        Txd2_Flag = TX_FINISH;
     }
 }
 /*************************************************************
@@ -360,9 +308,8 @@ void DMA1_Channel7_IRQHandler(void)
   Input      :
   return     :
 *************************************************************/
-extern Usart_State usart_state;
-extern struct rt_messagequeue usart2_r_mq;
-extern void set_read_servo_data(const uint8_t *data);
+extern void set_read_servo_data(const uint8_t* data);
+
 void USART2_IRQHandler(void)
 {
     uint32_t i;
@@ -377,80 +324,29 @@ void USART2_IRQHandler(void)
             Rcv2_Flag = 1;
         }
 
-        DMA_Cmd (DMA1_Channel6, DISABLE);
-        DMA1_Channel6->CMAR =  (u32)Rcv2_Buffer;
+        DMA_Cmd(DMA1_Channel6, DISABLE);
+        DMA1_Channel6->CMAR = (u32)Rcv2_Buffer;
         DMA1_Channel6->CNDTR =  RCV2_BUFFSIZE;
-        DMA_Cmd (DMA1_Channel6, ENABLE);
+        DMA_Cmd(DMA1_Channel6, ENABLE);
     }
-
-    if(Rcv2_Flag == 1 && Rcv2_Counter == 24)
+		
+		if(Rcv2_Flag != 1)
+		{
+			return;
+		}
+		Rcv2_Flag = 0;
+		
+    if(Rcv2_Counter == 12)
     {
-        Rcv2_Flag = 0;
-
-        switch(usart_state)
-        {
-            case USB_SERIAL_DISABLE:
-                for(i = 0; i < 12; i++)
-                {
-                    uart_receive_data(Rcv2_Buffer[i + 12]);
-                }
-
-                break;
-
-            case USB_SERIAL_TO_SERVO:
-                for(i = 0; i < 12; i++)
-                {
-                    rt_mq_send(&usart2_r_mq, &Rcv2_Buffer[i + 12], 1);
-                }
-
-                break;
-
-            case BLUETOOTH_MODE:
-                usart3_send_buff(&Rcv2_Buffer[12], 12);
-                break;
-
-            default:
-                break;
-        }
-    }
-    else if(Rcv2_Flag == 1 && Rcv2_Counter == 12)
-    {
-        Rcv2_Flag = 0;
-
         if(Rcv2_Buffer[0] == 0xFA && Rcv2_Buffer[11] == 0xFE && Rcv2_Buffer[3] == 0x02)
         {
-            switch(usart_state)
-            {
-                case USB_SERIAL_DISABLE:
-                    for(i = 0; i < 12; i++)
-                    {
-                        uart_receive_data(Rcv2_Buffer[i]);
-                    }
-
-                    break;
-
-                case USB_SERIAL_TO_SERVO:
-                    for(i = 0; i < 12; i++)
-                    {
-                        rt_mq_send(&usart2_r_mq, &Rcv2_Buffer[i], 1);
-                    }
-
-//					usart1_send_buff(&Rcv2_Buffer[0], 12);
-                    break;
-
-                case BLUETOOTH_MODE:
-                    usart3_send_buff(&Rcv2_Buffer[0], 12);
-                    break;
-
-                default:
-                    break;
-            }
+						uart_receive_data(Rcv2_Buffer[i]);
         }
     }
-	else if(Rcv2_Counter == 129)
-	{
-		set_read_servo_data(&Rcv2_Buffer[0]);
-	}
+    else if(Rcv2_Counter == 129)
+    {
+        set_read_servo_data(&Rcv2_Buffer[0]);
+    }
 }
 
 

@@ -6,18 +6,28 @@
 #include <rtthread.h>
 #include "usart1.h"
 #include "usart2.h"
-#include "usart3.h"
 #include "servo_serial.h"
 #include "string.h"
 #include "factory_data.h"
 #include "tai_servo.h"
 #include "tai_pwm.h"
+#include "servo_test_callback.h"
+#include "default_callback.h"
+#include "keep_callback.h"
+#include "memory_callback.h"
+#include "servo_rw_callback.h"
 
-#define BLINK_TIME 	10
 #define SIZE_OF_ITEM(x) (sizeof(x) / sizeof(struct Item))
+	
 extern struct rt_messagequeue key_mq;
 extern volatile uint8_t is_tai_servo_;
+extern void copy_read_data(void);
+extern struct Servo_Data_Stru_ servoDataStru;
+
+struct Servo_Data_Stru_ servo_load_data;
 volatile uint16_t current_servo_version_ = 0;
+uint8_t Item_Num_[2] = {0, 0};
+static int8_t l_num = 0, r_num = 0;
 
 //--0
 extern struct PAGE* pPage;
@@ -45,15 +55,6 @@ extern struct PAGE Servo_Write_Memory_Page;
 extern struct PAGE Servo_Read_Memory_Page;
 
 extern struct PAGE Pc_Page;
-
-extern struct Servo_Data_Stru_ servoDataStru;
-struct Servo_Data_Stru_ servo_load_data;
-
-uint8_t Item_Num_[2] = {0, 0};
-extern Usart_State usart_state;
-
-
-static int8_t l_num = 0, r_num = 0;
 /************************************************1******************************************************/
 //----1
 struct Item Main_item[] =
@@ -115,8 +116,7 @@ struct PAGE Data_Read_Page = {&Setting_Page, Menu_Three_CallBack, Data_Read_item
 struct PAGE Reset_Data_Read_Page = {&Setting_Page, Reset_Data_Read_Page_CallBack, 0, 0};
 //----3
 struct PAGE Lcd_Version_Page = {&mainPage, Servo_Version_Page_CallBack, 0, 0};
-
-
+/************************************************4*********************************************************/
 struct Item Brodband_item[] =
 {
     (char*)"PWM:500us",						&Broadband_servo_Page,  0,  0,  1, SHOW_NUM, 0, 0,
@@ -126,7 +126,7 @@ struct Item Brodband_item[] =
     (char*)"PWM:2500us",					&Broadband_servo_Page,  0,  0,  1, SHOW_NUM, 0, 0,
 };
 struct PAGE Broadband_servo_Page = {&Position_Page, Broadband_Page_CallBack, Brodband_item, SIZE_OF_ITEM(Brodband_item)};
-
+/************************************************4*********************************************************/
 struct Item Narrowband_item[] =
 {
     (char*)"PWM:500us",						&Narrowband_servo_Page,  0,  0,  1, SHOW_NUM, 0, 0,
@@ -140,87 +140,10 @@ struct PAGE Servo_Write_Memory_Page = {&Data_Save_Page, Servo_Write_Memory_CallB
 //----4
 struct PAGE Servo_Read_Memory_Page = {&Data_Read_Page, Servo_Read_Memory_CallBack, 0, 0};
 /*************************************************FUNCTIONS**************************************************************/
-// struct Servo_Data_Stru_  para_01= {2200,1500,800,3448,2048,648,2,0,0,1,0,1,380,1,16,248,1,1500,10,1,1,10,0,100,0,1020,1020,1500,1500,1500,1,0,3,1,8,16,32,1,1};
-/*----------------------------------
+
+/*---------------------------------------------------------------
 回调函数
-----------------------------------*/
-void keep_string(uint8_t state)
-{
-    if(state == S_FAILED)
-    {
-        LCD_Write_Str(1, 0, (char*)">Failed!");
-    }
-    else if(state == S_SUCCESS)
-    {
-        LCD_Write_Str(1, 0, (char*)">Success!");
-    }
-    else if(state == S_CONFORM)
-    {
-        LCD_Write_Str(0, 0, (char*)">Confirm?");
-    }
-    else
-    {
-        return;
-    }
-}
-
-uint8_t keep(uint8_t state)
-{
-    uint8_t rec_buff[2];
-    uint8_t i;
-    uint16_t time = 0;
-    uint8_t sh = 0;
-
-    keep_string(state);
-
-    //防止执行过程中按键误按触发
-    for(i = 0; i < 5; i++)
-    {
-        rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO);
-    }
-
-    //等待用户操作
-    while(1)
-    {
-        if(rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO) == RT_EOK)
-        {
-            if(rec_buff[0] == 2)
-            {
-                return F_RETURN; //return
-            }
-            else if(rec_buff[0] == 3)
-            {
-                return F_OK; //ok
-            }
-        }
-
-        rt_thread_delay(RT_TICK_PER_SECOND / 10);
-        time ++;
-
-        if(time >= BLINK_TIME)
-        {
-            time = 0;
-        }
-
-        if(time < BLINK_TIME / 2)
-        {
-            if(sh == 1)
-            {
-                keep_string(state);
-                sh = 0;
-            }
-        }
-        else
-        {
-            if(sh == 0)
-            {
-                LCD_Write_Str(1, 0, (char*)"         ");
-                sh = 1;
-            }
-        }
-    }
-}
-
+----------------------------------------------------------------*/
 void Pc_Page_CallBack(u8 key)
 {
     Lcd_Clr_Scr();
@@ -238,7 +161,7 @@ void exit_pc_page(void)
     SetMainPage(&Setting_Page);
     ShowPage_Num(pPage, 0);
 }
-//-------------------------------------------------------------------
+//一级菜单回调
 void Menu_One_CallBack(u8 key)
 {
     switch(key)
@@ -250,18 +173,16 @@ void Menu_One_CallBack(u8 key)
         KeySelItem(key);
         Item_Num_[0] = Menu_GetSelItem();
         break;
-
     case KEY_Return:
         ShowParentPage_Num(0);
         break;
-
     case KEY_Ok:
         ShowItemPage_Num(0);
         Item_Num_[1] = 0;
         break;
     }
 }
-
+//二级菜单回调
 void Menu_Two_CallBack(u8 key)
 {
     switch(key)
@@ -273,11 +194,9 @@ void Menu_Two_CallBack(u8 key)
         KeySelItem(key);
         Item_Num_[1] = Menu_GetSelItem();
         break;
-
     case KEY_Return:
         ShowParentPage_Num(Item_Num_[0]);
         break;
-
     case KEY_Ok:
         if(pPage == &Position_Page)
         {
@@ -294,30 +213,12 @@ void Menu_Two_CallBack(u8 key)
         {
             ShowItemPage_Num(0);
         }
-
         break;
     }
 }
-
+//三级菜单回调
 void Menu_Three_CallBack(u8 key)
 {
-    uint16_t distribtor, distribtor1;
-    uint8_t buf_2[2];
-	if(is_tai_servo_){
-		buf_2[0] = current_servo_version_ / 1000 % 10;
-		buf_2[1] = current_servo_version_ / 100 % 10;
-		distribtor = buf_2[0] * 10 + buf_2[1];
-	}
-	else{
-		buf_2[0] = servoDataStru.work_p12 / 1000 % 10;
-		buf_2[1] = servoDataStru.work_p12 / 100 % 10;
-		distribtor = buf_2[0] * 10 + buf_2[1];
-	}
-	uint8_t result;
-	uint8_t count = 0;
-
-	int num = find_version(distribtor);
-	
     switch(key)
     {
     case KEY_UP:
@@ -332,489 +233,16 @@ void Menu_Three_CallBack(u8 key)
         break;
 
     case KEY_Ok:
-        if(pPage == &Data_Save_Page && Menu_GetSelItem() == 0)
-        {
-            if(num == 100)
-            {
-                Lcd_Clr_Scr();
-                LCD_Write_Str(0, 0, (char*)"<Writting>...");
-                keep(S_FAILED);
-                SetMainPage(&Data_Save_Page);
-                ShowPage_Num(pPage, 0);
-                break;
-            }
-            else
-            {
-                Lcd_Clr_Scr();
-                LCD_Write_Str(0, 0, (char*)"<Writting>...");
-                Copy_Data_To_Stru();
-//				while(1){
-					menu_combine_prom_work_parm();
-					res = menu_combine_verify_work_parm();
-//					if(result){
-//						break;
-//					}
-//					count ++;
-//					if(count >=2 ){
-//						break;
-//					}
-//				}
-				
-                if(result)
-                {
-                    if(keep(S_SUCCESS) == F_RETURN)
-                    {
-                        ShowParentPage_Num(Item_Num_[1]);
-                    }
-                    else
-                    {
-                        SetMainPage(&Setting_Page);
-                        ShowPage_Num(pPage, 0);
-                    }
-                }
-                else
-                {
-                    keep(S_FAILED);
-                    SetMainPage(&Data_Save_Page);
-                    ShowPage_Num(pPage, 0);
-                }
-
-                break;
-            }
+        if(pPage == &Data_Save_Page && Menu_GetSelItem() == 0){
+					servo_write_callback();
         }
-        else if(pPage == &Data_Read_Page && Menu_GetSelItem() == 0)
-        {
-            Lcd_Clr_Scr();
-            LCD_Write_Str(0, 0, (char*)"<Reading>...");
-
-            if(menu_combine_fb_work_parm())
-            {
-                if(keep(S_SUCCESS) == F_RETURN)
-                {
-                    ShowParentPage_Num(Item_Num_[1]);
-                }
-                else
-                {
-                    SetMainPage(&Setting_Page);
-                    ShowPage_Num(pPage, 0);
-                }
-            }
-            else
-            {
-                keep(S_FAILED);
-                SetMainPage(&Data_Read_Page);
-                ShowPage_Num(pPage, 0);
-            }
-
-            break;
+        else if(pPage == &Data_Read_Page && Menu_GetSelItem() == 0){
+					servo_read_callback();
         }
-
-        //----------------
-        ShowItemPage_Num(0);
-        break;
-    }
-}
-//-------------------------------------------------------------------
-//void Lcd_Upgrade_CallBack(u8 key)
-//{
-//    Lcd_Clr_Scr();
-//    put_chars_middle(0, "LCD Upgrade");
-//    usart_state = USB_SERIAL_PROGRAM;
-//    usart1_init(115200);
-
-//    switch(key)
-//    {
-//    case KEY_Return:
-//        ShowParentPage_Num(2);
-//        break;
-//    }
-//}
-
-//void Servo_Bd_Set_CallBack(u8 key)
-//{
-//    uint32_t bd_set;
-
-//    switch(key)
-//    {
-//    case KEY_UP:
-//    case KEY_Down:
-//    case KEY_UP_L:
-//    case KEY_Down_L:
-//        KeySelItem(key);
-//        break;
-
-//    case KEY_Return:
-//        ShowParentPage_Num(0);
-//        break;
-
-//    case KEY_Ok:
-//        if(Menu_GetSelItem() == 0)
-//        {
-//            bd_set = 19200;
-//        }
-//        else if(Menu_GetSelItem() == 1)
-//        {
-//            bd_set = 9600;
-//        }
-//        else if(Menu_GetSelItem() == 2)
-//        {
-//            bd_set = 38400;
-//        }
-//        else if(Menu_GetSelItem() == 3)
-//        {
-//            bd_set = 115200;
-//        }
-
-//        usart2_init_rx(bd_set);
-//        LCD_Write_Str(0, 0, (char*)"<BAUD SET>...");
-//        rt_thread_delay(RT_TICK_PER_SECOND);
-//        keep(S_SUCCESS);
-//        ShowParentPage_Num(0);
-//        break;
-//    }
-//}
-
-//void Lcd_Bd_Set_CallBack(u8 key)
-//{
-//    uint32_t bd_set;
-
-//    switch(key)
-//    {
-//    case KEY_UP:
-//    case KEY_Down:
-//    case KEY_UP_L:
-//    case KEY_Down_L:
-//        KeySelItem(key);
-//        break;
-
-//    case KEY_Return:
-//        ShowParentPage_Num(0);
-//        break;
-
-//    case KEY_Ok:
-//        if(Menu_GetSelItem() == 0)
-//        {
-//            bd_set = 19200;
-//        }
-//        else if(Menu_GetSelItem() == 1)
-//        {
-//            bd_set = 9600;
-//        }
-//        else if(Menu_GetSelItem() == 2)
-//        {
-//            bd_set = 38400;
-//        }
-//        else if(Menu_GetSelItem() == 3)
-//        {
-//            bd_set = 115200;
-//        }
-
-//        usart1_init(bd_set);
-//        LCD_Write_Str(0, 0, (char*)"<BAUD SET>...");
-//        rt_thread_delay(RT_TICK_PER_SECOND);
-//        keep(S_SUCCESS);
-//        ShowParentPage_Num(1);
-//        break;
-//    }
-//}
-
-void Servo_Write_Memory_CallBack(u8 key)
-{
-    static uint8_t num = 0;
-    char buf[16] = "  SERVO-DATA-00 ";
-    uint16_t data_version;
-
-    struct Servo_Data_Stru_ data;
-    uint8_t buf_2[2];
-    uint8_t distribtor, costormer;
-    uint8_t is_taiwan_distribtor;
-
-    uint8_t data_taiwan[128];
-    switch(key)
-    {
-    case KEY_UP:
-        num ++;
-
-        if(num > 19)
-        {
-            num = 0;
-        }
-
-        break;
-
-    case KEY_Down:
-        if(num == 0)
-        {
-            num = 19;
-        }
-        else
-        {
-            num --;
-        }
-
-        break;
-
-    case KEY_UP_L:
-        num ++;
-
-        if(num > 19)
-        {
-            num = 0;
-        }
-
-        break;
-
-    case KEY_Down_L:
-        if(num == 0)
-        {
-            num = 19;
-        }
-        else
-        {
-            num --;
-        }
-
-        break;
-
-    case KEY_Return:
-        ShowParentPage_Num(1);
-        return;
-
-    case KEY_Ok:
-        Lcd_Clr_Scr();
-        Copy_Data_To_Stru();
-        if(is_tai_servo_ == 0)
-        {
-            data_version = servoDataStru.work_p12;
-            buf_2[0] = servoDataStru.work_p12 / 10 % 10;
-            buf_2[1] = servoDataStru.work_p12 / 1 % 10;
-            data_version -= (buf_2[0] * 10 + buf_2[1]);
-            data_version += (num + 1);
-            LCD_Write_Str(0, 0, (char*)"<Writting>...");
-            save_servo_data_in_flash(num + USER_OUT_SPACE, data_version);
-        }
-        else
-        {
-            data_version = (num + 1);
-            LCD_Write_Str(0, 0, (char*)"<Writting>...");
-            save_servo_data_in_flash(num + USER_OUT_SPACE, data_version);
-        }
-        rt_thread_delay(RT_TICK_PER_SECOND);
-
-        if(keep(S_SUCCESS) == F_RETURN)
-        {
-            ShowParentPage_Num(1);
-        }
-        else
-        {
-            SetMainPage(&Setting_Page);
-            ShowPage_Num(pPage, 0);
-        }
-
-        return;
-    }
-    read_servo_data_in_flash_(num, &data);
-
-    read_servo_data_in_flash_taiwan(num, data_taiwan);
-    is_taiwan_distribtor = is_version_taiwan(data_taiwan);
-    if(is_taiwan_distribtor)
-    {
-        distribtor = (data_taiwan[96] - '0') * 10 + (data_taiwan[97] - '0');
-    }
-    else
-    {
-        buf_2[0] = data.work_p12 / 1000 % 10;
-        buf_2[1] = data.work_p12 / 100 % 10;
-        distribtor = buf_2[0] * 10 + buf_2[1];
-    }
-
-    if(find_version(distribtor) != 100)
-    {
-        buf_2[0] = data.work_p12  / 10000 % 10 + 1;
-        if(is_taiwan_distribtor)
-        {
-            sprintf(buf, "v1.%d ", data_taiwan[95] - '0' + 1);
-        }
-        else
-        {
-            sprintf(buf, "v1.%d ", buf_2[0]);
-        }
-        sprintf(&buf[5], "%s-", get_ver_char(find_version(distribtor)));
-
-        if(is_taiwan_distribtor)
-        {
-            costormer = (data_taiwan[98] - '0') * 10 + (data_taiwan[99] - '0');
-        }
-        else
-        {
-            buf_2[0] = data.work_p12 / 10 % 10;
-            buf_2[1] = data.work_p12 / 1 % 10;
-            costormer = buf_2[0] * 10 + buf_2[1];
-        }
-
-        if(costormer >= 21)
-        {
-            sprintf(&buf[13], "00");
-        }
-        else if(costormer >= 10)
-        {
-            sprintf(&buf[13], "%d", costormer);
-        }
-        else
-        {
-            sprintf(&buf[13], "0%d", costormer);
-        }
-    }
-
-    Lcd_Clr_Scr();
-
-    if(find_version(distribtor) == 100)
-    {
-        buf[13] += (num + 1) / 10 % 10;
-        buf[14] += (num + 1) / 1 % 10;
-    }
-
-    put_chars_middle(0, " Write Memory");
-    LCD_Write_Str(1, 0, (char*)buf);
-}
-
-
-void Servo_Read_Memory_CallBack(u8 key)
-{
-    static uint8_t num = 0;
-    char buf[16] = "  SERVO-DATA-00 ";
-    struct Servo_Data_Stru_ data;
-    uint8_t buf_2[2];
-    uint8_t distribtor, costormer;
-
-    uint8_t data_taiwan[128];
-    uint8_t is_taiwan_distribtor;
-    switch(key)
-    {
-    case KEY_UP:
-        num ++;
-
-        if(num > 19)
-        {
-            num = 0;
-        }
-
-        break;
-
-    case KEY_Down:
-        if(num == 0)
-        {
-            num = 19;
-        }
-        else
-        {
-            num --;
-        }
-        break;
-
-    case KEY_UP_L:
-        num ++;
-
-        if(num > 19)
-        {
-            num = 0;
-        }
-
-        break;
-
-    case KEY_Down_L:
-        if(num == 0)
-        {
-            num = 19;
-        }
-        else
-        {
-            num --;
-        }
-
-        break;
-
-    case KEY_Return:
-        ShowParentPage_Num(1);
-        return;
-
-    case KEY_Ok:
-        Lcd_Clr_Scr();
-        LCD_Write_Str(0, 0, (char*)"<Reading>...");
-        read_servo_data_in_flash(num + USER_OUT_SPACE);
-        rt_thread_delay(RT_TICK_PER_SECOND);
-
-        if(keep(S_SUCCESS) == F_RETURN)
-        {
-            ShowParentPage_Num(1);
-        }
-        else
-        {
-            SetMainPage(&Setting_Page);
-            ShowPage_Num(pPage, 0);
-        }
-        return;
-    }
-    read_servo_data_in_flash_taiwan(num, data_taiwan);
-    read_servo_data_in_flash_(num, &data);
-    is_taiwan_distribtor = is_version_taiwan(data_taiwan);
-    if(is_taiwan_distribtor)
-    {
-        distribtor = (data_taiwan[96] - '0') * 10 + (data_taiwan[97] - '0');
-    }
-    else
-    {
-        buf_2[0] = data.work_p12 / 1000 % 10;
-        buf_2[1] = data.work_p12 / 100 % 10;
-        distribtor = buf_2[0] * 10 + buf_2[1];
-    }
-
-    if(find_version(distribtor) != 100)
-    {
-        if(is_taiwan_distribtor)
-        {
-            sprintf(buf, "v1.%d ", data_taiwan[95] - '0' + 1);
-        }
-        else
-        {
-            buf_2[0] = data.work_p12  / 10000 % 10 + 1;
-            sprintf(buf, "v1.%d ", buf_2[0]);
-        }
-        sprintf(&buf[5], "%s-", get_ver_char(find_version(distribtor)));
-
-        if(is_taiwan_distribtor)
-        {
-            costormer = (data_taiwan[98] - '0') * 10 + (data_taiwan[99] - '0');
-        }
-        else
-        {
-            buf_2[0] = data.work_p12 / 10 % 10;
-            buf_2[1] = data.work_p12 / 1 % 10;
-            costormer = buf_2[0] * 10 + buf_2[1];
-        }
-
-        if(costormer >= 21)
-        {
-            sprintf(&buf[13], "00");
-        }
-        else if(costormer >= 10)
-        {
-            sprintf(&buf[13], "%d", costormer);
-        }
-        else
-        {
-            sprintf(&buf[13], "0%d", costormer);
-        }
-    }
-    else
-    {
-        buf[13] += (num + 1) / 10 % 10;
-        buf[14] += (num + 1) / 1 % 10;
-    }
-
-    Lcd_Clr_Scr();
-    put_chars_middle(0, " Read Memory");
-    LCD_Write_Str(1, 0, (char*)buf);
+				else{
+					ShowItemPage_Num(0);
+				}
+    }//end switch
 }
 
 void Servo_Version_Page_CallBack(u8 key)
@@ -826,11 +254,9 @@ void Servo_Version_Page_CallBack(u8 key)
     case KEY_Return:
         ShowParentPage_Num(0);
         return;
-
     case KEY_Ok:
         break;
     }
-
     Lcd_Clr_Scr();
     put_chars_middle(0, str);
 }
@@ -847,7 +273,6 @@ void Servo_Center_Page_CallBack(u8 key)
             {
                 l_num++;
             }
-
         }
         else if(l_num != 0)
         {
@@ -860,7 +285,6 @@ void Servo_Center_Page_CallBack(u8 key)
         {
             r_num--;
         }
-
         break;
     case KEY_UP:
         if(l_num == 0 && r_num == 0)
@@ -887,7 +311,6 @@ void Servo_Center_Page_CallBack(u8 key)
         ShowParentPage_Num(Item_Num_[1]);
         return;
     }
-
 
     //show data
     if(l_num == 0 && r_num == 0)
@@ -932,281 +355,14 @@ void Servo_Center_Page_CallBack(u8 key)
     {
         menu_combine_center(-l_num + r_num);
     }
-		else{
-				menu_combine_prom_work_parm();//写入参数
-				produce_pwm(1500);//旋转
-		}
+    else
+    {
+        menu_combine_prom_work_parm();//写入参数
+        produce_pwm(1500);//旋转
+    }
     Lcd_Clr_Scr();
     put_chars_middle(0, "Center");
     put_chars_middle(1, oper_num);
-}
-
-void Broadband_Page_CallBack(u8 key)
-{
-    switch(key)
-    {
-    case KEY_UP:
-    case KEY_Down:
-    case KEY_UP_L:
-    case KEY_Down_L:
-        KeySelItem(key);
-        break;
-
-    case KEY_Return:
-        ShowParentPage_Num(0);
-        return;
-
-    case KEY_Ok:
-        break;
-    }
-
-    switch(Menu_GetSelItem())
-    {
-    case 0:
-        if(!is_tai_servo_){
-            menu_combine_position(500);
-				}
-				else{
-						produce_pwm(500);
-				}
-        break;
-
-    case 1:
-        if(!is_tai_servo_){
-            menu_combine_position(900);
-				}
-				else{
-						produce_pwm(900);
-				}
-        break;
-
-    case 2:
-        if(!is_tai_servo_){
-            menu_combine_position(1500);
-				}
-				else{
-						produce_pwm(1500);
-				}
-        break;
-
-    case 3:
-        if(!is_tai_servo_){
-            menu_combine_position(2100);
-				}
-				else{
-						produce_pwm(2100);
-				}
-        break;
-
-    case 4:
-        if(!is_tai_servo_){
-            menu_combine_position(2500);
-				}
-				else{
-					produce_pwm(2500);
-				}
-        break;
-
-    default:
-        break;
-    }
-}
-
-void Narrowband_Page_CallBack(u8 key)
-{
-    switch(key)
-    {
-    case KEY_UP:
-    case KEY_Down:
-    case KEY_UP_L:
-    case KEY_Down_L:
-        KeySelItem(key);
-        break;
-
-    case KEY_Return:
-        ShowParentPage_Num(0);
-        return;
-
-    case KEY_Ok:
-        break;
-    }
-
-    switch(Menu_GetSelItem())
-    {
-    case 0:
-        if(!is_tai_servo_){
-            menu_combine_position(500);
-				}
-				else{
-						produce_pwm(500);
-				}
-        break;
-
-    case 1:
-        if(!is_tai_servo_){
-            menu_combine_position(750);
-				}
-				else{
-						produce_pwm(750);
-				}
-        break;
-
-    case 2:
-        if(!is_tai_servo_){
-            menu_combine_position(1000);
-				}
-				else{
-					produce_pwm(1000);
-				}
-        break;
-
-    default:
-        break;
-    }
-}
-
-void Reset_Data_Read_Page_CallBack(u8 key)
-{
-    static uint8_t num = 0;
-    static uint8_t fisrt = 0;
-    int total_num  = get_total_num() - 1;
-    char buf_title[17];
-    uint8_t ch_value;
-
-    uint16_t distribtor;
-    uint8_t buf_2[2];
-    buf_2[0] = current_servo_version_ / 1000 % 10;
-    buf_2[1] = current_servo_version_ / 100 % 10;
-    distribtor = buf_2[0] * 10 + buf_2[1];
-
-    if(fisrt == 0)
-    {
-        Lcd_Clr_Scr();
-
-        if(keep(S_CONFORM) == F_RETURN)
-        {
-            ShowParentPage_Num(Item_Num_[1]);
-            fisrt = 0;
-            return;
-        }
-    }
-
-    fisrt = 1;
-    Lcd_Clr_Scr();
-
-    if(find_version(distribtor) != 100)
-    {
-        num = find_version(distribtor);
-        ch_value = 1;
-    }
-    else
-    {
-        ch_value = 0;
-    }
-
-    switch(key)
-    {
-    case KEY_UP:
-        if(ch_value == 0)
-        {
-            num ++;
-            if(num > total_num)
-            {
-                num = 0;
-            }
-        }
-
-        break;
-
-    case KEY_Down:
-        if(ch_value == 0)
-        {
-            num --;
-
-            if(num > total_num)
-            {
-                num = total_num;
-            }
-        }
-
-        break;
-
-    case KEY_UP_L:
-        if(ch_value == 0)
-        {
-            num ++;
-
-            if(num > total_num)
-            {
-                num = 0;
-            }
-        }
-
-        break;
-
-    case KEY_Down_L:
-        if(ch_value == 0)
-        {
-            num --;
-
-            if(num > total_num)
-            {
-                num = total_num;
-            }
-        }
-
-        break;
-
-    case KEY_Return:
-        ShowParentPage_Num(Item_Num_[1]);
-        fisrt = 0;
-        return;
-
-    case KEY_Ok:
-
-        if(get_ver_num(num) != distribtor)
-        {
-//			if(0){
-            Lcd_Clr_Scr();
-            LCD_Write_Str(0, 0, (char*)"<Restoring>...");
-            keep(S_FAILED);
-            break;
-        }
-        else
-        {
-//		num = 1;
-            Lcd_Clr_Scr();
-            LCD_Write_Str(0, 0, (char*)"<Restoring>...");
-            read_servo_data_in_flash(num + 20);
-
-            menu_combine_prom_work_parm();
-            if(menu_combine_verify_work_parm())
-            {
-                if(keep(S_SUCCESS) == F_RETURN)
-                {
-                    ShowParentPage_Num(0);
-                }
-                else
-                {
-                    ShowParentPage_Num(0);
-                }
-            }
-            else
-            {
-                keep(S_FAILED);
-                ShowParentPage_Num(0);
-            }
-
-            fisrt = 0;
-            return;
-        }
-    }
-
-    Lcd_Clr_Scr();
-    char* buf = get_ver_char(num);
-    sprintf(buf_title, "Factory Reset");
-    LCD_Write_Str(0, 0, buf_title);
-    LCD_Write_Str(1, 0, buf);
 }
 
 
@@ -1294,7 +450,7 @@ void Copy_Data_To_Show(void)
         Setting_item[8].data = get_value; //8.Soft Start
     }
 }
-extern void copy_read_data(void);
+
 void Copy_Data_To_Stru(void)
 {
     if(is_tai_servo_ == 0)
@@ -1323,9 +479,9 @@ void Copy_Data_To_Stru(void)
         set_brake(Setting_item[6].data);
         set_senter(-l_num + r_num);
         set_soft_start(Setting_item[8].data);
-		servoDataStru.work_p12 = current_servo_version_;
+        servoDataStru.work_p12 = current_servo_version_;
     }
 }
 
 
-
+//------------------------------------------------end-------------------------------------------

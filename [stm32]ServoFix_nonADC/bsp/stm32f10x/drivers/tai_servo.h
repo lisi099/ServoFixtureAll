@@ -23,7 +23,6 @@ uint8_t *get_taiwan_read_data(void);
 void set_read_servo_data(const uint8_t *data);
 
 void taiwan_send_read_data(void);
-void taiwan_servo_init(void);
 
 void set_soft_start(int8_t state);
 void get_soft_start(int8_t *state);
