@@ -245,7 +245,7 @@ void GetShowString(char *str, uint16_t *data)
     switch(pPage->pItem[Menu_GetSelItem()].type)
     {
         case SHOW_NUM:
-            sprintf(str, "%d", *data);
+            sprintf(str, "%d ", *data);
             break;
 
         case SHOW_STRING:

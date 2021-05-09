@@ -436,15 +436,15 @@ void taiwan_send_write_data(void)
     ///end
     data[10] = 0xed;
     usart2_send_buff(data, 11);
-    rt_thread_delay(300);
+    rt_thread_delay(20);
 
     uint8_t* data_cpy = &write_servo_data[0];
     memcpy(&data[0], data_cpy, 111); //data 110byte
-    data[95] = 1 + 0x30;	//CS
-    data[96] = 8 + 0x30;	//CS
-    data[97] = 0 + 0x30;	//CS
-    data[98] = 0 + 0x30;	//CS
-    data[99] = 0 + 0x30;	//CS
+//    data[95] = 1 + 0x30;	//CS
+//    data[96] = 8 + 0x30;	//CS
+//    data[97] = 0 + 0x30;	//CS
+//    data[98] = 0 + 0x30;	//CS
+//    data[99] = 0 + 0x30;	//CS
     data[111] = chech_sum_xor(data, 111);	//CS
     data[112] = 0xED;	//end
     usart2_send_buff(data, 113);
@@ -462,7 +462,7 @@ uint8_t connect_taiwan(void)
     while(receive_tai_data_flag == 0)
     {
         time_count++;
-        if(time_count > 500) //200ms
+        if(time_count > 300) //300ms
         {
             write_read_busy_state_ = 0;
             return 0;
@@ -479,9 +479,29 @@ uint8_t is_taiwan_servo(void)
     uint8_t try_count = 3;
     write_read_busy_state_ = 1;
 	
-		produce_pwm_count(7000, 2);
+	produce_pwm_count(7000, 3);
 	
     write_read_busy_state_ = 0;
+	
+    do
+    {
+        if(connect_taiwan())
+        {
+            connect_servo_state_ = 1;
+            is_tai_servo_ = 1;
+            return 1;
+        }
+        try_count--;
+    }
+    while(try_count);
+
+    is_tai_servo_ = 0;
+    return 0; //no find servo
+}
+
+uint8_t read_tai_servo_data(void)
+{
+    uint8_t try_count = 3;
 	
     do
     {

@@ -29,47 +29,54 @@ void produce_pwm(uint16_t pwm) //0.5ms ~ 2.5ms
     rt_thread_delay(100);
     pwm_finish_flag = 0;
     TIM3_Int_Init(pwm);
+
     while(1)
     {
         if(pwm_finish_flag)
         {
             break;
         }
+
         rt_thread_delay(10);
     }
+
     rt_thread_delay(100);
     usart2_init_rx(115200);
-		rt_mutex_release(servo_mutex);
+    rt_mutex_release(servo_mutex);
 }
 
 void produce_pwm_count(uint16_t pwm, uint8_t count) //0.5ms ~ 2.5ms
 {
-		uint8_t p_count = 0;
-    rt_thread_delay(100);
+    uint8_t p_count = 0;
+    rt_thread_delay(10);
     rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
+	
     usart2_init_pwm();
     PWM_LOW();
-    rt_thread_delay(100);
+    rt_thread_delay(10);
     pwm_finish_flag = 0;
     TIM3_Int_Init(pwm);
+
     while(1)
     {
         if(pwm_finish_flag)
         {
-						rt_thread_delay(10);
-						pwm_finish_flag = 0;
-						p_count ++;
-						TIM3->CNT = 0;
-						TIM_Cmd(TIM3, ENABLE);
-						if(p_count >= count){
-							break;
-						}
+			p_count ++;
+            if(p_count >= count)
+            {
+                break;
+            }
+			rt_thread_delay(10);
+            pwm_finish_flag = 0;
+			TIM3_Int_Init(pwm);
         }
+
         rt_thread_delay(10);
     }
-    rt_thread_delay(100);
+
+    rt_thread_delay(10);
     usart2_init_rx(115200);
-		rt_mutex_release(servo_mutex);
+    rt_mutex_release(servo_mutex);
 }
 
 
@@ -107,6 +114,7 @@ void TIM3_IRQHandler(void)   //TIM3中断
     {
         TIM_ClearITPendingBit(TIM3, TIM_IT_Update);    //清除TIMx更新中断标志
     }
+
     PWM_LOW();
     pwm_finish_flag = 1;
     TIM_Cmd(TIM3, DISABLE);  //使能TIMx

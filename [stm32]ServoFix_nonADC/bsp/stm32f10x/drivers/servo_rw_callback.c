@@ -62,7 +62,7 @@ uint8_t servo_write_callback(void)
         Copy_Data_To_Stru();
         menu_combine_prom_work_parm();
         res = menu_combine_verify_work_parm();
-        if(result)
+        if(res)
         {
             if(keep(S_SUCCESS) == F_RETURN)
             {

@@ -89,7 +89,7 @@ void uart_send_command(uint8_t id, uint8_t cmd, uint8_t state, uint8_t para_id1,
 
 void uart_send_clear_command(void)
 {
-		memset(uart_write_datas, 0x55, 12);
+	memset(uart_write_datas, 0x55, 12);
     uart_write_datas[0]		= 0xfa;
     uart_write_datas[11] 	= 0xfe;
     usart2_send_buff(uart_write_datas, sizeof(uart_write_datas));
@@ -98,7 +98,7 @@ void uart_send_clear_command(void)
 
 void uart_send_common_command(void)
 {
-		memset(uart_write_datas, 0, 12);
+	memset(uart_write_datas, 0, 12);
     uart_write_datas[0]		= 0xfa;
     uart_write_datas[1] 	= 0x10;
     uart_write_datas[2] 	= 0x12;
@@ -240,6 +240,7 @@ void menu_combine_prom_work_parm(void)
 {
     if(is_tai_servo_)
     {
+		
         taiwan_send_write_data();
         return;
     }

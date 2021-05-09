@@ -72,7 +72,8 @@ static void menu_process_thread(void* parameter)
 {
     uint8_t rec_buff[2];
     uint8_t tempKey = KEY_NONE;
-		uint8_t i ;
+    uint8_t i ;
+
     while(1)
     {
         tempKey = KEY_NONE;
@@ -81,35 +82,45 @@ static void menu_process_thread(void* parameter)
         {
             switch(rec_buff[0])
             {
-            case 0:
-                if(rec_buff[1] == 0) tempKey = KEY_UP;
-                else tempKey = KEY_UP_L;
-                break;
-            case 1:
-                if(rec_buff[1] == 0) tempKey = KEY_Down;
-                else tempKey = KEY_Down_L;
-                break;
-            case 3:
-                tempKey = KEY_Ok;
-                break;
-            case 2:
-                tempKey = KEY_Return;
-                break;
-            default:
-                break;
+                case 0:
+                    if(rec_buff[1] == 0) tempKey = KEY_UP;
+                    else tempKey = KEY_UP_L;
+
+                    break;
+
+                case 1:
+                    if(rec_buff[1] == 0) tempKey = KEY_Down;
+                    else tempKey = KEY_Down_L;
+
+                    break;
+
+                case 3:
+                    tempKey = KEY_Ok;
+                    break;
+
+                case 2:
+                    tempKey = KEY_Return;
+                    break;
+
+                default:
+                    break;
             }
-            if(tempKey != KEY_NONE){
-							rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
-							pPage->Function(tempKey);
-							rt_mutex_release(servo_mutex);
-							for(i = 0; i < 5; i++)
-							{
-									rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO);
-							}
-							//
-						}
+
+            if(tempKey != KEY_NONE)
+            {
+                rt_mutex_take(lcd_mutex, RT_WAITING_FOREVER);
+                pPage->Function(tempKey);
+                rt_mutex_release(lcd_mutex);
+
+                for(i = 0; i < 5; i++)
+                {
+                    rt_mq_recv(&key_mq, &rec_buff, 2, RT_WAITING_NO);
+                }
+
+                //
+            }
         }
-				
+
         rt_thread_delay(RT_TICK_PER_SECOND / 50);
     }
 }
@@ -117,9 +128,10 @@ static void menu_process_thread(void* parameter)
 //-----------------------USB串口数据处理-------------
 static void usb_usart_thread(void* parameter)
 {
-		usart1_init(115200);
+    usart1_init(115200);
     usart1_fifo_rx_init();
     rt_thread_delay(RT_TICK_PER_SECOND);
+
     while(1)
     {
         usart1_length_13_data_process();
@@ -148,18 +160,20 @@ static void usb_usart_thread(void* parameter)
 //-----------------------串口收发切换线程------------------------
 static void usart_sw_thread_entry(void* parameter)
 {
-    rt_thread_delay(RT_TICK_PER_SECOND);
+    rt_thread_delay(RT_TICK_PER_SECOND*2);
 
     while(1)
     {
         rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
+
         if(Txd2_Flag == TX_FINISH && usart2_mode == TX_MODE)
         {
             rt_thread_delay(2);
             usart2_init_rx(bd_set_);
         }
+
         rt_mutex_release(servo_mutex);
-				
+
         rt_thread_delay(2);
     }
 }
@@ -167,11 +181,11 @@ static void usart_sw_thread_entry(void* parameter)
 /*------------------------------运行线程----------------------------*/
 static void running(void* parameter)
 {
-		rt_thread_t tid1 = RT_NULL;
-	
-		/*类型识别*/
-		lcd_init();
-		Lcd_Clr_Scr();
+    rt_thread_t tid1 = RT_NULL;
+
+    /*类型识别*/
+    lcd_init();
+    Lcd_Clr_Scr();
     put_chars_middle(0, "Welcome to");
     put_chars_middle(1, "Power HD");
     rt_thread_delay(RT_TICK_PER_SECOND * 2);
@@ -179,8 +193,8 @@ static void running(void* parameter)
     Lcd_Clr_Scr();
     put_chars(0, 0, "Please Connect");
     put_chars(1, 0, "Servo");
-	
-		while(1)
+
+    while(1)
     {
         if(is_taiwan_servo())
         {
@@ -190,81 +204,89 @@ static void running(void* parameter)
         {
             break;
         }
-				rt_thread_delay(200);
+
+        rt_thread_delay(200);
     }
-		
-		Lcd_Clr_Scr();
-		put_chars_middle(0, "SERVO");
-		put_chars_middle(1, "Connect OK");
-		rt_thread_delay(RT_TICK_PER_SECOND / 2);
-		Lcd_Clr_Scr();
-		put_chars(0, 0, "<Reading>....");
-		
-		if(is_tai_servo_)
-		{
-				Copy_Data_To_Show();
-		}
-		else
-		{
-				if(menu_combine_fb_work_parm())
-				{
-						if(!is_need_update())
-						{
-								put_chars(1, 0, ">Success");
-						}
-						else
-						{
-								put_chars(1, 0, ">Pls Update LCD");
-								while(1)
-								{
-									rt_thread_delay(RT_TICK_PER_SECOND * 2);
-								}
-						}
-				}
-				else{
-						put_chars(1, 0, ">Pls Read Erro!");
-						while(1)
-						{
-							rt_thread_delay(RT_TICK_PER_SECOND * 2);
-						}
-				}
-		}
-		
-		rt_thread_delay(RT_TICK_PER_SECOND * 2);
-		SetMainPage(&Setting_Page);
-		ShowPage_Num(pPage, 0);
-		
-		
+
+    Lcd_Clr_Scr();
+    put_chars_middle(0, "SERVO");
+    put_chars_middle(1, "Connect OK");
+    rt_thread_delay(RT_TICK_PER_SECOND / 2);
+    Lcd_Clr_Scr();
+    put_chars(0, 0, "<Reading>....");
+
+    if(is_tai_servo_)
+    {
+        Copy_Data_To_Show();
+    }
+    else
+    {
+        if(menu_combine_fb_work_parm())
+        {
+            if(!is_need_update())
+            {
+                put_chars(1, 0, ">Success");
+            }
+            else
+            {
+                put_chars(1, 0, ">Pls Update LCD");
+
+                while(1)
+                {
+                    rt_thread_delay(RT_TICK_PER_SECOND * 2);
+                }
+            }
+        }
+        else
+        {
+            put_chars(1, 0, ">Pls Read Erro!");
+
+            while(1)
+            {
+                rt_thread_delay(RT_TICK_PER_SECOND * 2);
+            }
+        }
+    }
+
+    rt_thread_delay(RT_TICK_PER_SECOND * 2);
+    SetMainPage(&Setting_Page);
+    ShowPage_Num(pPage, 0);
+
+
 //    tid1 = rt_thread_create("reconnect", reconnect_taiwan_servo, RT_NULL, 512, 15, 5);
 //    if(tid1 != RT_NULL) rt_thread_startup(tid1);
 
     tid1 = rt_thread_create("key_scan", key_scan_thread, RT_NULL, 512, 19, 5);
+
     if(tid1 != RT_NULL) rt_thread_startup(tid1);
 
     tid1 = rt_thread_create("menu_process", menu_process_thread, RT_NULL, 1024, 20, 5);
+
     if(tid1 != RT_NULL) rt_thread_startup(tid1);
 
     tid1 = rt_thread_create("usb_usart", usb_usart_thread, RT_NULL, 2048, 14, 10);
+
     if(tid1 != RT_NULL) rt_thread_startup(tid1);
 
-    tid1 = rt_thread_create("usart_sw", usart_sw_thread_entry, RT_NULL, 1024, 16, 10);
-    if(tid1 != RT_NULL) rt_thread_startup(tid1);
 }
 
 
 /*----------------------------初始化线程--------------------------*/
 int rt_application_init(void)
 {
-		/*按键消息队列*/
+    /*按键消息队列*/
     rt_mq_init(&key_mq, "key_mqt", &key_msg_pool[0], 2, sizeof(key_msg_pool), RT_IPC_FLAG_FIFO);
-		
-		/*串口占用互斥量*/
+
+    /*串口占用互斥量*/
     servo_mutex = rt_mutex_create("servo_mutex", RT_IPC_FLAG_FIFO);
-		lcd_mutex = rt_mutex_create("lcd_mutex", RT_IPC_FLAG_FIFO);
+    lcd_mutex = rt_mutex_create("lcd_mutex", RT_IPC_FLAG_FIFO);
 
     rt_thread_t tid1 = RT_NULL;
+
+    tid1 = rt_thread_create("running", running, RT_NULL, 512, 10, 100);
+    if(tid1 != RT_NULL) rt_thread_startup(tid1);
 	
-		tid1 = rt_thread_create("running", running, RT_NULL, 512, 10, 100);
+	tid1 = rt_thread_create("usart_sw", usart_sw_thread_entry, RT_NULL, 1024, 16, 10);
     if(tid1 != RT_NULL) rt_thread_startup(tid1);
 
     return 0;

@@ -32,7 +32,7 @@ enum{
 enum{
 	TX_FINISH = 0,
 	TX_START = 1,
-	
+	TX_INIT = 2,
 };
 
 

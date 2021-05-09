@@ -82,13 +82,17 @@ void usart2_init_pwm(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
+	GPIO_SetBits(COM_PORT_SOURCE, COM_PORT_PIN_TX);  //输出高电平
 
     GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_RX;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
-    GPIO_ResetBits(GPIOB, GPIO_Pin_12); //输出信号
-		GPIO_SetBits(COM_PORT_SOURCE, COM_PORT_PIN_TX);
-
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    GPIO_ResetBits(GPIOB, GPIO_Pin_12);	//输出使能
+    
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
@@ -185,6 +189,7 @@ void usart2_init_tx(uint32_t bd)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_ResetBits(GPIOB, GPIO_Pin_12); //输出使能
 
     USART_DeInit(USART2);
     USART_InitStructure.USART_BaudRate = bd;
@@ -202,13 +207,11 @@ void usart2_init_tx(uint32_t bd)
     USART_DMACmd(COM_PORT, USART_DMAReq_Rx, ENABLE);
     USART_Cmd(COM_PORT, ENABLE);
 
-    GPIO_ResetBits(GPIOB, GPIO_Pin_12);
-
     usart2_DMA_config();
     usart2_NVIC_config();
     Rcv2_Counter = 0;
     Rcv2_Flag = 0;
-    Txd2_Flag = TX_FINISH;
+    Txd2_Flag = TX_INIT;
     usart2_mode = TX_MODE;
 }
 
@@ -244,13 +247,17 @@ void usart2_init_rx(uint32_t bd)
     USART_DMACmd(COM_PORT, USART_DMAReq_Rx, ENABLE);
     USART_Cmd(COM_PORT, ENABLE);
 
-    GPIO_SetBits(GPIOB, GPIO_Pin_12);
-    if(bd == 19200){
+    GPIO_SetBits(GPIOB, GPIO_Pin_12); //rx
+
+    if(bd == 19200)
+    {
         GPIO_ResetBits(GPIOB, GPIO_Pin_13);
     }
-		else{
-				GPIO_SetBits(GPIOB, GPIO_Pin_13);
-		}
+    else
+    {
+        GPIO_SetBits(GPIOB, GPIO_Pin_13);
+    }
+
     usart2_DMA_config();
     usart2_NVIC_config();
     Rcv2_Counter = 0;
@@ -267,7 +274,8 @@ void usart2_init_rx(uint32_t bd)
 *************************************************************/
 void usart2_send_buff(uint8_t* pbuffer, uint32_t size)
 {
-		rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
+    rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
+
     if(usart2_mode == RX_MODE)
     {
         usart2_init_tx(bd_set_);
@@ -284,7 +292,7 @@ void usart2_send_buff(uint8_t* pbuffer, uint32_t size)
     COM_DMA_TX->CNDTR = size;
     DMA_Cmd(COM_DMA_TX, ENABLE);
     Txd2_Flag    = TX_START;
-		rt_mutex_release(servo_mutex);
+    rt_mutex_release(servo_mutex);
 }
 /*************************************************************
   Function   :
@@ -329,18 +337,20 @@ void USART2_IRQHandler(void)
         DMA1_Channel6->CNDTR =  RCV2_BUFFSIZE;
         DMA_Cmd(DMA1_Channel6, ENABLE);
     }
-		
-		if(Rcv2_Flag != 1)
-		{
-			return;
-		}
-		Rcv2_Flag = 0;
-		
+
+    if(Rcv2_Flag != 1)
+    {
+        return;
+    }
+
+    Rcv2_Flag = 0;
+
     if(Rcv2_Counter == 12)
     {
         if(Rcv2_Buffer[0] == 0xFA && Rcv2_Buffer[11] == 0xFE && Rcv2_Buffer[3] == 0x02)
         {
-						uart_receive_data(Rcv2_Buffer[i]);
+			for(i =0; i<12; i++)
+            uart_receive_data(Rcv2_Buffer[i]);
         }
     }
     else if(Rcv2_Counter == 129)
