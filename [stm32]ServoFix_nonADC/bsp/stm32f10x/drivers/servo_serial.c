@@ -33,6 +33,39 @@ volatile uint8_t receive_uart_data_flag = 0;
 struct Servo_Data_Stru_ servoDataStru;
 uint16_t 	servo_unique_address_id 		= 16;
 
+const int16_t menu_work_parm_[] ={	MENU_WORK_SERVO_PARM0, 	MENU_WORK_SERVO_PARM1, 	MENU_WORK_SERVO_PARM2, 	MENU_WORK_SERVO_PARM3, 
+																		MENU_WORK_SERVO_PARM4,	MENU_WORK_SERVO_PARM5,	MENU_WORK_SERVO_PARM6, 	MENU_WORK_SERVO_PARM7,
+																		MENU_WORK_SERVO_PARM8,	MENU_WORK_SERVO_PARM9,	MENU_WORK_SERVO_PARM10, MENU_WORK_SERVO_PARM11,
+																		MENU_WORK_SERVO_PARM12, MENU_WORK_SERVO_PARM13, MENU_WORK_SERVO_PARM14, MENU_WORK_SERVO_PARM15
+};
+
+const int16_t menu_setup_parm_[]={	MENU_SETUP_SERVO_PARM0, MENU_SETUP_SERVO_PARM1,	MENU_SETUP_SERVO_PARM2, MENU_SETUP_SERVO_PARM3,
+																		MENU_SETUP_SERVO_PARM4, MENU_SETUP_SERVO_PARM5,	MENU_SETUP_SERVO_PARM6, MENU_SETUP_SERVO_PARM7,
+																		MENU_SETUP_SERVO_PARM8, MENU_SETUP_SERVO_PARM9, MENU_SETUP_SERVO_PARM10, MENU_SETUP_SERVO_PARM11,
+																		MENU_SETUP_SERVO_PARM12, MENU_SETUP_SERVO_PARM13, MENU_SETUP_SERVO_PARM14, MENU_SETUP_SERVO_PARM15
+};
+
+const int16_t menu_debug_config_parm_[]={ MENU_DEBUG_SERVO_PARM0, MENU_DEBUG_SERVO_PARM1, MENU_DEBUG_SERVO_PARM2, MENU_DEBUG_SERVO_PARM3,
+																					MENU_DEBUG_SERVO_PARM4, MENU_DEBUG_SERVO_PARM5, MENU_DEBUG_SERVO_PARM6, MENU_CONFIG_SERVO_PARM0,
+																					MENU_CONFIG_SERVO_PARM1, MENU_CONFIG_SERVO_PARM2, MENU_CONFIG_SERVO_PARM3
+};
+
+const int16_t menu_fb_work_parm_[]={	MENU_FB_SERVO_WORK_PARM0,	MENU_FB_SERVO_WORK_PARM1, MENU_FB_SERVO_WORK_PARM2, MENU_FB_SERVO_WORK_PARM3,
+																			MENU_FB_SERVO_WORK_PARM4, MENU_FB_SERVO_WORK_PARM5, MENU_FB_SERVO_WORK_PARM6, MENU_FB_SERVO_WORK_PARM7,
+																			MENU_FB_SERVO_WORK_PARM8, MENU_FB_SERVO_WORK_PARM9, MENU_FB_SERVO_WORK_PARM10, MENU_FB_SERVO_WORK_PARM11,
+																			MENU_FB_SERVO_WORK_PARM12, MENU_FB_SERVO_WORK_PARM13, MENU_FB_SERVO_WORK_PARM14, MENU_FB_SERVO_WORK_PARM15
+};
+
+const int16_t menu_fb_setup_parm_[]={ MENU_FB_SERVO_SETUP_PARM0, MENU_FB_SERVO_SETUP_PARM1, MENU_FB_SERVO_SETUP_PARM2, MENU_FB_SERVO_SETUP_PARM3,
+																			MENU_FB_SERVO_SETUP_PARM4, MENU_FB_SERVO_SETUP_PARM5, MENU_FB_SERVO_SETUP_PARM6, MENU_FB_SERVO_SETUP_PARM7,
+																			MENU_FB_SERVO_SETUP_PARM8, MENU_FB_SERVO_SETUP_PARM9, MENU_FB_SERVO_SETUP_PARM10, MENU_FB_SERVO_SETUP_PARM11,
+																			MENU_FB_SERVO_SETUP_PARM12, MENU_FB_SERVO_SETUP_PARM13, MENU_FB_SERVO_SETUP_PARM14, MENU_FB_SERVO_SETUP_PARM15
+};
+
+const int16_t menu_fb_debug_parm_[]={ MENU_FB_SERVO_DEBUG_PARM0, MENU_FB_SERVO_DEBUG_PARM1, MENU_FB_SERVO_DEBUG_PARM2, MENU_FB_SERVO_DEBUG_PARM3,
+																			MENU_FB_SERVO_DEBUG_PARM4, MENU_FB_SERVO_DEBUG_PARM5, MENU_FB_SERVO_DEBUG_PARM6
+};
+
 //-----------------------------------------------------------
 void uart_receive_data(uint8_t data)
 {
@@ -89,7 +122,7 @@ void uart_send_command(uint8_t id, uint8_t cmd, uint8_t state, uint8_t para_id1,
 
 void uart_send_clear_command(void)
 {
-	memset(uart_write_datas, 0x55, 12);
+		memset(uart_write_datas, 0x55, 12);
     uart_write_datas[0]		= 0xfa;
     uart_write_datas[11] 	= 0xfe;
     usart2_send_buff(uart_write_datas, sizeof(uart_write_datas));
@@ -98,7 +131,7 @@ void uart_send_clear_command(void)
 
 void uart_send_common_command(void)
 {
-	memset(uart_write_datas, 0, 12);
+		memset(uart_write_datas, 0, 12);
     uart_write_datas[0]		= 0xfa;
     uart_write_datas[1] 	= 0x10;
     uart_write_datas[2] 	= 0x12;
@@ -152,28 +185,13 @@ void menu_combine_position(uint16_t pos)
     uart_send_command(servo_unique_address_id, 0x0A, 0x01, MENU_SERVO_RUN_POSITION_VALUE, pos, MENU_SERVO_RUN_SPEED_VALUE, 266);
     rt_thread_delay(SERVO_DELAY_TIME);
 }
+/**********************************************SEND DATA****************************************************/
 
 void send_work_param(uint8_t seq, struct Servo_Data_Stru_ *servo_data)
 {
-    int16_t work_param[16];
+    const int16_t *work_param = menu_work_parm_;
     int16_t temp_param;
     int16_t temp_param1;
-    work_param[0] = MENU_WORK_SERVO_PARM0;
-    work_param[1] = MENU_WORK_SERVO_PARM1;
-    work_param[2] = MENU_WORK_SERVO_PARM2;
-    work_param[3] = MENU_WORK_SERVO_PARM3;
-    work_param[4] = MENU_WORK_SERVO_PARM4;
-    work_param[5] = MENU_WORK_SERVO_PARM5;
-    work_param[6] = MENU_WORK_SERVO_PARM6;
-    work_param[7] = MENU_WORK_SERVO_PARM7;
-    work_param[8] = MENU_WORK_SERVO_PARM8;
-    work_param[9] = MENU_WORK_SERVO_PARM9;
-    work_param[10] = MENU_WORK_SERVO_PARM10;
-    work_param[11] = MENU_WORK_SERVO_PARM11;
-    work_param[12] = MENU_WORK_SERVO_PARM12;
-    work_param[13] = MENU_WORK_SERVO_PARM13;
-    work_param[14] = MENU_WORK_SERVO_PARM14;
-    work_param[15] = MENU_WORK_SERVO_PARM15;
     temp_param = *(work_param + seq);
     temp_param1 = *(&servo_data->work_p0 + seq);
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_WORK, SERVO_STATE_COM, temp_param, temp_param1, 0, 0);
@@ -181,25 +199,9 @@ void send_work_param(uint8_t seq, struct Servo_Data_Stru_ *servo_data)
 
 void send_setup_param(uint8_t seq, struct Servo_Data_Stru_ *servo_data)
 {
-    int16_t setup_param[16];
+    const int16_t *setup_param = menu_setup_parm_;
     int16_t temp_param;
     int16_t temp_param1;
-    setup_param[0] = MENU_SETUP_SERVO_PARM0;
-    setup_param[1] = MENU_SETUP_SERVO_PARM1;
-    setup_param[2] = MENU_SETUP_SERVO_PARM2;
-    setup_param[3] = MENU_SETUP_SERVO_PARM3;
-    setup_param[4] = MENU_SETUP_SERVO_PARM4;
-    setup_param[5] = MENU_SETUP_SERVO_PARM5;
-    setup_param[6] = MENU_SETUP_SERVO_PARM6;
-    setup_param[7] = MENU_SETUP_SERVO_PARM7;
-    setup_param[8] = MENU_SETUP_SERVO_PARM8;
-    setup_param[9] = MENU_SETUP_SERVO_PARM9;
-    setup_param[10] = MENU_SETUP_SERVO_PARM10;
-    setup_param[11] = MENU_SETUP_SERVO_PARM11;
-    setup_param[12] = MENU_SETUP_SERVO_PARM12;
-    setup_param[13] = MENU_SETUP_SERVO_PARM13;
-    setup_param[14] = MENU_SETUP_SERVO_PARM14;
-    setup_param[15] = MENU_SETUP_SERVO_PARM15;
     temp_param = *(setup_param + seq);
     temp_param1 = *(&servo_data->set_p0 + seq);
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_SETUP, SERVO_STATE_COM, temp_param, temp_param1, 0, 0);
@@ -207,25 +209,11 @@ void send_setup_param(uint8_t seq, struct Servo_Data_Stru_ *servo_data)
 
 void send_debug_param(uint8_t seq, struct Servo_Data_Stru_ *servo_data)
 {
-    int16_t debug_param[11];
+    const int16_t *debug_param = menu_debug_config_parm_;
     int16_t temp_param;
     int16_t temp_param1;
-    debug_param[0] = MENU_DEBUG_SERVO_PARM0;
-    debug_param[1] = MENU_DEBUG_SERVO_PARM1;
-    debug_param[2] = MENU_DEBUG_SERVO_PARM2;
-    debug_param[3] = MENU_DEBUG_SERVO_PARM3;
-    debug_param[4] = MENU_DEBUG_SERVO_PARM4;
-    debug_param[5] = MENU_DEBUG_SERVO_PARM5;
-    debug_param[6] = MENU_DEBUG_SERVO_PARM6;
-
-    debug_param[7] = MENU_CONFIG_SERVO_PARM0;
-    debug_param[8] = MENU_CONFIG_SERVO_PARM1;
-    debug_param[9] = MENU_CONFIG_SERVO_PARM2;
-    debug_param[10] = MENU_CONFIG_SERVO_PARM3;
-
     temp_param = *(debug_param + seq);
     temp_param1 = *(&servo_data->debug_p0 + seq);
-
     if(seq < 7)
     {
         uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DEBUG, SERVO_STATE_COM, temp_param, temp_param1, 0, 0);
@@ -297,66 +285,27 @@ void menu_combine_prom_work_parm(void)
     write_read_busy_state_ = 0;
 }
 
-
+/**********************************************READ DATA****************************************************/
 void read_work_param(uint8_t seq)
 {
-    int16_t work_param[16];
+    const int16_t *work_param = menu_fb_work_parm_;
     int16_t temp_param;
-    work_param[0] = MENU_FB_SERVO_WORK_PARM0;
-    work_param[1] = MENU_FB_SERVO_WORK_PARM1;
-    work_param[2] = MENU_FB_SERVO_WORK_PARM2;
-    work_param[3] = MENU_FB_SERVO_WORK_PARM3;
-    work_param[4] = MENU_FB_SERVO_WORK_PARM4;
-    work_param[5] = MENU_FB_SERVO_WORK_PARM5;
-    work_param[6] = MENU_FB_SERVO_WORK_PARM6;
-    work_param[7] = MENU_FB_SERVO_WORK_PARM7;
-    work_param[8] = MENU_FB_SERVO_WORK_PARM8;
-    work_param[9] = MENU_FB_SERVO_WORK_PARM9;
-    work_param[10] = MENU_FB_SERVO_WORK_PARM10;
-    work_param[11] = MENU_FB_SERVO_WORK_PARM11;
-    work_param[12] = MENU_FB_SERVO_WORK_PARM12;
-    work_param[13] = MENU_FB_SERVO_WORK_PARM13;
-    work_param[14] = MENU_FB_SERVO_WORK_PARM14;
-    work_param[15] = MENU_FB_SERVO_WORK_PARM15;
     temp_param = *(work_param + seq);
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
 }
 
 void read_setup_param(uint8_t seq)
 {
-    int16_t setup_param[16];
+		const int16_t *setup_param = menu_fb_setup_parm_;
     int16_t temp_param;
-    setup_param[0] = MENU_FB_SERVO_SETUP_PARM0;
-    setup_param[1] = MENU_FB_SERVO_SETUP_PARM1;
-    setup_param[2] = MENU_FB_SERVO_SETUP_PARM2;
-    setup_param[3] = MENU_FB_SERVO_SETUP_PARM3;
-    setup_param[4] = MENU_FB_SERVO_SETUP_PARM4;
-    setup_param[5] = MENU_FB_SERVO_SETUP_PARM5;
-    setup_param[6] = MENU_FB_SERVO_SETUP_PARM6;
-    setup_param[7] = MENU_FB_SERVO_SETUP_PARM7;
-    setup_param[8] = MENU_FB_SERVO_SETUP_PARM8;
-    setup_param[9] = MENU_FB_SERVO_SETUP_PARM9;
-    setup_param[10] = MENU_FB_SERVO_SETUP_PARM10;
-    setup_param[11] = MENU_FB_SERVO_SETUP_PARM11;
-    setup_param[12] = MENU_FB_SERVO_SETUP_PARM12;
-    setup_param[13] = MENU_FB_SERVO_SETUP_PARM13;
-    setup_param[14] = MENU_FB_SERVO_SETUP_PARM14;
-    setup_param[15] = MENU_FB_SERVO_SETUP_PARM15;
     temp_param = *(setup_param + seq);
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
 }
 
 void read_debug_param(uint8_t seq)
 {
-    int16_t debug_param[7];
+    const int16_t *debug_param = menu_fb_debug_parm_;
     int16_t temp_param;
-    debug_param[0] = MENU_FB_SERVO_DEBUG_PARM0;
-    debug_param[1] = MENU_FB_SERVO_DEBUG_PARM1;
-    debug_param[2] = MENU_FB_SERVO_DEBUG_PARM2;
-    debug_param[3] = MENU_FB_SERVO_DEBUG_PARM3;
-    debug_param[4] = MENU_FB_SERVO_DEBUG_PARM4;
-    debug_param[5] = MENU_FB_SERVO_DEBUG_PARM5;
-    debug_param[6] = MENU_FB_SERVO_DEBUG_PARM6;
     temp_param = *(debug_param + seq);
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_FB, SERVO_STATE_COM, temp_param, 0, 0, 0);
 }
