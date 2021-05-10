@@ -50,7 +50,7 @@ void produce_pwm_count(uint16_t pwm, uint8_t count) //0.5ms ~ 2.5ms
     uint8_t p_count = 0;
     rt_thread_delay(10);
     rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
-	
+
     usart2_init_pwm();
     PWM_LOW();
     rt_thread_delay(10);
@@ -61,17 +61,16 @@ void produce_pwm_count(uint16_t pwm, uint8_t count) //0.5ms ~ 2.5ms
     {
         if(pwm_finish_flag)
         {
-			p_count ++;
+            p_count ++;
             if(p_count >= count)
             {
                 break;
             }
-			rt_thread_delay(10);
+            rt_thread_delay(10);
             pwm_finish_flag = 0;
-			TIM3_Int_Init(pwm);
+            TIM3_Int_Init(pwm);
         }
-
-        rt_thread_delay(10);
+        rt_thread_delay(1);
     }
 
     rt_thread_delay(10);

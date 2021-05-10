@@ -10,27 +10,30 @@
 
 #define LOW_BYTE_NUM   8
 #define LOW_BYTE_MAX  0xFF
+#define BLINK_TIME1 	50
 
 extern struct rt_messagequeue key_mq;
+extern struct Servo_Data_Stru_ servoDataStru;
+extern volatile uint8_t is_tai_servo_;
+
 struct PAGE* pPage;
 static uint8_t SelItem = 0;
 static u16 ListShow = 0;
 
-#define BLINK_TIME1 	50
-
 void SelItemOfList(u8 index, char* s);
 
-extern struct Servo_Data_Stru_ servoDataStru;
 //--------------------------------------------
-int is_version_taiwan(const uint8_t * data)
+int is_version_taiwan(const uint8_t* data)
 {
-	if(data[96] != '8'){
-		return 0;
-	}
-	if(data[97] > '5' || data[97] < '0'){
-		return 0;
-	}
-	return 1;
+    if(data[96] != '8')
+    {
+        return 0;
+    }
+    if(data[97] > '5' || data[97] < '0')
+    {
+        return 0;
+    }
+    return 1;
 }
 
 int find_version(int num)
@@ -60,7 +63,6 @@ uint8_t is_need_update(void)
     {
         return 1;
     }
-
     return 0;
 }
 
@@ -89,7 +91,7 @@ void Menu_SetSelItem(u8 num)
 {
     SelItem = num;
 }
-extern volatile uint8_t is_tai_servo_;
+
 //--------------------------------------------
 void ShowList(u8 min, u8 max)
 {
@@ -110,64 +112,63 @@ void ShowList(u8 min, u8 max)
         {
             switch(pPage->pItem[index].type)
             {
-                case SHOW_NUM:
-                    u8_data = (uint8_t)pPage->pItem[index].data;
-                    sprintf(str, "%d", u8_data);
-					LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
-                    break;
-                case SHOW_STRING:
-                    if(pPage->pItem[index].data) sprintf(str, "%s", "Y");
-                    else sprintf(str, "%s", "N");
-					LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
-                    break;
-                case SHOW_STRING_VER:
-						buf[0] = pPage->pItem[index].data / 10000 % 10 + 1;
-						if(!is_tai_servo_){
-							sprintf(str, "v1.%d ", buf[0]);
-						}
-						else{
-							sprintf(str, "v1.%d ", buf[0]);
-						}
+            case SHOW_NUM:
+                u8_data = (uint8_t)pPage->pItem[index].data;
+                sprintf(str, "%d", u8_data);
+                LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
+                break;
+            case SHOW_STRING:
+                if(pPage->pItem[index].data) sprintf(str, "%s", "Y");
+                else sprintf(str, "%s", "N");
+                LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
+                break;
+            case SHOW_STRING_VER:
+                buf[0] = pPage->pItem[index].data / 10000 % 10 + 1;
+                if(!is_tai_servo_)
+                {
+                    sprintf(str, "v1.%d ", buf[0]);
+                }
+                else
+                {
+                    sprintf(str, "v1.%d ", buf[0]);
+                }
 
-						buf[0] = pPage->pItem[index].data / 1000 % 10;
-						buf[1] = pPage->pItem[index].data / 100 % 10;
-						distribtor = buf[0] * 10 + buf[1];
+                buf[0] = pPage->pItem[index].data / 1000 % 10;
+                buf[1] = pPage->pItem[index].data / 100 % 10;
+                distribtor = buf[0] * 10 + buf[1];
 
-						if(find_version(distribtor) == 100)
-						{
-							sprintf(&str[5], "%s-", "XXX-XXX");
-						}
-						else
-						{
-							sprintf(&str[5], "%s-", get_ver_char(find_version(distribtor)));
-						}
+                if(find_version(distribtor) == 100)
+                {
+                    sprintf(&str[5], "%s-", "XXX-XXX");
+                }
+                else
+                {
+                    sprintf(&str[5], "%s-", get_ver_char(find_version(distribtor)));
+                }
 
-						buf[0] = pPage->pItem[index].data / 10 % 10;
-						buf[1] = pPage->pItem[index].data / 1 % 10;
-						costormer = buf[0] * 10 + buf[1];
+                buf[0] = pPage->pItem[index].data / 10 % 10;
+                buf[1] = pPage->pItem[index].data / 1 % 10;
+                costormer = buf[0] * 10 + buf[1];
 
-						if(costormer >= 21)
-						{
-							sprintf(&str[13], "00");
-						}
-						else if(costormer >= 10)
-						{
-							sprintf(&str[13], "%d", costormer);
-						}
-						else
-						{
-							sprintf(&str[13], "0%d", costormer);
-						}
-					
-					LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
-                    break;
-                default:
-                    break;
+                if(costormer >= 21)
+                {
+                    sprintf(&str[13], "00");
+                }
+                else if(costormer >= 10)
+                {
+                    sprintf(&str[13], "%d", costormer);
+                }
+                else
+                {
+                    sprintf(&str[13], "0%d", costormer);
+                }
+
+                LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
+                break;
+            default:
+                break;
             }
-
-            
         }
-
         i++;
     }
 
@@ -211,7 +212,7 @@ void ShowParentPage_Num(uint16_t num)
     ShowPage_Num(pPage, num);
 }
 
-void BlinkEdit(char *str, uint8_t state)
+void BlinkEdit(char* str, uint8_t state)
 {
     uint8_t min;
     min = ListShow & LOW_BYTE_MAX;
@@ -240,27 +241,26 @@ void BlinkEdit(char *str, uint8_t state)
     }
 }
 
-void GetShowString(char *str, uint16_t *data)
+void GetShowString(char* str, uint16_t* data)
 {
     switch(pPage->pItem[Menu_GetSelItem()].type)
     {
-        case SHOW_NUM:
-            sprintf(str, "%d ", *data);
-            break;
-
-        case SHOW_STRING:
-            if(*data)
-            {
-                *data = 1;
-                sprintf(str, "%s", "Y");
-            }
-            else
-            {
-                sprintf(str, "%s", "N");
-            }
-
-        default:
-            break;
+    case SHOW_NUM:
+        sprintf(str, "%d ", *data);
+        break;
+    case SHOW_STRING:
+        if(*data)
+        {
+            *data = 1;
+            sprintf(str, "%s", "Y");
+        }
+        else
+        {
+            sprintf(str, "%s", "N");
+        }
+				break;
+    default:
+        break;
     }
 }
 
@@ -324,7 +324,7 @@ void ShowItemPage_Num(u8 num) //编辑参数值首先到这个函数
             }
             else if(rec_buff[0] == 2) //KEY_Return
             {
-                GetShowString(str, &pPage->pItem[Menu_GetSelItem()].data );
+                GetShowString(str, &pPage->pItem[Menu_GetSelItem()].data);
                 BlinkEdit(str, 1);
                 return;
             }

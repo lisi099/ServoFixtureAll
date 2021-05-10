@@ -46,7 +46,6 @@ int servo_version_num[] = {40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 80, 81, 82, 83
 
 int get_total_num(void)
 {
-
     return sizeof(servo_version_num) / sizeof(int);
 }
 

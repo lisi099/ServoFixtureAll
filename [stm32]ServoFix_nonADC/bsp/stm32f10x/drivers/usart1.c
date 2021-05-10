@@ -226,7 +226,7 @@ extern volatile uint8_t test_data_state_;
 
 void USART1_IRQHandler(void)
 {
-    uint8_t i;
+//    uint8_t i;
 
     if(USART_GetITStatus(COM_PORT, USART_IT_IDLE) != RESET)
     {

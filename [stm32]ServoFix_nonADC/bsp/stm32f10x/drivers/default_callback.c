@@ -14,6 +14,7 @@
 #include "menu.h"
 #include "menu_app.h"
 #include "factory_data.h"
+#include "data_base_flash.h"
 
 extern volatile uint8_t is_tai_servo_;
 extern uint8_t Item_Num_[2];

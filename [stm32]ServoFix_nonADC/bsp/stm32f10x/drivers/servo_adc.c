@@ -8,7 +8,6 @@
 
 volatile uint16_t  Adc_Convert_Value[2];
 volatile uint8_t  write_read_busy_state_ = 0;
-
 volatile uint8_t  is_servo_in_ = 0;
 
 uint8_t get_servo_state(void )

@@ -15,6 +15,7 @@
 #include "menu_app.h"
 #include "factory_data.h"
 #include "keep_callback.h"
+#include "data_base_flash.h"
 
 extern volatile uint8_t is_tai_servo_;
 extern struct Servo_Data_Stru_ servoDataStru;

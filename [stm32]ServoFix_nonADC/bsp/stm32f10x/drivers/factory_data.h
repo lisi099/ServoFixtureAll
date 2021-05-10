@@ -6,6 +6,8 @@
 #ifndef _FACTORY_DATA_H_
 #define	_FACTORY_DATA_H_
 
+#include "servo_serial.h"
+
 struct Servo_Tai_Data_
 {
 	uint16_t max_power;
