@@ -228,7 +228,6 @@ void menu_combine_prom_work_parm(void)
 {
     if(is_tai_servo_)
     {
-		
         taiwan_send_write_data();
         return;
     }

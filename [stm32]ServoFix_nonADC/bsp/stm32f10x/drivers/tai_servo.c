@@ -447,6 +447,8 @@ void taiwan_send_write_data(void)
 //    data[99] = 0 + 0x30;	//CS
     data[111] = chech_sum_xor(data, 111);	//CS
     data[112] = 0xED;	//end
+		
+		//produce pwm ?
     usart2_send_buff(data, 113);
     rt_thread_delay(800);
 }
@@ -476,13 +478,13 @@ uint8_t connect_taiwan(void)
 
 uint8_t is_taiwan_servo(void)
 {
-    uint8_t try_count = 3;
+    uint8_t try_count = 2;
     write_read_busy_state_ = 1;
-	
-	produce_pwm_count(7000, 3);
-	
+
+    produce_pwm_count(7000, 3);
+
     write_read_busy_state_ = 0;
-	
+
     do
     {
         if(connect_taiwan())
@@ -502,7 +504,7 @@ uint8_t is_taiwan_servo(void)
 uint8_t read_tai_servo_data(void)
 {
     uint8_t try_count = 3;
-	
+
     do
     {
         if(connect_taiwan())

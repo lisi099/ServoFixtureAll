@@ -22,11 +22,11 @@ void TIM3_Int_Init(uint16_t psc);// 500 ~ 2500
 
 void produce_pwm(uint16_t pwm) //0.5ms ~ 2.5ms
 {
-    rt_thread_delay(100);
+    rt_thread_delay(10);
     rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
     usart2_init_pwm();
     PWM_LOW();
-    rt_thread_delay(100);
+    rt_thread_delay(10);
     pwm_finish_flag = 0;
     TIM3_Int_Init(pwm);
 
@@ -40,7 +40,7 @@ void produce_pwm(uint16_t pwm) //0.5ms ~ 2.5ms
         rt_thread_delay(10);
     }
 
-    rt_thread_delay(100);
+    rt_thread_delay(10);
     usart2_init_rx(115200);
     rt_mutex_release(servo_mutex);
 }

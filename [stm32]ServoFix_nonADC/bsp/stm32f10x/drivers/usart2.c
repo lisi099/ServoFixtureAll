@@ -189,7 +189,7 @@ void usart2_init_tx(uint32_t bd)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
-	GPIO_ResetBits(GPIOB, GPIO_Pin_12); //输出使能
+		GPIO_ResetBits(GPIOB, GPIO_Pin_12); //输出使能
 
     USART_DeInit(USART2);
     USART_InitStructure.USART_BaudRate = bd;

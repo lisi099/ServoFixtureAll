@@ -19,6 +19,8 @@ struct Servo_Tai_Data_
 	uint16_t senter;
 	uint16_t soft_start;
 	uint16_t version;
+	uint16_t init_speed;
+	uint16_t init_timeout;
 };
 
 int get_total_num(void);
