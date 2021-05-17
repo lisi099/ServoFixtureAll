@@ -34,6 +34,7 @@ volatile uint8_t  usart2_mode = TX_MODE;
 volatile uint32_t bd_set_ = COM_BAUDRATE;
 
 extern rt_mutex_t servo_mutex;
+extern uint8_t uart_all_flag_;
 
 /*************************************************************
   Function   :
@@ -79,7 +80,7 @@ void usart2_init_pwm(void)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = COM_PORT_PIN_TX;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(COM_PORT_SOURCE, &GPIO_InitStructure);
 	GPIO_SetBits(COM_PORT_SOURCE, COM_PORT_PIN_TX);  //输出高电平
@@ -97,6 +98,8 @@ void usart2_init_pwm(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
     GPIO_SetBits(GPIOB, GPIO_Pin_13); // 上拉电阻起效
+	
+	uart_all_flag_ = 1;
 }
 /*************************************************************
   Function   :
@@ -189,7 +192,7 @@ void usart2_init_tx(uint32_t bd)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
-		GPIO_ResetBits(GPIOB, GPIO_Pin_12); //输出使能
+	GPIO_ResetBits(GPIOB, GPIO_Pin_12); //输出使能
 
     USART_DeInit(USART2);
     USART_InitStructure.USART_BaudRate = bd;
@@ -206,6 +209,15 @@ void usart2_init_tx(uint32_t bd)
     USART_DMACmd(COM_PORT, USART_DMAReq_Tx, ENABLE);
     USART_DMACmd(COM_PORT, USART_DMAReq_Rx, ENABLE);
     USART_Cmd(COM_PORT, ENABLE);
+	
+	if(bd == 19200)
+    {
+        GPIO_ResetBits(GPIOB, GPIO_Pin_13);
+    }
+    else
+    {
+        GPIO_SetBits(GPIOB, GPIO_Pin_13);
+    }
 
     usart2_DMA_config();
     usart2_NVIC_config();
@@ -213,6 +225,8 @@ void usart2_init_tx(uint32_t bd)
     Rcv2_Flag = 0;
     Txd2_Flag = TX_INIT;
     usart2_mode = TX_MODE;
+	
+	uart_all_flag_ = 2;
 }
 
 void usart2_init_rx(uint32_t bd)
@@ -265,6 +279,8 @@ void usart2_init_rx(uint32_t bd)
     Txd2_Flag = TX_FINISH;
     usart2_mode = RX_MODE;
     bd_set_ = bd;
+	
+	uart_all_flag_ = 3;
 }
 /*************************************************************
   Function   :

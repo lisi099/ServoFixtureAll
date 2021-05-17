@@ -351,14 +351,19 @@ void Servo_Center_Page_CallBack(u8 key)
         oper_num[13] = '1';
         oper_num[14] = '0';
     }
+	
     if(!is_tai_servo_)
     {
         menu_combine_center(-l_num + r_num);
     }
     else
     {
-        menu_combine_prom_work_parm();//写入参数
-        produce_pwm(1500);//旋转
+		produce_pwm_count(7000,5);
+		Copy_Data_To_Stru();
+		menu_combine_prom_work_parm();
+		rt_thread_delay(100);	
+        produce_pwm_count(1500,50);//旋转
+		rt_thread_delay(500);
     }
     Lcd_Clr_Scr();
     put_chars_middle(0, "Center");

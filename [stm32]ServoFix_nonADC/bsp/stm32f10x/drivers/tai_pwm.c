@@ -26,7 +26,7 @@ void produce_pwm(uint16_t pwm) //0.5ms ~ 2.5ms
     rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
     usart2_init_pwm();
     PWM_LOW();
-    rt_thread_delay(10);
+    rt_thread_delay(3);
     pwm_finish_flag = 0;
     TIM3_Int_Init(pwm);
 
@@ -37,7 +37,7 @@ void produce_pwm(uint16_t pwm) //0.5ms ~ 2.5ms
             break;
         }
 
-        rt_thread_delay(10);
+        rt_thread_delay(3);
     }
 
     rt_thread_delay(10);
@@ -53,7 +53,7 @@ void produce_pwm_count(uint16_t pwm, uint8_t count) //0.5ms ~ 2.5ms
 
     usart2_init_pwm();
     PWM_LOW();
-    rt_thread_delay(10);
+    rt_thread_delay(12);
     pwm_finish_flag = 0;
     TIM3_Int_Init(pwm);
 
@@ -66,14 +66,15 @@ void produce_pwm_count(uint16_t pwm, uint8_t count) //0.5ms ~ 2.5ms
             {
                 break;
             }
-            rt_thread_delay(10);
+            rt_thread_delay(12);
             pwm_finish_flag = 0;
             TIM3_Int_Init(pwm);
         }
         rt_thread_delay(1);
     }
-
     rt_thread_delay(10);
+	PWM_HIGH();
+	rt_thread_delay(50);
     usart2_init_rx(115200);
     rt_mutex_release(servo_mutex);
 }

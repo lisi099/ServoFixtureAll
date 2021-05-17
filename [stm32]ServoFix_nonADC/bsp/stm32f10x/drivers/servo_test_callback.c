@@ -41,7 +41,7 @@ void Broadband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm(500);
+            produce_pwm_count(500,10);
         }
         break;
 
@@ -52,7 +52,7 @@ void Broadband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm(900);
+            produce_pwm_count(900,10);
         }
         break;
 
@@ -63,7 +63,7 @@ void Broadband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm(1500);
+            produce_pwm_count(1500,10);
         }
         break;
 
@@ -74,7 +74,7 @@ void Broadband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm(2100);
+            produce_pwm_count(2100,10);
         }
         break;
 
@@ -85,7 +85,7 @@ void Broadband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm(2500);
+            produce_pwm_count(2500,10);
         }
         break;
 

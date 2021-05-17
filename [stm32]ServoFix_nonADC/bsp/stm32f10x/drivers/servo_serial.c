@@ -375,7 +375,7 @@ uint8_t menu_combine_fb_work_parm(void)
 
     if(is_tai_servo_)
     {
-        if(!connect_taiwan())
+        if(!is_taiwan_servo())
         {
             write_read_busy_state_ = 0;
             return 0;

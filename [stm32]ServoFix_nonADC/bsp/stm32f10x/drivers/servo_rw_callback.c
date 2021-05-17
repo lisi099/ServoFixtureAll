@@ -48,6 +48,7 @@ uint8_t servo_write_callback(void)
     }
 
     if(find_version(distribtor) == 100)
+//	if(0)
     {
         Lcd_Clr_Scr();
         LCD_Write_Str(0, 0, (char*)"<Writting>...");
@@ -62,6 +63,7 @@ uint8_t servo_write_callback(void)
         Copy_Data_To_Stru();
         menu_combine_prom_work_parm();
         res = menu_combine_verify_work_parm();
+		rt_thread_delay(500);
         if(res)
         {
             if(keep(S_SUCCESS) == F_RETURN)
@@ -76,6 +78,7 @@ uint8_t servo_write_callback(void)
         }
         else
         {
+			rt_thread_delay(500);
             keep(S_FAILED);
             SetMainPage(&Data_Save_Page);
             ShowPage_Num(pPage, 0);
@@ -90,9 +93,10 @@ uint8_t servo_read_callback(void)
 
     Lcd_Clr_Scr();
     LCD_Write_Str(0, 0, (char*)"<Reading>...");
-
+	
     if(menu_combine_fb_work_parm())
     {
+		rt_thread_delay(500);
         if(keep(S_SUCCESS) == F_RETURN)
         {
             ShowParentPage_Num(Item_Num_[1]);
@@ -105,6 +109,7 @@ uint8_t servo_read_callback(void)
     }
     else
     {
+		rt_thread_delay(500);
         keep(S_FAILED);
         SetMainPage(&Data_Read_Page);
         ShowPage_Num(pPage, 0);

@@ -21,6 +21,7 @@
 
 //----------------------全局变量---------------------------
 volatile uint8_t servo_detect_flag_ = 0;
+volatile uint8_t uart_all_flag_ = 0;
 volatile uint8_t reconnect_taiwan_servo_flag_ = 0;
 rt_mutex_t servo_mutex = RT_NULL;
 rt_mutex_t lcd_mutex = RT_NULL;
@@ -65,6 +66,7 @@ static void key_scan_thread(void* parameter)
 
 /*-----------------------菜单处理-----------------------*/
 extern volatile uint8_t is_tai_servo_;
+extern volatile uint8_t is_tai_servo_e_;
 extern uint8_t connect_detect(void);
 extern void Copy_Data_To_Show(void);
 
@@ -168,13 +170,14 @@ static void usart_sw_thread_entry(void* parameter)
 
         if(Txd2_Flag == TX_FINISH && usart2_mode == TX_MODE)
         {
-            rt_thread_delay(2);
+            rt_thread_delay(3);
             usart2_init_rx(bd_set_);
+			
         }
 
         rt_mutex_release(servo_mutex);
 
-        rt_thread_delay(2);
+        rt_thread_delay(3);
     }
 }
 
@@ -207,6 +210,9 @@ static void running(void* parameter)
 
         rt_thread_delay(200);
     }
+	if(is_tai_servo_e_){
+		is_tai_servo_ = 1;
+	}
 
     Lcd_Clr_Scr();
     put_chars_middle(0, "SERVO");

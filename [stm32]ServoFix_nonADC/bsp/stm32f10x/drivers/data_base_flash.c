@@ -108,6 +108,7 @@ void read_servo_data_in_flash(uint8_t seq)
         {
             memcpy(data_w_ptr, data_ptr, 129);
             get_tai_factory_data(data_w_ptr, seq - 20);
+			memcpy(data_ptr, data_w_ptr, 129);
         }
     }
 

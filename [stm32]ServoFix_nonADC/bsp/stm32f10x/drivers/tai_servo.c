@@ -26,6 +26,8 @@
 #define SOFT_START_INDEX	91
 
 volatile uint8_t is_tai_servo_ = 0;
+volatile uint8_t is_tai_servo_e_ = 0;
+
 static 	uint8_t read_servo_data[136];
 static 	uint8_t write_servo_data[136];
 volatile uint8_t receive_tai_data_flag = 0;
@@ -388,8 +390,8 @@ uint16_t get_version(void)
 
 uint8_t chech_sum_xor(const uint8_t* data, const uint8_t size)
 {
-    uint8_t sum = data[0];
-    for(int i = 1; i < size; i++)
+    uint8_t sum = 0;
+    for(int i = 0; i < size; i++)
     {
         sum ^= data[i];
     }
@@ -420,6 +422,7 @@ void taiwan_send_read_data(void)
 void taiwan_send_write_data(void)
 {
     uint8_t data[124];
+	produce_pwm_count(7000, 5);
     data[0] = 0x22;
     data[1] = 0x32;
     data[2] = 110;
@@ -436,7 +439,7 @@ void taiwan_send_write_data(void)
     ///end
     data[10] = 0xed;
     usart2_send_buff(data, 11);
-    rt_thread_delay(20);
+    rt_thread_delay(100);
 
     uint8_t* data_cpy = &write_servo_data[0];
     memcpy(&data[0], data_cpy, 111); //data 110byte
@@ -445,12 +448,11 @@ void taiwan_send_write_data(void)
 //    data[97] = 0 + 0x30;	//CS
 //    data[98] = 0 + 0x30;	//CS
 //    data[99] = 0 + 0x30;	//CS
-    data[111] = chech_sum_xor(data, 111);	//CS
+    data[111] = chech_sum_xor(data, 111);	//
     data[112] = 0xED;	//end
 		
-		//produce pwm ?
     usart2_send_buff(data, 113);
-    rt_thread_delay(800);
+    rt_thread_delay(500);
 }
 
 
@@ -481,7 +483,7 @@ uint8_t is_taiwan_servo(void)
     uint8_t try_count = 2;
     write_read_busy_state_ = 1;
 
-    produce_pwm_count(7000, 3);
+    produce_pwm_count(7000, 5);
 
     write_read_busy_state_ = 0;
 
@@ -490,14 +492,14 @@ uint8_t is_taiwan_servo(void)
         if(connect_taiwan())
         {
             connect_servo_state_ = 1;
-            is_tai_servo_ = 1;
+            is_tai_servo_e_ = 1;
             return 1;
         }
         try_count--;
     }
     while(try_count);
 
-    is_tai_servo_ = 0;
+    is_tai_servo_e_ = 0;
     return 0; //no find servo
 }
 
@@ -510,14 +512,14 @@ uint8_t read_tai_servo_data(void)
         if(connect_taiwan())
         {
             connect_servo_state_ = 1;
-            is_tai_servo_ = 1;
+//            is_tai_servo_e_ = 1;
             return 1;
         }
         try_count--;
     }
     while(try_count);
 
-    is_tai_servo_ = 0;
+//    is_tai_servo_e_ = 0;
     return 0; //no find servo
 }
 

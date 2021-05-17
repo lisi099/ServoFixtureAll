@@ -11,6 +11,7 @@ volatile uint8_t  write_read_busy_state_ = 0;
 
 uint8_t get_servo_state(void )
 {
+	return 1;
     if(Adc_Convert_Value[0] >= 3600)
     {
         return 0;
