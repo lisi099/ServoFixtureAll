@@ -264,7 +264,7 @@ void menu_combine_prom_work_parm(void)
         send_work_param(i, &servo_data);
     }
 		
-		rt_thread_delay(SERVO_DELAY_TIME);
+	rt_thread_delay(SERVO_DELAY_TIME);
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_WORK_PARM, 0, 0, 0);
     rt_thread_delay(SERVO_DELAY_TIME);
 
@@ -283,10 +283,23 @@ void menu_combine_prom_work_parm(void)
         rt_thread_delay(SERVO_DELAY_TIME);
         send_debug_param(i, &servo_data);
     }
+	
+	rt_thread_delay(SERVO_DELAY_TIME);
+    uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_WORK_PARM, 0, 0, 0);
+
+	
+	rt_thread_delay(SERVO_DELAY_TIME);
+    uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_SETUP_PARM, 0, 0, 0);
+
 
     rt_thread_delay(SERVO_DELAY_TIME);
     uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_DEBUG_PARM, 0, 0, 0);
-
+		
+	rt_thread_delay(SERVO_DELAY_TIME);
+    uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_CONFIG_PARM, 0, 0, 0);
+	
+	rt_thread_delay(SERVO_DELAY_TIME);
+    uart_send_command(servo_unique_address_id, SERVO_COMMAND_SERVO_PARM_DOWNLOAD, SERVO_STATE_COM, MENU_DOWMLOAD_ALL_PARM, 0, 0, 0);
     write_read_busy_state_ = 0;
 }
 

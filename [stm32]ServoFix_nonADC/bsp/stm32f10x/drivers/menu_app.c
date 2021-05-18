@@ -310,6 +310,8 @@ void Servo_Center_Page_CallBack(u8 key)
     case KEY_Return:
         ShowParentPage_Num(Item_Num_[1]);
         return;
+	default:
+		break;
     }
 
     //show data
@@ -358,12 +360,11 @@ void Servo_Center_Page_CallBack(u8 key)
     }
     else
     {
-		produce_pwm_count(7000,5);
 		Copy_Data_To_Stru();
 		menu_combine_prom_work_parm();
-		rt_thread_delay(100);	
-        produce_pwm_count(1500,50);//Ðý×ª
-		rt_thread_delay(500);
+		rt_thread_delay(120);	
+        produce_pwm_count(1500,60);//Ðý×ª
+		rt_thread_delay(200);
     }
     Lcd_Clr_Scr();
     put_chars_middle(0, "Center");
