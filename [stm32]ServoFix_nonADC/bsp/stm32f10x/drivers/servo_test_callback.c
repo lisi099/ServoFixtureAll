@@ -14,6 +14,8 @@
 #include "Menu.h"
 
 extern volatile uint8_t is_tai_servo_;
+extern volatile uint8_t 					pwm_continue_flag;
+extern volatile uint16_t 					pwm_count;
 
 void Broadband_Page_CallBack(u8 key)
 {
@@ -26,6 +28,7 @@ void Broadband_Page_CallBack(u8 key)
         KeySelItem(key);
         break;
     case KEY_Return:
+		pwm_continue_flag = 0;
         ShowParentPage_Num(0);
         return;
     case KEY_Ok:
@@ -41,7 +44,9 @@ void Broadband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm_count(500,10);
+			pwm_count = 500;
+			pwm_continue_flag = 1;
+//            produce_pwm_count(500,10);
         }
         break;
 
@@ -52,7 +57,9 @@ void Broadband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm_count(900,10);
+			pwm_count = 900;
+			pwm_continue_flag = 1;
+//            produce_pwm_count(900,10);
         }
         break;
 
@@ -63,7 +70,9 @@ void Broadband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm_count(1500,10);
+			pwm_count = 1500;
+			pwm_continue_flag = 1;
+//            produce_pwm_count(1500,10);
         }
         break;
 
@@ -74,7 +83,9 @@ void Broadband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm_count(2100,10);
+			pwm_count = 2100;
+			pwm_continue_flag = 1;
+//            produce_pwm_count(2100,10);
         }
         break;
 
@@ -85,7 +96,9 @@ void Broadband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm_count(2500,10);
+			pwm_count = 2500;
+			pwm_continue_flag = 1;
+//            produce_pwm_count(2500,10);
         }
         break;
 
@@ -106,6 +119,7 @@ void Narrowband_Page_CallBack(u8 key)
         break;
 
     case KEY_Return:
+		pwm_continue_flag = 0;
         ShowParentPage_Num(0);
         return;
 
@@ -122,7 +136,9 @@ void Narrowband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm(500);
+			pwm_count = 500;
+			pwm_continue_flag = 1;
+//            produce_pwm(500);
         }
         break;
 
@@ -133,7 +149,9 @@ void Narrowband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm(750);
+//            produce_pwm(750);
+			pwm_count = 750;
+			pwm_continue_flag = 1;
         }
         break;
 
@@ -144,7 +162,9 @@ void Narrowband_Page_CallBack(u8 key)
         }
         else
         {
-            produce_pwm(1000);
+			pwm_count = 1000;
+			pwm_continue_flag = 1;
+//            produce_pwm(1000);
         }
         break;
 

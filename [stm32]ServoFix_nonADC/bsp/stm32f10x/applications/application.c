@@ -181,6 +181,9 @@ static void usart_sw_thread_entry(void* parameter)
     }
 }
 
+extern void produce_continue_pwm(void* parameter);
+	
+
 /*------------------------------运行线程----------------------------*/
 static void running(void* parameter)
 {
@@ -293,6 +296,9 @@ int rt_application_init(void)
     if(tid1 != RT_NULL) rt_thread_startup(tid1);
 	
 	tid1 = rt_thread_create("usart_sw", usart_sw_thread_entry, RT_NULL, 1024, 16, 10);
+    if(tid1 != RT_NULL) rt_thread_startup(tid1);
+	
+	tid1 = rt_thread_create("pwm_c", produce_continue_pwm, RT_NULL, 1024, 16, 10);
     if(tid1 != RT_NULL) rt_thread_startup(tid1);
 
     return 0;

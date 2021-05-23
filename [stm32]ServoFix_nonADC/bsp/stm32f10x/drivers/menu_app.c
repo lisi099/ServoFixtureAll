@@ -261,6 +261,9 @@ void Servo_Version_Page_CallBack(u8 key)
     put_chars_middle(0, str);
 }
 
+extern volatile uint8_t 					pwm_continue_flag;
+extern volatile uint16_t 					pwm_count;
+
 void Servo_Center_Page_CallBack(u8 key)
 {
     char oper_num[] = "L10 ---0--- R10";
@@ -308,6 +311,8 @@ void Servo_Center_Page_CallBack(u8 key)
 
         break;
     case KEY_Return:
+		pwm_continue_flag = 0;
+		rt_thread_delay(200);
         ShowParentPage_Num(Item_Num_[1]);
         return;
 	default:
@@ -360,10 +365,13 @@ void Servo_Center_Page_CallBack(u8 key)
     }
     else
     {
-		Copy_Data_To_Stru();
-		menu_combine_prom_work_parm();
-		rt_thread_delay(120);	
-        produce_pwm_count(1500,60);//Ðý×ª
+		pwm_count = 1500 + (-l_num + r_num) *15;
+		pwm_continue_flag = 1;
+//		Copy_Data_To_Stru();
+//		menu_combine_prom_work_parm();
+//		rt_thread_delay(120);	
+//      produce_pwm_count(1500,60);//Ðý×ª
+		
 		rt_thread_delay(200);
     }
     Lcd_Clr_Scr();

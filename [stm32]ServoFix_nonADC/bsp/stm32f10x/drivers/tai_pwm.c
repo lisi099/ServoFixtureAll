@@ -16,9 +16,12 @@
 #define PWM_LOW()					GPIO_ResetBits(GPIOA, GPIO_Pin_2)
 
 volatile uint8_t 					pwm_finish_flag = 0;
+volatile uint8_t 					pwm_continue_flag= 0;
+volatile uint16_t 					pwm_count= 0;
 extern rt_mutex_t servo_mutex;
 
 void TIM3_Int_Init(uint16_t psc);// 500 ~ 2500
+
 
 void produce_pwm(uint16_t pwm) //0.5ms ~ 2.5ms
 {
@@ -43,6 +46,43 @@ void produce_pwm(uint16_t pwm) //0.5ms ~ 2.5ms
     rt_thread_delay(10);
     usart2_init_rx(115200);
     rt_mutex_release(servo_mutex);
+}
+
+void produce_continue_pwm(void* parameter)
+{
+	while(1)
+	{
+		if(pwm_continue_flag)
+		{
+			rt_thread_delay(10);
+			rt_mutex_take(servo_mutex, RT_WAITING_FOREVER);
+			usart2_init_pwm();
+			PWM_LOW();
+			rt_thread_delay(3);
+			pwm_finish_flag = 0;
+			TIM3_Int_Init(pwm_count);
+			while(1)
+			{
+				if(pwm_finish_flag)
+				{
+					rt_thread_delay(12);
+					pwm_finish_flag = 0;
+					TIM3_Int_Init(pwm_count);
+				}
+				if(pwm_continue_flag == 0){
+					rt_thread_delay(10);
+					usart2_init_rx(115200);
+					pwm_finish_flag = 0;
+					break;
+				}
+				rt_thread_delay(1);
+			}
+			rt_mutex_release(servo_mutex);
+		}
+		else{
+			rt_thread_delay(10);
+		}
+	}
 }
 
 void produce_pwm_count(uint16_t pwm, uint8_t count) //0.5ms ~ 2.5ms
@@ -98,7 +138,7 @@ void TIM3_Int_Init(uint16_t psc)// 500 ~ 2500
 
     NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //TIM3中断
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;  //从优先级3级
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级3级
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
     NVIC_Init(&NVIC_InitStructure);  //初始化NVIC寄存器
 
