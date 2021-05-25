@@ -365,7 +365,9 @@ void Servo_Center_Page_CallBack(u8 key)
     }
     else
     {
-		pwm_count = 1500 + (-l_num + r_num) *15;
+		int8_t center;
+        get_senter(&center);
+		pwm_count = 1500 + (-l_num + r_num -center) *15;
 		pwm_continue_flag = 1;
 //		Copy_Data_To_Stru();
 //		menu_combine_prom_work_parm();

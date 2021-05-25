@@ -185,6 +185,8 @@ extern void produce_continue_pwm(void* parameter);
 	
 
 /*------------------------------运行线程----------------------------*/
+extern volatile uint16_t  Adc_Convert_Value[2];
+
 static void running(void* parameter)
 {
     rt_thread_t tid1 = RT_NULL;
@@ -195,21 +197,31 @@ static void running(void* parameter)
     put_chars_middle(0, "Welcome to");
     put_chars_middle(1, "Power HD");
     rt_thread_delay(RT_TICK_PER_SECOND * 2);
-
+	usart2_init_rx(19200);
+	rt_thread_delay(100);
     Lcd_Clr_Scr();
     put_chars(0, 0, "Please Connect");
     put_chars(1, 0, "Servo");
-
+	
     while(1)
     {
-        if(is_taiwan_servo())
-        {
-            break;
-        }
-        else if(connect_detect())
-        {
-            break;
-        }
+		if(Adc_Convert_Value[0] >3000){
+			if(connect_detect()){
+				break;
+			}
+		}
+		else if (is_taiwan_servo()){
+			break;
+		}
+//		is_taiwan_servo();
+//        if(connect_detect())
+//        {
+//            break;
+//        }
+//        else if(is_taiwan_servo())
+//        {
+//            break;
+//        }
 
         rt_thread_delay(200);
     }
@@ -283,6 +295,7 @@ static void running(void* parameter)
 /*----------------------------初始化线程--------------------------*/
 int rt_application_init(void)
 {
+	adc_configration();
     /*按键消息队列*/
     rt_mq_init(&key_mq, "key_mqt", &key_msg_pool[0], 2, sizeof(key_msg_pool), RT_IPC_FLAG_FIFO);
 
