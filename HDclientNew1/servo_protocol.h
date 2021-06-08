@@ -316,6 +316,19 @@ struct Servo_Data_Stru_  //64 byte
     int16_t debug_p10;
 };
 
+//struct Servo_Tai_Data_
+//{
+//    uint16_t max_power;
+//    uint16_t boost;
+//    uint16_t deadband;
+//    uint16_t tension;
+//    uint16_t farce;
+//    uint16_t brake;
+//    uint16_t senter;
+//    uint16_t soft_start;
+//    uint16_t version;
+//};
+
 struct Servo_Tai_Data_
 {
     uint16_t max_power;
@@ -327,7 +340,10 @@ struct Servo_Tai_Data_
     uint16_t senter;
     uint16_t soft_start;
     uint16_t version;
+    uint16_t init_speed;
+    uint16_t init_timeout;
 };
+
 
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>

@@ -1126,7 +1126,12 @@ void MainWindow::on_pushButton_writeData_clicked()
     ui_data_.soft_start = ui->comboBox_s8->currentIndex();
 
     lcd_protocol_->set_data(ui_data_);
-    lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);
+    if(lcd_protocol_->is_tai_servo_){
+
+    }
+    else{
+        lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);
+    }
     operate_states_ = WRITE_SERVO_DATA;
     cmd_ticks_ = ticks_;
     time_out_set_ = 1000;

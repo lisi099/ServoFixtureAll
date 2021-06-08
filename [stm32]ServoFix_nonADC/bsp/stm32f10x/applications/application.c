@@ -197,7 +197,8 @@ static void running(void* parameter)
     put_chars_middle(0, "Welcome to");
     put_chars_middle(1, "Power HD");
     rt_thread_delay(RT_TICK_PER_SECOND * 2);
-	usart2_init_rx(19200);
+	usart2_init_tx(19200);
+	uart_send_clear_command();
 	rt_thread_delay(100);
     Lcd_Clr_Scr();
     put_chars(0, 0, "Please Connect");
@@ -213,6 +214,7 @@ static void running(void* parameter)
 		else if (is_taiwan_servo()){
 			break;
 		}
+		
 //		is_taiwan_servo();
 //        if(connect_detect())
 //        {

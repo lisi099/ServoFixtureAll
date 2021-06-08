@@ -32,6 +32,7 @@ struct ui_data{
     int16_t center_num;
 };
 
+
 class lcd_protocol{
 public:
     lcd_protocol(QSerialPort *port):serial_(port)
@@ -136,6 +137,21 @@ public:
         data[2] = WRITE_CMD;
         data[3] = 0x00;
         memcpy(&data[4], servo_data, sizeof(Servo_Data_Stru_));
+        uint16_t sum = sum_check(data, sizeof(data) -2);
+        data[DATA_SIZE +4] = (uint8_t)sum;
+        data[DATA_SIZE +5] = (uint8_t)(sum >> 8);
+        char *data_send = (char *)data;
+        serial_->write(data_send, sizeof(data));
+    }
+
+    void send_write_tai_data(struct Servo_Tai_Data_ *servo_data){
+        uint8_t data[DATA_SIZE +6];
+        memset(data, 0, sizeof(data));
+        data[0] = 0x5A;
+        data[1] = 0xA5;
+        data[2] = WRITE_CMD;
+        data[3] = 0x00;
+        memcpy(&data[4], servo_data, sizeof(Servo_Tai_Data_));
         uint16_t sum = sum_check(data, sizeof(data) -2);
         data[DATA_SIZE +4] = (uint8_t)sum;
         data[DATA_SIZE +5] = (uint8_t)(sum >> 8);
@@ -265,20 +281,29 @@ public:
 
     void set_data(const ui_data &data)
     {
-        int16_t offset = data.center_num;
-        servo_data_.work_p3 = 3100 + (offset) * 28;
-        servo_data_.work_p4 = 2048 + (offset) * 28;
-        servo_data_.work_p5 = 996 + (offset) * 28;
+        if(is_tai_servo_ == false){
+            int16_t offset = data.center_num;
+            servo_data_.work_p3 = 3100 + (offset) * 28;
+            servo_data_.work_p4 = 2048 + (offset) * 28;
+            servo_data_.work_p5 = 996 + (offset) * 28;
 
-        servo_data_.work_p12 = data.version; //version
-        servo_data_.set_p11 = round_f(data.max_power * 72.2 + 727.7f); //servo_max_pwm_set
-        servo_data_.set_p15 = round_f(data.boost * 5.6f + 4.3f); //servo_work_base_voltage
-        servo_data_.work_p6 = data.dead_band; //servo_zero_zone_set
-        servo_data_.debug_p5 = data.tension; //servo_position_pid_parm_p_set
-        servo_data_.debug_p0 = data.force; //servo_speed_pid_parm_p_set
-        servo_data_.debug_p2 = round_f(data.brake * 4.3f - 3.2f); //servo_speed_run_sample_k_set
-        servo_data_.set_p14 = data.soft_start;//servo_init_flag_set
+            servo_data_.work_p12 = data.version; //version
+            servo_data_.set_p11 = round_f(data.max_power * 72.2 + 727.7f); //servo_max_pwm_set
+            servo_data_.set_p15 = round_f(data.boost * 5.6f + 4.3f); //servo_work_base_voltage
+            servo_data_.work_p6 = data.dead_band; //servo_zero_zone_set
+            servo_data_.debug_p5 = data.tension; //servo_position_pid_parm_p_set
+            servo_data_.debug_p0 = data.force; //servo_speed_pid_parm_p_set
+            servo_data_.debug_p2 = round_f(data.brake * 4.3f - 3.2f); //servo_speed_run_sample_k_set
+            servo_data_.set_p14 = data.soft_start;//servo_init_flag_set
+        }
+        else{
+            servo_tai_data_.max_power = data.max_power;
+
+
+        }
     }
+
+
 
     void get_data(ui_data &data)
     {
