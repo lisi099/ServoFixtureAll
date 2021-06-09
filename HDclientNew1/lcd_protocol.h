@@ -70,6 +70,12 @@ public:
         version_map_index_.insert(9, 9);
         version_map_index_.insert(10, 10);
         version_map_index_.insert(11, 11);
+        version_map_index_.insert(80, 12);
+        version_map_index_.insert(81, 13);
+        version_map_index_.insert(82, 14);
+        version_map_index_.insert(83, 15);
+        version_map_index_.insert(84, 16);
+        version_map_index_.insert(85, 17);
         is_tai_servo_ = false;
     }
 
@@ -148,7 +154,7 @@ public:
         uint8_t data[DATA_SIZE +6];
         memset(data, 0, sizeof(data));
         data[0] = 0x5A;
-        data[1] = 0xA5;
+        data[1] = 0xA6;
         data[2] = WRITE_CMD;
         data[3] = 0x00;
         memcpy(&data[4], servo_data, sizeof(Servo_Tai_Data_));
@@ -297,9 +303,101 @@ public:
             servo_data_.set_p14 = data.soft_start;//servo_init_flag_set
         }
         else{
-            servo_tai_data_.max_power = data.max_power;
+            servo_tai_data_.max_power = data.max_power *5 +50;
+            servo_tai_data_.deadband = data.dead_band;
+            servo_tai_data_.brake = data.brake *10 +20;
+            servo_tai_data_.senter = data.center_num *28 +2048;
+            if(data.soft_start!= 0){
+                servo_tai_data_.soft_start = 1;
+            }
+            else{
+                servo_tai_data_.soft_start = 0;
+            }
 
-
+            //force
+            switch(data.force){
+            case 1:
+                servo_tai_data_.farce = 90;
+                break;
+            case 2:
+                servo_tai_data_.farce = 100;
+                break;
+            case 3:
+                servo_tai_data_.farce = 110;
+                break;
+            case 4:
+                servo_tai_data_.farce = 120;
+                break;
+            case 5:
+                servo_tai_data_.farce = 130;
+                break;
+            case 6:
+                servo_tai_data_.farce = 155;
+                break;
+            case 7:
+                servo_tai_data_.farce = 165;
+                break;
+            case 8:
+                servo_tai_data_.farce = 175;
+                break;
+            case 9:
+                servo_tai_data_.farce = 185;
+                break;
+            case 10:
+                servo_tai_data_.farce = 200;
+                break;
+            default:
+                break;
+            }
+            //tension
+            switch(data.tension){
+            case 1:
+                servo_tai_data_.tension = 130;
+                break;
+            case 2:
+                servo_tai_data_.tension = 200;
+                break;
+            case 3:
+                servo_tai_data_.tension = 270;
+                break;
+            default:
+                break;
+            }
+            //boost
+            switch(data.boost){
+            case 1:
+                servo_tai_data_.boost = 1300;
+                break;
+            case 2:
+                servo_tai_data_.boost = 1200;
+                break;
+            case 3:
+                servo_tai_data_.boost = 1100;
+                break;
+            case 4:
+                servo_tai_data_.boost = 1000;
+                break;
+            case 5:
+                servo_tai_data_.boost = 900;
+                break;
+            case 6:
+                servo_tai_data_.boost = 800;
+                break;
+            case 7:
+                servo_tai_data_.boost = 700;
+                break;
+            case 8:
+                servo_tai_data_.boost = 600;
+                break;
+            case 9:
+                servo_tai_data_.boost = 500;
+                break;
+            case 10:
+                servo_tai_data_.boost = 400;
+                break;
+            default:
+                break;
+            }
         }
     }
 

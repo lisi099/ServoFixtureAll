@@ -52,9 +52,12 @@ void response_connect(void)
 		}
 		data[2] = CONNECT_CMD -1;
 		data[3] = 0x00;
-		memcpy(&data[4], &servoDataStru, DATA_SIZE);
+		
 		if(is_tai_servo_){
 			memcpy(&data[4], &tai_servo, sizeof(tai_servo));
+		}
+		else{
+			memcpy(&data[4], &servoDataStru, DATA_SIZE);
 		}
 		
 		uint16_t sum = sum_check(data, sizeof(data) -2);
@@ -80,14 +83,26 @@ void response_disconnect(void)
 
 void response_read(void)
 {
+		struct Servo_Tai_Data_ tai_servo;
 		uint8_t data[DATA_SIZE +6];
 		memset(data, 0, sizeof(data));
 		rt_thread_delay(2000);
 		data[0] = 0x5A;
-		data[1] = 0xA5;
+		if(is_tai_servo_){
+			data[1] = 0xA6;
+			get_tai_stru(&tai_servo);
+		}
+		else{
+			data[1] = 0xA5;
+		}
 		data[2] = READ_CMD -1;
 		data[3] = 0x00;
-		memcpy(&data[4], &servoDataStru, DATA_SIZE);
+		if(is_tai_servo_){
+			memcpy(&data[4], &tai_servo, sizeof(tai_servo));
+		}
+		else{
+			memcpy(&data[4], &servoDataStru, DATA_SIZE);
+		}
 		uint16_t sum = sum_check(data, sizeof(data) -2);
 		data[DATA_SIZE +4] = (uint8_t)sum;
 		data[DATA_SIZE +5] = (uint8_t)(sum >> 8);
@@ -95,10 +110,22 @@ void response_read(void)
 	
 }
 
+extern void Copy_Data_To_Stru(void);
+
 void response_write(uint8_t *data_write)
 {
 		uint8_t data[DATA_SIZE +6];
-		memcpy(&servoDataStru, &data_write[4], DATA_SIZE);
+		struct Servo_Tai_Data_ tai_servo;
+		if(is_tai_servo_){
+			memcpy(&tai_servo, &data[4], sizeof(tai_servo));
+			Copy_Data_To_Stru();
+			set_tai_stru(&tai_servo);
+			copy_write_data();
+		}
+		else{
+			memcpy(&servoDataStru, &data_write[4], DATA_SIZE);
+		}
+		
 		menu_combine_prom_work_parm();
 		if(menu_combine_verify_work_parm())
 		{

@@ -51,6 +51,45 @@ void get_tai_stru(struct Servo_Tai_Data_ *tai_data)
     tai_data->version = get_version();
 }
 
+void set_tai_stru(struct Servo_Tai_Data_ *tai_data)
+{
+    uint8_t* data = write_servo_data;
+		data[BOOST_INDEX] = (uint8_t)(tai_data->boost);
+		data[BOOST_INDEX+1] = (uint8_t)(tai_data->boost >> 8);
+	
+		data[MAX_POWER_INDEX] = (uint8_t)(tai_data->max_power);
+		data[MAX_POWER_INDEX+1] = (uint8_t)(tai_data->max_power >> 8);
+	
+		data[TENSION_INDEX] = (uint8_t)(tai_data->tension);
+		data[TENSION_INDEX+1] = (uint8_t)(tai_data->tension >> 8);
+	
+		data[DEAD_BAND_INDEX] = (uint8_t)(tai_data->deadband);
+		data[DEAD_BAND_INDEX+1] = (uint8_t)(tai_data->deadband >> 8);
+	
+		data[FORCE_INDEX] = (uint8_t)(tai_data->farce);
+		data[FORCE_INDEX+1] = (uint8_t)(tai_data->farce >> 8);
+	
+		data[BRAKE_INDEX] = (uint8_t)(tai_data->brake);
+		data[BRAKE_INDEX+1] = (uint8_t)(tai_data->brake >> 8);
+	
+		data[CENTER_INDEX] = (uint8_t)(tai_data->senter);
+		data[CENTER_INDEX+1] = (uint8_t)(tai_data->senter >> 8);
+		
+		data[SOFT_START_INDEX+2] = (uint8_t)(tai_data->soft_start);
+		data[SOFT_START_INDEX+3] = (uint8_t)(tai_data->soft_start >> 8);
+//    tai_data->boost = (uint16_t)(data[BOOST_INDEX] | data[BOOST_INDEX + 1] << 8);
+//    tai_data->max_power = (uint16_t)(data[MAX_POWER_INDEX] | data[MAX_POWER_INDEX + 1] << 8);
+//    tai_data->tension = (uint16_t)(data[TENSION_INDEX] | data[TENSION_INDEX + 1] << 8);
+//    tai_data->deadband = (uint16_t)(data[DEAD_BAND_INDEX] | data[DEAD_BAND_INDEX + 1] << 8);
+//    tai_data->farce = (uint16_t)(data[FORCE_INDEX] | data[FORCE_INDEX + 1] << 8);
+//    tai_data->brake = (uint16_t)(data[BRAKE_INDEX] | data[BRAKE_INDEX + 1] << 8);
+//    tai_data->senter = (uint16_t)(data[CENTER_INDEX] | data[CENTER_INDEX + 1] << 8);
+//    tai_data->soft_start = (uint16_t)(data[SOFT_START_INDEX + 2] | data[SOFT_START_INDEX + 3] << 8);
+//    tai_data->version = get_version();
+	
+}
+
+
 uint8_t* get_taiwan_read_data(void)
 {
     return read_servo_data;
@@ -74,6 +113,12 @@ void copy_read_data(void)
 {
     memcpy(write_servo_data, read_servo_data, 129);
 }
+
+void copy_write_data(void)
+{
+    memcpy(read_servo_data, write_servo_data, 129);
+}
+
 
 void set_read_servo_data(const uint8_t* data)
 {

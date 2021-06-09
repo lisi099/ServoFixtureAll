@@ -48,6 +48,17 @@ const struct Servo_Data_Stru_ factory_para[] =
 {2100,1500,900,3100,2048,996,3,0,0,1,1,1,11100,1,14,0,1,1500,10,1,1,10,1080,50,20,5,800,1350,1500,1500,0,20,6,1,20,4,20,1,50,1,1,1,1}, //11100=V1.2 PGC-A50-00.bat"
 };
 
+const struct Servo_Tai_Data_ factory_tai_para[]=
+{
+    {100, 1200, 1, 200, 100, 50, 2048, 0, 0, 45, 0},
+    {95, 1100, 1, 130, 175, 35, 2048, 0, 0, 45, 0},
+    {95, 1100, 1, 130, 175, 35, 2048, 0, 0, 45, 0},
+    {95, 1100, 1, 130, 175, 35, 2048, 0, 0, 45, 0},
+    {95, 1100, 1, 130, 175, 35, 2048, 0, 0, 45, 0},
+    {95, 1100, 1, 130, 175, 35, 2018, 0, 0, 45, 0},
+};
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -1126,8 +1137,9 @@ void MainWindow::on_pushButton_writeData_clicked()
     ui_data_.soft_start = ui->comboBox_s8->currentIndex();
 
     lcd_protocol_->set_data(ui_data_);
-    if(lcd_protocol_->is_tai_servo_){
 
+    if(lcd_protocol_->is_tai_servo_){
+        lcd_protocol_->send_write_tai_data(&lcd_protocol_->servo_tai_data_);
     }
     else{
         lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);
@@ -1155,7 +1167,14 @@ void MainWindow::on_pushButton_Default_clicked()
         QMessageBox::critical(this, QString::fromLocal8Bit("Error"), "The servo not support!");
         return;
     }
-    memcpy(&lcd_protocol_->servo_data_, &factory_para[index], sizeof(Servo_Data_Stru_));
+    if(lcd_protocol_->is_tai_servo_){ //Servo_Data_Stru_ factory_para
+        index = index - (sizof(factory_para)/ sizeof(Servo_Data_Stru_));
+        memcpy(&lcd_protocol_->servo_tai_data_, &factory_tai_para[index], sizeof(Servo_Tai_Data_));
+    }
+    else{
+        memcpy(&lcd_protocol_->servo_data_, &factory_para[index], sizeof(Servo_Data_Stru_));
+    }
+
     //ui show
     lcd_protocol_->get_data(ui_data_);
     ui->spinBox_1->setValue(ui_data_.max_power);
@@ -1167,7 +1186,12 @@ void MainWindow::on_pushButton_Default_clicked()
     ui->spinBox_7->setValue(ui_data_.center_num);
     ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
     //write data
-    lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);
+    if(lcd_protocol_->is_tai_servo_){
+        lcd_protocol_->send_write_tai_data(&lcd_protocol_->servo_data_);
+    }
+    else{
+        lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);
+    }
     operate_states_ = DEFAULT_SERVO_DATA;
     cmd_ticks_ = ticks_;
     time_out_set_ = 1000;
