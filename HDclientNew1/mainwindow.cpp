@@ -1168,7 +1168,8 @@ void MainWindow::on_pushButton_Default_clicked()
         return;
     }
     if(lcd_protocol_->is_tai_servo_){ //Servo_Data_Stru_ factory_para
-        index = index - (sizof(factory_para)/ sizeof(Servo_Data_Stru_));
+        index = index - (sizeof(factory_para)/ sizeof(Servo_Data_Stru_));
+        qDebug() << "----index" <<index;
         memcpy(&lcd_protocol_->servo_tai_data_, &factory_tai_para[index], sizeof(Servo_Tai_Data_));
     }
     else{
@@ -1187,7 +1188,7 @@ void MainWindow::on_pushButton_Default_clicked()
     ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
     //write data
     if(lcd_protocol_->is_tai_servo_){
-        lcd_protocol_->send_write_tai_data(&lcd_protocol_->servo_data_);
+        lcd_protocol_->send_write_tai_data(&lcd_protocol_->servo_tai_data_);
     }
     else{
         lcd_protocol_->send_write_data(&lcd_protocol_->servo_data_);

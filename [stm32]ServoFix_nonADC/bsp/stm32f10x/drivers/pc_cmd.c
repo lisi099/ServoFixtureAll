@@ -120,7 +120,7 @@ void response_write(uint8_t *data_write)
 			memcpy(&tai_servo, &data[4], sizeof(tai_servo));
 			Copy_Data_To_Stru();
 			set_tai_stru(&tai_servo);
-			copy_write_data();
+//			copy_write_data();
 		}
 		else{
 			memcpy(&servoDataStru, &data_write[4], DATA_SIZE);
