@@ -150,6 +150,12 @@ public:
         serial_->write(data_send, sizeof(data));
     }
 
+    void print_debug(uint8_t *data, uint16_t size){
+        for(uint16_t i=0; i<size; i++){
+         qDebug() << data[i];
+        }
+    }
+
     void send_write_tai_data(struct Servo_Tai_Data_ *servo_data){
         uint8_t data[DATA_SIZE +6];
         memset(data, 0, sizeof(data));
@@ -163,6 +169,7 @@ public:
         data[DATA_SIZE +5] = (uint8_t)(sum >> 8);
         char *data_send = (char *)data;
         serial_->write(data_send, sizeof(data));
+        print_debug(&data[4], sizeof(Servo_Tai_Data_));
     }
 
     bool data_process(const QByteArray &data)
@@ -194,8 +201,21 @@ public:
                 res= true;
                 break;
             case READ_CMD -1:
-                memcpy(&servo_data_, &buff[4], sizeof(servo_data_));
-                get_version(servo_data_);
+//                memcpy(&servo_data_, &buff[4], sizeof(servo_data_));
+//                get_version(servo_data_);
+
+                if((uint8_t)buff[1] == 0xA5){
+                    memcpy(&servo_data_, &buff[4], sizeof(servo_data_));
+                    get_version(servo_data_);
+                    is_tai_servo_ = false;
+                    qDebug() << "is_tai_servo_" << is_tai_servo_;
+                }
+                else{
+                    memcpy(&servo_tai_data_, &buff[4], sizeof(servo_tai_data_));
+                    get_version(servo_tai_data_);
+                    is_tai_servo_ = true;
+                    qDebug() << "is_tai_servo_" << is_tai_servo_;
+                }
                 qDebug() << "READ_CMD -1";
                 res= true;
                 break;

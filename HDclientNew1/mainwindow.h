@@ -79,6 +79,8 @@ private slots:
 
     void items_callback(QListWidgetItem *item);
 
+    void on_tabWidget_currentChanged(int index);
+
 public:
     CSysParam  m_SysParam;
     uint32_t CRC32Software( uint32_t *pData, uint16_t Length );

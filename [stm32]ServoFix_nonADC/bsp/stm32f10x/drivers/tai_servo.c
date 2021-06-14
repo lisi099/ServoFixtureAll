@@ -53,7 +53,7 @@ void get_tai_stru(struct Servo_Tai_Data_ *tai_data)
 
 void set_tai_stru(struct Servo_Tai_Data_ *tai_data)
 {
-    uint8_t* data = write_servo_data;
+		uint8_t* data = write_servo_data;
 		data[BOOST_INDEX] = (uint8_t)(tai_data->boost);
 		data[BOOST_INDEX+1] = (uint8_t)(tai_data->boost >> 8);
 	
@@ -77,16 +77,6 @@ void set_tai_stru(struct Servo_Tai_Data_ *tai_data)
 		
 		data[SOFT_START_INDEX+2] = (uint8_t)(tai_data->soft_start);
 		data[SOFT_START_INDEX+3] = (uint8_t)(tai_data->soft_start >> 8);
-//    tai_data->boost = (uint16_t)(data[BOOST_INDEX] | data[BOOST_INDEX + 1] << 8);
-//    tai_data->max_power = (uint16_t)(data[MAX_POWER_INDEX] | data[MAX_POWER_INDEX + 1] << 8);
-//    tai_data->tension = (uint16_t)(data[TENSION_INDEX] | data[TENSION_INDEX + 1] << 8);
-//    tai_data->deadband = (uint16_t)(data[DEAD_BAND_INDEX] | data[DEAD_BAND_INDEX + 1] << 8);
-//    tai_data->farce = (uint16_t)(data[FORCE_INDEX] | data[FORCE_INDEX + 1] << 8);
-//    tai_data->brake = (uint16_t)(data[BRAKE_INDEX] | data[BRAKE_INDEX + 1] << 8);
-//    tai_data->senter = (uint16_t)(data[CENTER_INDEX] | data[CENTER_INDEX + 1] << 8);
-//    tai_data->soft_start = (uint16_t)(data[SOFT_START_INDEX + 2] | data[SOFT_START_INDEX + 3] << 8);
-//    tai_data->version = get_version();
-	
 }
 
 

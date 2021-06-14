@@ -662,6 +662,8 @@ void MainWindow::lcd_Ticks()
 
         //data check
         if(lcd_data_.size() == (sizeof(Servo_Data_Stru_) +6)){
+            qDebug() << lcd_data_.at(20);
+            qDebug() << lcd_data_.at(21);
             if(lcd_protocol_->data_process(lcd_data_)){
                 switch (operate_states_) {
                 case READ_SERVO_DATA:
@@ -684,6 +686,7 @@ void MainWindow::lcd_Ticks()
                     ui->lineEdit->setText(lcd_protocol_->version_);
                     ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Read servo success!</span> <br/>"));
                     servo_version_read_ = ui_data_.version;
+                    qDebug() << servo_version_read_;
                     break;
                 case WRITE_SERVO_DATA:
                     ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Write servo success!</span> <br/>"));
@@ -712,6 +715,7 @@ void MainWindow::lcd_Ticks()
                     ui->lineEdit->setText(lcd_protocol_->version_);
                     ui->pushButton_connect->setText("Disconnect");
                     servo_version_read_ = ui_data_.version;
+                    qDebug() << servo_version_read_;
                     break;
                 case DISCONECT_SERVO_DATA:
                     ui->pushButton_connect->setText("Connect");
@@ -1197,4 +1201,17 @@ void MainWindow::on_pushButton_Default_clicked()
     cmd_ticks_ = ticks_;
     time_out_set_ = 1000;
     lcd_data_.clear();
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    static int count = 0;
+    count ++;
+    if(count <2){
+        return;
+    }
+    if(index != 1){
+        band_send(0,false);
+    }
+    qDebug() << index;
 }
