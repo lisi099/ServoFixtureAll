@@ -59,13 +59,13 @@ const struct Servo_Tai_Data_ factory_tai_para[]=
 };*/
 
 char *servo_version[] = {"PGC-D12", "S1206G2", "D1206G2", "WH-20KG", "WH-30KG", "WH-40KG",
-                         "PGC-DRF", "PGC-D15", "PGC-R12", "PGC-A20",
-                         "PGC-A40", "PGC-A50",
+                         "PGC-DRF", "PGC-D15", "PGC-R12",
+                         "PGC-A40", "PGC-A50", "PGB-S15", "PGB-S25", "PGB-S35", "PGB-S50"
                         };
 /*char *servo_version[] = {"PGC-D12", "D1206G2", "WH-20KG", "WH-30KG", "WH-40KG",
                          "PGC-DRF", "PGC-D15", "PGC-R12", "PGC-A20",
                          "PGC-A30", "PGC-A40", "PGC-A50", "PGB-S15", "PGB-S25",
-						 "PGB-S35", "PGB-S50",	"PGC-H15", "PGC-H30",	
+													"PGB-S35", "PGB-S50",	"PGC-H15", "PGC-H30",	
                         };
 						*/
 
