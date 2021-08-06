@@ -92,6 +92,7 @@ void Menu_SetSelItem(u8 num)
     SelItem = num;
 }
 
+extern volatile uint8_t is_tai_servo_;
 //--------------------------------------------
 void ShowList(u8 min, u8 max)
 {
@@ -118,8 +119,14 @@ void ShowList(u8 min, u8 max)
                 LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
                 break;
             case SHOW_STRING:
-                if(pPage->pItem[index].data) sprintf(str, "%s", "Y");
-                else sprintf(str, "%s", "N");
+								if(is_tai_servo_){
+									if(pPage->pItem[index].data) sprintf(str, "%s", "Y");
+									else sprintf(str, "%s", "N");
+								}
+								else{
+									if(pPage->pItem[index].data) sprintf(str, "%s", "N");
+									else sprintf(str, "%s", "Y");
+								}
                 LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
                 break;
             case SHOW_STRING_VER:
@@ -249,15 +256,28 @@ void GetShowString(char* str, uint16_t* data)
         sprintf(str, "%d ", *data);
         break;
     case SHOW_STRING:
-        if(*data)
-        {
-            *data = 1;
-            sprintf(str, "%s", "Y");
-        }
-        else
-        {
-            sprintf(str, "%s", "N");
-        }
+				if(is_tai_servo_){
+					if(*data)
+					{
+							*data = 1;
+							sprintf(str, "%s", "Y");
+					}
+					else
+					{
+							sprintf(str, "%s", "N");
+					}
+				}
+				else{
+					if(*data)
+					{
+							*data = 1;
+							sprintf(str, "%s", "N");
+					}
+					else
+					{
+							sprintf(str, "%s", "Y");
+					}
+				}
 				break;
     default:
         break;

@@ -57,5 +57,5 @@ uint8_t is_taiwan_servo(void);
 uint8_t connect_taiwan(void);
 
 uint16_t get_version(void);
-
+uint16_t get_distributor(void);
 #endif

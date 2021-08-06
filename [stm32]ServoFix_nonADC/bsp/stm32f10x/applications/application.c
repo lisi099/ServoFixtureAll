@@ -240,7 +240,18 @@ static void running(void* parameter)
 
     if(is_tai_servo_)
     {
-        Copy_Data_To_Show();
+				uint16_t dis = get_distributor();
+				if(80 <= dis && dis <=83){
+					Copy_Data_To_Show();
+				}
+				else
+				{
+						put_chars(1, 0, ">Pls Read Erro!");
+            while(1)
+            {
+                rt_thread_delay(RT_TICK_PER_SECOND * 2);
+            }
+				}
     }
     else
     {

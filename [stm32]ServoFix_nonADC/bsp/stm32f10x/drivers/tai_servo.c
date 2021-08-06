@@ -423,6 +423,16 @@ uint16_t get_version(void)
     return base1;
 }
 
+uint16_t get_distributor(void)
+{
+    uint8_t* data = read_servo_data;
+    uint16_t base1 = 0;
+    base1 = (data[96] - '0') * 10;
+    base1 += (data[97] - '0') * 1;
+    return base1;
+}
+
+
 uint8_t chech_sum_xor(const uint8_t* data, const uint8_t size)
 {
     uint8_t sum = 0;
