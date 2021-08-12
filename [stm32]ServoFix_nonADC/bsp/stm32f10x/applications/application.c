@@ -246,7 +246,7 @@ static void running(void* parameter)
 				}
 				else
 				{
-						put_chars(1, 0, ">Pls Read Erro!");
+						put_chars(1, 0, ">Pls Update LCD!");
             while(1)
             {
                 rt_thread_delay(RT_TICK_PER_SECOND * 2);

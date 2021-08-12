@@ -62,9 +62,9 @@ uint8_t servo_write_callback(void)
         LCD_Write_Str(0, 0, (char*)"<Writting>...");
         Copy_Data_To_Stru();
         menu_combine_prom_work_parm();
-        res = menu_combine_verify_work_parm();
-		rt_thread_delay(500);
-        if(res)
+        result = menu_combine_verify_work_parm();
+				rt_thread_delay(500);
+        if(result)
         {
             if(keep(S_SUCCESS) == F_RETURN)
             {
@@ -78,7 +78,7 @@ uint8_t servo_write_callback(void)
         }
         else
         {
-			rt_thread_delay(500);
+						rt_thread_delay(500);
             keep(S_FAILED);
             SetMainPage(&Data_Save_Page);
             ShowPage_Num(pPage, 0);

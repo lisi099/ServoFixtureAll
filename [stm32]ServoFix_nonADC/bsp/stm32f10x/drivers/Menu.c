@@ -119,7 +119,8 @@ void ShowList(u8 min, u8 max)
                 LCD_Write_Str(i, pPage->pItem[index].colum, (char*)str);
                 break;
             case SHOW_STRING:
-								if(is_tai_servo_){
+//								if(is_tai_servo_){
+								if(1){
 									if(pPage->pItem[index].data) sprintf(str, "%s", "Y");
 									else sprintf(str, "%s", "N");
 								}
@@ -256,7 +257,8 @@ void GetShowString(char* str, uint16_t* data)
         sprintf(str, "%d ", *data);
         break;
     case SHOW_STRING:
-				if(is_tai_servo_){
+//				if(is_tai_servo_){
+			if(1){
 					if(*data)
 					{
 							*data = 1;

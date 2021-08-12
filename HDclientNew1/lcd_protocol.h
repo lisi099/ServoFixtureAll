@@ -38,7 +38,26 @@ public:
     lcd_protocol(QSerialPort *port):serial_(port)
     {
         version_map_.clear();
+//        version_map_.insert(40, "PGC-D12");
+//        version_map_.insert(1, "D1206G2");
+//        version_map_.insert(2, "WH-20KG");
+//        version_map_.insert(3, "WH-30KG");
+//        version_map_.insert(4, "WH-40KG");
+//        version_map_.insert(5, "PGC-DRF");
+//        version_map_.insert(6, "PGC-D15");
+//        version_map_.insert(7, "PGC-R12");
+//        version_map_.insert(8, "PGC-A20");
+//        version_map_.insert(9, "PGC-A30");
+//        version_map_.insert(10, "PGC-A40");
+//        version_map_.insert(11, "PGC-A50");
+//        version_map_.insert(80, "PGB-S15");
+//        version_map_.insert(81, "PGB-S25");
+//        version_map_.insert(82, "PGB-S35");
+//        version_map_.insert(83, "PGB-S50");
+//        version_map_.insert(84, "PGC-H15");
+//        version_map_.insert(85, "PGC-H30");
         version_map_.insert(40, "PGC-D12");
+        version_map_.insert(41, "S1206G2");
         version_map_.insert(1, "D1206G2");
         version_map_.insert(2, "WH-20KG");
         version_map_.insert(3, "WH-30KG");
@@ -46,36 +65,47 @@ public:
         version_map_.insert(5, "PGC-DRF");
         version_map_.insert(6, "PGC-D15");
         version_map_.insert(7, "PGC-R12");
-        version_map_.insert(8, "PGC-A20");
-        version_map_.insert(9, "PGC-A30");
         version_map_.insert(10, "PGC-A40");
         version_map_.insert(11, "PGC-A50");
         version_map_.insert(80, "PGB-S15");
         version_map_.insert(81, "PGB-S25");
         version_map_.insert(82, "PGB-S35");
         version_map_.insert(83, "PGB-S50");
-        version_map_.insert(84, "PGC-H15");
-        version_map_.insert(85, "PGC-H30");
 
         version_map_index_.clear();
+//        version_map_index_.insert(40, 0);
+//        version_map_index_.insert(1, 1);
+//        version_map_index_.insert(2, 2);
+//        version_map_index_.insert(3, 3);
+//        version_map_index_.insert(4, 4);
+//        version_map_index_.insert(5, 5);
+//        version_map_index_.insert(6, 6);
+//        version_map_index_.insert(7, 7);
+//        version_map_index_.insert(8, 8);
+//        version_map_index_.insert(9, 9);
+//        version_map_index_.insert(10, 10);
+//        version_map_index_.insert(11, 11);
+//        version_map_index_.insert(80, 12);
+//        version_map_index_.insert(81, 13);
+//        version_map_index_.insert(82, 14);
+//        version_map_index_.insert(83, 15);
+//        version_map_index_.insert(84, 16);
+//        version_map_index_.insert(85, 17);
         version_map_index_.insert(40, 0);
-        version_map_index_.insert(1, 1);
-        version_map_index_.insert(2, 2);
-        version_map_index_.insert(3, 3);
-        version_map_index_.insert(4, 4);
-        version_map_index_.insert(5, 5);
-        version_map_index_.insert(6, 6);
-        version_map_index_.insert(7, 7);
-        version_map_index_.insert(8, 8);
-        version_map_index_.insert(9, 9);
-        version_map_index_.insert(10, 10);
-        version_map_index_.insert(11, 11);
-        version_map_index_.insert(80, 12);
-        version_map_index_.insert(81, 13);
-        version_map_index_.insert(82, 14);
-        version_map_index_.insert(83, 15);
-        version_map_index_.insert(84, 16);
-        version_map_index_.insert(85, 17);
+        version_map_index_.insert(41, 1);
+        version_map_index_.insert(1, 2);
+        version_map_index_.insert(2, 3);
+        version_map_index_.insert(3, 4);
+        version_map_index_.insert(4, 5);
+        version_map_index_.insert(5, 6);
+        version_map_index_.insert(6, 7);
+        version_map_index_.insert(7, 8);
+        version_map_index_.insert(10, 9);
+        version_map_index_.insert(11, 10);
+        version_map_index_.insert(80, 11);
+        version_map_index_.insert(81, 12);
+        version_map_index_.insert(82, 13);
+        version_map_index_.insert(83, 14);
         is_tai_servo_ = false;
     }
 
@@ -320,7 +350,7 @@ public:
             servo_data_.debug_p5 = data.tension; //servo_position_pid_parm_p_set
             servo_data_.debug_p0 = data.force; //servo_speed_pid_parm_p_set
             servo_data_.debug_p2 = round_f(data.brake * 4.3f - 3.2f); //servo_speed_run_sample_k_set
-            servo_data_.set_p14 = data.soft_start;//servo_init_flag_set
+            servo_data_.set_p0 = data.soft_start;//servo_init_flag_set
         }
         else{
             servo_tai_data_.max_power = data.max_power *5 +50;
@@ -435,7 +465,7 @@ public:
             data.tension = servo_data_.debug_p5;
             data.force = servo_data_.debug_p0;
             data.brake = round_f((servo_data_.debug_p2 + 3.2f) / 4.3f);
-            data.soft_start = servo_data_.set_p14; //
+            data.soft_start = servo_data_.set_p0; //
             qDebug() << "soft_start" <<data.soft_start;
         }
         else{
