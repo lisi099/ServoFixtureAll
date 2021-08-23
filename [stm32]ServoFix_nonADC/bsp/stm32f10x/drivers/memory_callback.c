@@ -183,14 +183,14 @@ void Servo_Read_Memory_CallBack(u8 key)
     uint8_t is_taiwan_distribtor;
     switch(key)
     {
-    case KEY_UP:
+    case KEY_Down:
         num ++;
         if(num > 19)
         {
             num = 0;
         }
         break;
-    case KEY_Down:
+    case KEY_UP:
         if(num == 0)
         {
             num = 19;
@@ -200,14 +200,14 @@ void Servo_Read_Memory_CallBack(u8 key)
             num --;
         }
         break;
-    case KEY_UP_L:
+    case KEY_Down_L:
         num ++;
         if(num > 19)
         {
             num = 0;
         }
         break;
-    case KEY_Down_L:
+    case KEY_UP_L:
         if(num == 0)
         {
             num = 19;
@@ -221,21 +221,22 @@ void Servo_Read_Memory_CallBack(u8 key)
         ShowParentPage_Num(1);
         return;
     case KEY_Ok:
-        Lcd_Clr_Scr();
-        LCD_Write_Str(0, 0, (char*)"<Reading>...");
-        read_servo_data_in_flash(num + USER_OUT_SPACE);
-        rt_thread_delay(RT_TICK_PER_SECOND);
+//        Lcd_Clr_Scr();
+//        LCD_Write_Str(0, 0, (char*)"<Reading>...");
+//        read_servo_data_in_flash(num + USER_OUT_SPACE);
+//        rt_thread_delay(RT_TICK_PER_SECOND);
 
-        if(keep(S_SUCCESS) == F_RETURN)
-        {
-            ShowParentPage_Num(1);
-        }
-        else
-        {
-            SetMainPage(&Setting_Page);
-            ShowPage_Num(pPage, 0);
-        }
-        return;
+//        if(keep(S_SUCCESS) == F_RETURN)
+//        {
+//            ShowParentPage_Num(1);
+//        }
+//        else
+//        {
+//            SetMainPage(&Setting_Page);
+//            ShowPage_Num(pPage, 0);
+//        }
+//        return;
+					break;
     }
     read_servo_data_in_flash_taiwan(num, data_taiwan);
     read_servo_data_in_flash_(num, &data);
@@ -297,6 +298,43 @@ void Servo_Read_Memory_CallBack(u8 key)
     Lcd_Clr_Scr();
     put_chars_middle(0, " Read Memory");
     LCD_Write_Str(1, 0, (char*)buf);
+		
+		if(key != KEY_Ok)
+		{
+			return;
+		}
+		
+		if(find_version(distribtor) != 100){
+        Lcd_Clr_Scr();
+        LCD_Write_Str(0, 0, (char*)"<Reading>...");
+        read_servo_data_in_flash(num + USER_OUT_SPACE);
+        rt_thread_delay(RT_TICK_PER_SECOND);
+
+        if(keep(S_SUCCESS) == F_RETURN)
+        {
+            ShowParentPage_Num(1);
+        }
+        else
+        {
+            SetMainPage(&Setting_Page);
+            ShowPage_Num(pPage, 0);
+        }
+		}
+		else{
+				Lcd_Clr_Scr();
+        LCD_Write_Str(0, 0, (char*)"<Reading>...");
+				rt_thread_delay(RT_TICK_PER_SECOND);
+				if(keep(S_FAILED) == F_RETURN)
+        {
+						SetMainPage(&Setting_Page);
+            ShowPage_Num(pPage, 0);
+        }
+        else
+        {
+            SetMainPage(&Setting_Page);
+            ShowPage_Num(pPage, 0);
+        }
+		}
 }
 
 

@@ -69,7 +69,7 @@ char *servo_version[] = {"PGC-D12", "S1206G2", "D1206G2", "WH-20KG", "WH-30KG", 
                         };
 						*/
 
-int servo_version_num[] = {40, 12, 1, 2, 3, 4, 5, 6, 7, 10, 11, 80, 81, 82, 83};
+int servo_version_num[] = {40, 41, 1, 2, 3, 4, 5, 6, 7, 10, 11, 80, 81, 82, 83};
 
 //int servo_version_num[] = {40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 80, 81, 82, 83, 84, 85};
 int get_total_num(void)
