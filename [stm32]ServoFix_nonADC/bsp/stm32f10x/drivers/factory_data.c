@@ -46,6 +46,7 @@ const struct Servo_Tai_Data_ factory_tai_para[]=
 	{95, 1100, 1, 130, 175, 35, 2048, 0, 0, 45, 0},
 	{95, 1100, 1, 130, 175, 35, 2048, 0, 0, 45, 0},
 	{95, 1100, 1, 130, 175, 35, 2048, 0, 0, 45, 0},
+	{100, 1100, 1, 270, 155, 120, 2048, 0, 0, 45, 0},
 };
 
 /*const struct Servo_Tai_Data_ factory_tai_para[]=
@@ -60,7 +61,8 @@ const struct Servo_Tai_Data_ factory_tai_para[]=
 
 char *servo_version[] = {"PGC-D12", "S1206G2", "D1206G2", "WH-20KG", "WH-30KG", "WH-40KG",
                          "PGC-DRF", "PGC-D15", "PGC-R12",
-                         "PGC-A40", "PGC-A50", "PGB-S15", "PGB-S25", "PGB-S35", "PGB-S50"
+                         "PGC-A40", "PGC-A50", "PGB-S15", "PGB-S25", "PGB-S35", "PGB-S50",
+						 "PGB-B7S"
                         };
 /*char *servo_version[] = {"PGC-D12", "D1206G2", "WH-20KG", "WH-30KG", "WH-40KG",
                          "PGC-DRF", "PGC-D15", "PGC-R12", "PGC-A20",
@@ -69,7 +71,7 @@ char *servo_version[] = {"PGC-D12", "S1206G2", "D1206G2", "WH-20KG", "WH-30KG", 
                         };
 						*/
 
-int servo_version_num[] = {40, 41, 1, 2, 3, 4, 5, 6, 7, 10, 11, 80, 81, 82, 83};
+int servo_version_num[] = {40, 41, 1, 2, 3, 4, 5, 6, 7, 10, 11, 80, 81, 82, 83, 84};
 
 //int servo_version_num[] = {40, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 80, 81, 82, 83, 84, 85};
 int get_total_num(void)

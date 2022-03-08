@@ -71,6 +71,7 @@ public:
         version_map_.insert(81, "PGB-S25");
         version_map_.insert(82, "PGB-S35");
         version_map_.insert(83, "PGB-S50");
+        version_map_.insert(84, "PGB-B7S");
 
         version_map_index_.clear();
 //        version_map_index_.insert(40, 0);
@@ -106,6 +107,7 @@ public:
         version_map_index_.insert(81, 12);
         version_map_index_.insert(82, 13);
         version_map_index_.insert(83, 14);
+        version_map_index_.insert(84, 15);
         is_tai_servo_ = false;
     }
 
@@ -394,7 +396,7 @@ public:
                 servo_tai_data_.farce = 185;
                 break;
             case 10:
-                servo_tai_data_.farce = 200;
+                servo_tai_data_.farce = 220;
                 break;
             default:
                 break;

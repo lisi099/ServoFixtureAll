@@ -211,7 +211,7 @@ void set_force(int8_t state)
         *base1 = 185;
         break;
     case 10:
-        *base1 = 200;
+        *base1 = 220;
         break;
     }
 }
