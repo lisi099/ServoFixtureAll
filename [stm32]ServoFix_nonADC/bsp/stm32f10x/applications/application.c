@@ -241,7 +241,7 @@ static void running(void* parameter)
     if(is_tai_servo_)
     {
 				uint16_t dis = get_distributor();
-				if(80 <= dis && dis <=83){
+				if(80 <= dis && dis <=84){
 					Copy_Data_To_Show();
 				}
 				else
