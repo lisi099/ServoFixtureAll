@@ -513,7 +513,7 @@ public:
             else if(servo_tai_data_.farce <=185){
                 data.force = 9;
             }
-            else if(servo_tai_data_.farce <=200){
+            else if(servo_tai_data_.farce <=220){
                 data.force = 10;
             }
             //tension

@@ -256,7 +256,7 @@ void get_force(int8_t* state)
     {
         *state = 9;
     }
-    else if(*base1 <= 200)
+    else if(*base1 <= 220)
     {
         *state = 10;
     }
