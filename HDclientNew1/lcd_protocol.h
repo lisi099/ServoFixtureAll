@@ -56,22 +56,20 @@ public:
 //        version_map_.insert(83, "PGB-S50");
 //        version_map_.insert(84, "PGC-H15");
 //        version_map_.insert(85, "PGC-H30");
-        version_map_.insert(40, "PGC-D12");
-        version_map_.insert(41, "S1206G2");
-        version_map_.insert(1, "D1206G2");
-        version_map_.insert(2, "WH-20KG");
-        version_map_.insert(3, "WH-30KG");
-        version_map_.insert(4, "WH-40KG");
-        version_map_.insert(5, "PGC-DRF");
-        version_map_.insert(6, "PGC-D15");
-        version_map_.insert(7, "PGC-R12");
-        version_map_.insert(10, "PGC-A40");
-        version_map_.insert(11, "PGC-A50");
-        version_map_.insert(80, "PGB-S15");
-        version_map_.insert(81, "PGB-S25");
-        version_map_.insert(82, "PGB-S35");
-        version_map_.insert(83, "PGB-S50");
-        version_map_.insert(84, "PGB-B7S");
+//        "CLS-712", "CLS-D1X", "CLS-W35", "CLS-W45", "CLS-D1S", "CLS-T45", "CLS-T55",
+//                                "BLS-815", "BLS-922", "BLS-927", "BLS-T65", "BLS-T75"
+        version_map_.insert(50, "CLS-712");
+        version_map_.insert(61, "CLS-D1X");
+        version_map_.insert(63, "CLS-W35");
+        version_map_.insert(64, "CLS-W45");
+        version_map_.insert(66, "CLS-D1S");
+        version_map_.insert(68, "CLS-T45");
+        version_map_.insert(69, "CLS-T55");
+        version_map_.insert(71, "BLS-815");
+        version_map_.insert(72, "BLS-922");
+        version_map_.insert(73, "BLS-927");
+        version_map_.insert(76, "BLS-T65");
+        version_map_.insert(77, "BLS-T75");
 
         version_map_index_.clear();
 //        version_map_index_.insert(40, 0);
@@ -92,22 +90,18 @@ public:
 //        version_map_index_.insert(83, 15);
 //        version_map_index_.insert(84, 16);
 //        version_map_index_.insert(85, 17);
-        version_map_index_.insert(40, 0);
-        version_map_index_.insert(41, 1);
-        version_map_index_.insert(1, 2);
-        version_map_index_.insert(2, 3);
-        version_map_index_.insert(3, 4);
-        version_map_index_.insert(4, 5);
-        version_map_index_.insert(5, 6);
-        version_map_index_.insert(6, 7);
-        version_map_index_.insert(7, 8);
-        version_map_index_.insert(10, 9);
-        version_map_index_.insert(11, 10);
-        version_map_index_.insert(80, 11);
-        version_map_index_.insert(81, 12);
-        version_map_index_.insert(82, 13);
-        version_map_index_.insert(83, 14);
-        version_map_index_.insert(84, 15);
+        version_map_index_.insert(50, 0);
+        version_map_index_.insert(61, 1);
+        version_map_index_.insert(63, 2);
+        version_map_index_.insert(64, 3);
+        version_map_index_.insert(66, 4);
+        version_map_index_.insert(68, 5);
+        version_map_index_.insert(69, 6);
+        version_map_index_.insert(71, 7);
+        version_map_index_.insert(72, 8);
+        version_map_index_.insert(73, 9);
+        version_map_index_.insert(76, 10);
+        version_map_index_.insert(77, 10);
         is_tai_servo_ = false;
     }
 

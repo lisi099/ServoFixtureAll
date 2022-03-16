@@ -194,15 +194,15 @@ static void running(void* parameter)
     /*类型识别*/
     lcd_init();
     Lcd_Clr_Scr();
-    put_chars_middle(0, "Welcome to");
-    put_chars_middle(1, "Power HD");
+    put_chars_middle(0, "PROGBOX");
+    put_chars_middle(1, "SRT");
     rt_thread_delay(RT_TICK_PER_SECOND * 2);
 	usart2_init_tx(19200);
 	uart_send_clear_command();
 	rt_thread_delay(100);
     Lcd_Clr_Scr();
-    put_chars(0, 0, "Please Connect");
-    put_chars(1, 0, "Servo");
+    put_chars(0, 0, "PLEASE CONNECT");
+    put_chars(1, 0, "SERVO");
 	
     while(1)
     {
@@ -241,7 +241,7 @@ static void running(void* parameter)
     if(is_tai_servo_)
     {
 				uint16_t dis = get_distributor();
-				if(80 <= dis && dis <=84){
+				if(71 <= dis && dis <=77){
 					Copy_Data_To_Show();
 				}
 				else
@@ -259,7 +259,7 @@ static void running(void* parameter)
         {
             if(!is_need_update())
             {
-                put_chars(1, 0, ">Success");
+                put_chars(1, 0, ">OK");
             }
             else
             {

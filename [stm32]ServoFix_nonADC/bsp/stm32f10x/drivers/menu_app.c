@@ -59,9 +59,9 @@ extern struct PAGE Pc_Page;
 //----1
 struct Item Main_item[] =
 {
-    (char*)"Settings",       		&Setting_Page,  	0, 0,   0, SHOW_NULL, 0, 0,
-    (char*)"Servo Test",			&Position_Page,     0, 0,   0, SHOW_NULL, 0, 0,
-    (char*)"Information",			&Lcd_Version_Page,     	0, 0,   0, SHOW_NULL, 0, 0,
+    (char*)"SETTING",       		&Setting_Page,  	0, 0,   0, SHOW_NULL, 0, 0,
+    (char*)"SERVO TEST",			&Position_Page,     0, 0,   0, SHOW_NULL, 0, 0,
+    (char*)"INFORMATION",			&Lcd_Version_Page,     	0, 0,   0, SHOW_NULL, 0, 0,
 };
 struct PAGE mainPage = {0, Menu_One_CallBack, Main_item, SIZE_OF_ITEM(Main_item)};
 /************************************************2*********************************************************/
@@ -69,17 +69,17 @@ struct PAGE mainPage = {0, Menu_One_CallBack, Main_item, SIZE_OF_ITEM(Main_item)
 struct Item Setting_item[] =
 {
     (char*)" ",									0,  0,  1,   1, SHOW_STRING_VER, 0, 65535,
-    (char*)"1.Max Power",						0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"2.Boost",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"3.Dead Band",						0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"4.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
-    (char*)"5.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"6.Brake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"7.Center",				&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
-    (char*)"8.Soft Start",						0,  0,  14,  1, SHOW_STRING, 0, 1,
-    (char*)"9.Write Data",			&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
-    (char*)"10.Read Data",			&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
-    (char*)"11.Default",			&Reset_Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"1.MP",						0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"2.BT",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"3.DB",						0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"4.T",							0,  0,  14,  1, SHOW_NUM, 1, 3,
+    (char*)"5.F",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"6.B",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"7.CENTER",				&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
+    (char*)"8.SOFT START",						0,  0,  14,  1, SHOW_STRING, 0, 1,
+    (char*)"9.WRITE DATA",			&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"10.READ DATA",			&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"11.DEFAULT",			&Reset_Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
 };
 
 struct PAGE Setting_Page = {&mainPage, Menu_Two_CallBack, Setting_item, SIZE_OF_ITEM(Setting_item)};
@@ -87,8 +87,8 @@ struct PAGE Setting_Page = {&mainPage, Menu_Two_CallBack, Setting_item, SIZE_OF_
 //----2
 struct Item Position_item[] =
 {
-    (char*)"Broad Band",						&Broadband_servo_Page,  0,  0,  1, SHOW_NULL, 0, 0,
-    (char*)"Narrow Band",						&Narrowband_servo_Page,  0,  0,  1, SHOW_NULL, 0, 0,
+    (char*)"BROAD BAND",						&Broadband_servo_Page,  0,  0,  1, SHOW_NULL, 0, 0,
+    (char*)"NARROW BAND",						&Narrowband_servo_Page,  0,  0,  1, SHOW_NULL, 0, 0,
 };
 struct PAGE Position_Page = {&mainPage, Menu_Two_CallBack, Position_item, SIZE_OF_ITEM(Position_item)};
 
@@ -101,15 +101,15 @@ struct PAGE Servo_Center_Page = {&Setting_Page, Servo_Center_Page_CallBack, 0, 0
 //----3
 struct Item Data_Save_item[] =
 {
-    (char*)"To Servo",							0,  0,  0,  1, SHOW_NUM, 0, 0,
-    (char*)"To Memory",						&Servo_Write_Memory_Page,  0,  0,  1, SHOW_NUM, 0, 0,
+    (char*)"TO SERVO",							0,  0,  0,  1, SHOW_NUM, 0, 0,
+    (char*)"To MEMORY",						&Servo_Write_Memory_Page,  0,  0,  1, SHOW_NUM, 0, 0,
 };
 struct PAGE Data_Save_Page = {&Setting_Page, Menu_Three_CallBack, Data_Save_item, SIZE_OF_ITEM(Data_Save_item)};
 //----3
 struct Item Data_Read_item[] =
 {
-    (char*)"From Servo",							0,  0,  0,  1, SHOW_NUM, 0, 0,
-    (char*)"From Memory",							&Servo_Read_Memory_Page,  0,  0,  1, SHOW_NUM, 0, 0,
+    (char*)"FROM SERVO",							0,  0,  0,  1, SHOW_NUM, 0, 0,
+    (char*)"FROM MEMORY",							&Servo_Read_Memory_Page,  0,  0,  1, SHOW_NUM, 0, 0,
 };
 struct PAGE Data_Read_Page = {&Setting_Page, Menu_Three_CallBack, Data_Read_item, SIZE_OF_ITEM(Data_Read_item)};
 //----3
@@ -147,7 +147,7 @@ struct PAGE Servo_Read_Memory_Page = {&Data_Read_Page, Servo_Read_Memory_CallBac
 void Pc_Page_CallBack(u8 key)
 {
     Lcd_Clr_Scr();
-    LCD_Write_Str(0, 0, (char*)"<Pc Mode>...");
+    LCD_Write_Str(0, 0, (char*)"<PC MODE>...");
 }
 
 void enter_pc_page(void)

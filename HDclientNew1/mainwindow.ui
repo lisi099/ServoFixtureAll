@@ -86,7 +86,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Max Power</string>
+       <string> MP</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_s2">
@@ -802,7 +802,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Boost</string>
+       <string>BT</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_s3">
@@ -822,7 +822,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Dead Band</string>
+       <string>DB</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_s4">
@@ -842,7 +842,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Tension</string>
+       <string>T</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_s5">
@@ -862,7 +862,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Force</string>
+       <string>F</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_s6">
@@ -882,7 +882,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Brake</string>
+       <string>B</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_s7">
