@@ -247,7 +247,7 @@ void Menu_Three_CallBack(u8 key)
 
 void Servo_Version_Page_CallBack(u8 key)
 {
-    char str[16] = "PGC-LCD-6033";
+    char str[16] = "SP-MX082 V1.0";
 
     switch(key)
     {
