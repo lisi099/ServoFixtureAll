@@ -403,10 +403,12 @@ void MainWindow::on_pushButton_open_clicked()
     int tai_size = sizeof(lcd_protocol_->servo_tai_data_);
     QFile  file(fileName);
     bool res = file.open(QIODevice::ReadOnly);//|QIODevice::Text
-    if( !res ) return  false;
+    if( !res ) return ;
     QByteArray  t = file.readAll();
+    qDebug() << "t size " << t.size() << " tai size " << tai_size;
     if( t.size() == tai_size )
     {
+        qDebug() << "tai servo";
         memcpy((char*)&lcd_protocol_->servo_tai_data_, t.data(), tai_size);
         lcd_protocol_->get_data(ui_data_);
 
@@ -505,8 +507,12 @@ void MainWindow::on_pushButton_save_clicked()
     if(lcd_protocol_->is_tai_servo_)
     {
         int  iSize = sizeof(lcd_protocol_->servo_tai_data_);
-        char *buf = new char[iSize+1];
-        memcpy(buf,(char*)&lcd_protocol_->servo_tai_data_,iSize);
+        QByteArray buf;
+        uint8_t *data = (uint8_t *)&lcd_protocol_->servo_tai_data_;
+        for(int i=0; i<iSize; i++)
+        {
+            buf.append(data[i]);
+        }
         QFile file(fileName);
         if(!file.open(QIODevice::WriteOnly)){
             qDebug() << "Can't open file for writing";
