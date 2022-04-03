@@ -403,6 +403,34 @@ void MainWindow::on_pushButton_open_clicked()
     if(fileName.isEmpty()){
         return;
     }
+
+    int tai_size = sizeof(lcd_protocol_->servo_tai_data_);
+    QFile  file(fileName);
+    bool res = file.open(QIODevice::ReadOnly);//|QIODevice::Text
+    if( !res ) return ;
+    QByteArray  t = file.readAll();
+    qDebug() << "t size " << t.size() << " tai size " << tai_size;
+    if( t.size() == tai_size )
+    {
+        qDebug() << "tai servo";
+        memcpy((char*)&lcd_protocol_->servo_tai_data_, t.data(), tai_size);
+        lcd_protocol_->get_data(ui_data_);
+
+        ui->spinBox_1->setValue(ui_data_.max_power);
+        ui->spinBox_2->setValue(ui_data_.boost);
+        ui->spinBox_3->setValue(ui_data_.dead_band);
+        ui->spinBox_4->setValue(ui_data_.tension);
+        ui->spinBox_5->setValue(ui_data_.force);
+        ui->spinBox_6->setValue(ui_data_.brake);
+        ui->spinBox_7->setValue(ui_data_.center_num);
+        ui->comboBox_s8->setCurrentIndex(ui_data_.soft_start);
+        lcd_protocol_->get_version(lcd_protocol_->servo_data_);
+        ui->lineEdit->setText(lcd_protocol_->version_);
+        ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Open file success!</span> <br/>"));
+        return;
+    }
+
+
     int     iSize = sizeof(lcd_protocol_->servo_data_);
     char    *buf = new char[iSize+1];
     bool    bhr = CSysFile::read(fileName,buf,iSize);
@@ -481,10 +509,32 @@ void MainWindow::on_pushButton_save_clicked()
     ui_data_.soft_start = ui->comboBox_s8->currentIndex();
 
     lcd_protocol_->set_data(ui_data_);
-    int  iSize = sizeof(lcd_protocol_->servo_data_);
-    char *buf = new char[iSize+1];
-    memcpy(buf,(char*)&lcd_protocol_->servo_data_,iSize);
-    CSysFile::write(fileName,buf,iSize);
+    if(lcd_protocol_->is_tai_servo_)
+    {
+        int  iSize = sizeof(lcd_protocol_->servo_tai_data_);
+        QByteArray buf;
+        uint8_t *data = (uint8_t *)&lcd_protocol_->servo_tai_data_;
+        for(int i=0; i<iSize; i++)
+        {
+            buf.append(data[i]);
+        }
+        QFile file(fileName);
+        if(!file.open(QIODevice::WriteOnly)){
+            qDebug() << "Can't open file for writing";
+            return;
+        }
+        file.write(buf);
+        file.flush();
+        file.close();
+    }
+    else
+    {
+        int  iSize = sizeof(lcd_protocol_->servo_data_);
+        char *buf = new char[iSize+1];
+        memcpy(buf,(char*)&lcd_protocol_->servo_data_,iSize);
+        CSysFile::write(fileName,buf,iSize);
+    }
+
     ui->textEdit->setHtml(text_append_string("<span style=' color:#0080ff;'>Save file success!</span><br/>"));
 
 }
