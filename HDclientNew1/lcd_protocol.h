@@ -38,26 +38,6 @@ public:
     lcd_protocol(QSerialPort *port):serial_(port)
     {
         version_map_.clear();
-//        version_map_.insert(40, "PGC-D12");
-//        version_map_.insert(1, "D1206G2");
-//        version_map_.insert(2, "WH-20KG");
-//        version_map_.insert(3, "WH-30KG");
-//        version_map_.insert(4, "WH-40KG");
-//        version_map_.insert(5, "PGC-DRF");
-//        version_map_.insert(6, "PGC-D15");
-//        version_map_.insert(7, "PGC-R12");
-//        version_map_.insert(8, "PGC-A20");
-//        version_map_.insert(9, "PGC-A30");
-//        version_map_.insert(10, "PGC-A40");
-//        version_map_.insert(11, "PGC-A50");
-//        version_map_.insert(80, "PGB-S15");
-//        version_map_.insert(81, "PGB-S25");
-//        version_map_.insert(82, "PGB-S35");
-//        version_map_.insert(83, "PGB-S50");
-//        version_map_.insert(84, "PGC-H15");
-//        version_map_.insert(85, "PGC-H30");
-//        "CLS-712", "CLS-D1X", "CLS-W35", "CLS-W45", "CLS-D1S", "CLS-T45", "CLS-T55",
-//                                "BLS-815", "BLS-922", "BLS-927", "BLS-T65", "BLS-T75"
         version_map_.insert(50, "CLS-712");
         version_map_.insert(61, "CLS-D1X");
         version_map_.insert(63, "CLS-W35");
@@ -65,6 +45,7 @@ public:
         version_map_.insert(66, "CLS-D1S");
         version_map_.insert(68, "CLS-T45");
         version_map_.insert(69, "CLS-T55");
+        version_map_.insert(8, "PGC-M8.");
         version_map_.insert(71, "BLS-815");
         version_map_.insert(72, "BLS-922");
         version_map_.insert(73, "BLS-927");
@@ -72,36 +53,32 @@ public:
         version_map_.insert(77, "BLS-T75");
 
         version_map_index_.clear();
-//        version_map_index_.insert(40, 0);
-//        version_map_index_.insert(1, 1);
-//        version_map_index_.insert(2, 2);
-//        version_map_index_.insert(3, 3);
-//        version_map_index_.insert(4, 4);
-//        version_map_index_.insert(5, 5);
-//        version_map_index_.insert(6, 6);
-//        version_map_index_.insert(7, 7);
-//        version_map_index_.insert(8, 8);
-//        version_map_index_.insert(9, 9);
-//        version_map_index_.insert(10, 10);
-//        version_map_index_.insert(11, 11);
-//        version_map_index_.insert(80, 12);
-//        version_map_index_.insert(81, 13);
-//        version_map_index_.insert(82, 14);
-//        version_map_index_.insert(83, 15);
-//        version_map_index_.insert(84, 16);
-//        version_map_index_.insert(85, 17);
-        version_map_index_.insert(50, 0);
-        version_map_index_.insert(61, 1);
-        version_map_index_.insert(63, 2);
-        version_map_index_.insert(64, 3);
-        version_map_index_.insert(66, 4);
-        version_map_index_.insert(68, 5);
-        version_map_index_.insert(69, 6);
-        version_map_index_.insert(71, 7);
-        version_map_index_.insert(72, 8);
-        version_map_index_.insert(73, 9);
-        version_map_index_.insert(76, 10);
-        version_map_index_.insert(77, 10);
+        int i = 0;
+        version_map_index_.insert(50, i);
+        i++;
+        version_map_index_.insert(61, i);
+        i++;
+        version_map_index_.insert(63, i);
+        i++;
+        version_map_index_.insert(64, i);
+        i++;
+        version_map_index_.insert(66, i);
+        i++;
+        version_map_index_.insert(68, i);
+        i++;
+        version_map_index_.insert(69, i);
+        i++;
+        version_map_index_.insert(8, i);
+        i++;
+        version_map_index_.insert(71, i);
+        i++;
+        version_map_index_.insert(72, i);
+        i++;
+        version_map_index_.insert(73, i);
+        i++;
+        version_map_index_.insert(76, i);
+        i++;
+        version_map_index_.insert(77, i);
         is_tai_servo_ = false;
     }
 
