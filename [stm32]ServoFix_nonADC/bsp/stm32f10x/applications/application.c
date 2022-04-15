@@ -195,7 +195,7 @@ static void running(void* parameter)
     lcd_init();
     Lcd_Clr_Scr();
     put_chars_middle(0, "Welcome to");
-    put_chars_middle(1, "Power HD");
+    put_chars_middle(1, "Team Powers");
     rt_thread_delay(RT_TICK_PER_SECOND * 2);
 	usart2_init_tx(19200);
 	uart_send_clear_command();
@@ -241,7 +241,7 @@ static void running(void* parameter)
     if(is_tai_servo_)
     {
 				uint16_t dis = get_distributor();
-				if(80 <= dis && dis <=84){
+				if(20 <= dis && dis <=21){
 					Copy_Data_To_Show();
 				}
 				else

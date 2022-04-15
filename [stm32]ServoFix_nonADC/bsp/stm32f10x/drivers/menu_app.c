@@ -70,16 +70,16 @@ struct Item Setting_item[] =
 {
     (char*)" ",									0,  0,  1,   1, SHOW_STRING_VER, 0, 65535,
     (char*)"1.Max Power",						0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"2.Boost",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"2.TurnBoost",							0,  0,  14,  1, SHOW_NUM, 1, 10,
     (char*)"3.Dead Band",						0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"4.Tension",							0,  0,  14,  1, SHOW_NUM, 1, 3,
-    (char*)"5.Force",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"6.Brake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
-    (char*)"7.Center",				&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
+    (char*)"4.ResponseLv",							0,  0,  14,  1, SHOW_NUM, 1, 3,
+    (char*)"5.Max Torque",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"6.TurnBrake",							0,  0,  14,  1, SHOW_NUM, 1, 10,
+    (char*)"7.CenterAdjust",				&Servo_Center_Page,  0,  14,  1, SHOW_NULL, 1, 10,
     (char*)"8.Soft Start",						0,  0,  14,  1, SHOW_STRING, 0, 1,
-    (char*)"9.Write Data",			&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
-    (char*)"10.Read Data",			&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
-    (char*)"11.Default",			&Reset_Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"9.UpLoadData",			&Data_Save_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"10.DownLoadData",			&Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
+    (char*)"11.ResetDefault",			&Reset_Data_Read_Page,  0,  0,  3, SHOW_NULL, 0, 0,
 };
 
 struct PAGE Setting_Page = {&mainPage, Menu_Two_CallBack, Setting_item, SIZE_OF_ITEM(Setting_item)};
@@ -247,7 +247,8 @@ void Menu_Three_CallBack(u8 key)
 
 void Servo_Version_Page_CallBack(u8 key)
 {
-    char str[16] = "PGC-LCD-6033";
+    char str[] = "Servo Program";
+	char str1[] = "Card V1.0";
 
     switch(key)
     {
@@ -259,6 +260,7 @@ void Servo_Version_Page_CallBack(u8 key)
     }
     Lcd_Clr_Scr();
     put_chars_middle(0, str);
+	put_chars_middle(1, str1);
 }
 
 extern volatile uint8_t 					pwm_continue_flag;

@@ -802,7 +802,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Boost</string>
+       <string>Turn Boost</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_s3">
@@ -830,7 +830,7 @@ color: rgb(0, 0, 0);</string>
        <rect>
         <x>25</x>
         <y>138</y>
-        <width>81</width>
+        <width>111</width>
         <height>16</height>
        </rect>
       </property>
@@ -842,7 +842,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Tension</string>
+       <string>Response Level</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_s5">
@@ -862,7 +862,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Force</string>
+       <string>Max Torque</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_s6">
@@ -882,7 +882,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Brake</string>
+       <string>Turn Brake</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_s7">
@@ -890,7 +890,7 @@ color: rgb(0, 0, 0);</string>
        <rect>
         <x>360</x>
         <y>98</y>
-        <width>81</width>
+        <width>121</width>
         <height>16</height>
        </rect>
       </property>
@@ -902,7 +902,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="text">
-       <string>Center</string>
+       <string>Center Adjustment</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_s8">
@@ -1525,8 +1525,8 @@ color: rgb(0, 0, 0);</string>
      <rect>
       <x>-2</x>
       <y>-2</y>
-      <width>711</width>
-      <height>421</height>
+      <width>721</width>
+      <height>451</height>
      </rect>
     </property>
     <property name="font">
@@ -1545,6 +1545,7 @@ color: rgb(0, 0, 0);</string>
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
+    <zorder>pushButton_Default</zorder>
    </widget>
    <widget class="QPushButton" name="pushButton_save">
     <property name="geometry">
@@ -1710,9 +1711,9 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="pushButton_Default">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>220</x>
       <y>370</y>
-      <width>75</width>
+      <width>101</width>
       <height>23</height>
      </rect>
     </property>
@@ -1724,7 +1725,7 @@ p, li { white-space: pre-wrap; }
      </font>
     </property>
     <property name="text">
-     <string>Default</string>
+     <string>Reset Default</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_readData">
@@ -1732,7 +1733,7 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>10</x>
       <y>370</y>
-      <width>75</width>
+      <width>91</width>
       <height>23</height>
      </rect>
     </property>
@@ -1744,15 +1745,15 @@ p, li { white-space: pre-wrap; }
      </font>
     </property>
     <property name="text">
-     <string>Read Data</string>
+     <string>Upload Data</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_writeData">
     <property name="geometry">
      <rect>
-      <x>96</x>
+      <x>110</x>
       <y>370</y>
-      <width>81</width>
+      <width>101</width>
       <height>23</height>
      </rect>
     </property>
@@ -1764,14 +1765,14 @@ p, li { white-space: pre-wrap; }
      </font>
     </property>
     <property name="text">
-     <string>Write Data</string>
+     <string>Download Data</string>
     </property>
    </widget>
    <widget class="QListWidget" name="listWidget">
     <property name="geometry">
      <rect>
-      <x>282</x>
-      <y>347</y>
+      <x>340</x>
+      <y>350</y>
       <width>161</width>
       <height>71</height>
      </rect>
