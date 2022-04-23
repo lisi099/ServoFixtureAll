@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ESC_Config>
+  <!--Protection_OvdOnOff,  0:off, 1:on-->
+  <!--Protection_LvdOnOff,  0:off, 1:on-->
+  <!--Protection_LockOnOff, 0:off, 1:on-->
+  <!--DrivingBasic_MotDrvLogic, 0:L, 1:H-->
+  <!--DrivingBasic_PtDrvLogic,  0:L, 1:H-->
+  <Protection_OvdOnOff>0</Protection_OvdOnOff>
+  <Protection_OvdMaxVolt>90</Protection_OvdMaxVolt>
+  <Protection_OvdRecVolt>85</Protection_OvdRecVolt>
+  <Protection_LvdOnOff>0</Protection_LvdOnOff>
+  <Protection_LvdMinVolt>40</Protection_LvdMinVolt>
+  <Protection_LvdRecVolt>45</Protection_LvdRecVolt>
+  <Protection_MaxPwmDuty>100</Protection_MaxPwmDuty>
+  <Protection_MinPwmDuty>0</Protection_MinPwmDuty>
+  <Protection_LockOnOff>1</Protection_LockOnOff>
+  <Protection_LockMaxPwmDuty>65</Protection_LockMaxPwmDuty>
+  <Protection_LockContTime>50</Protection_LockContTime>
+  <Protection_LockDecay>20</Protection_LockDecay>
+  <Protection_TempProtOnOff>0</Protection_TempProtOnOff>
+  <Protection_TempStart>85</Protection_TempStart>
+  <Protection_TempRecovery>60</Protection_TempRecovery>
+  <Protection_TempCutoff>115</Protection_TempCutoff>
+  <Protection_TempDecay>15</Protection_TempDecay>
+  <Protection_PpmLossTime>10</Protection_PpmLossTime>
+  <Protection_PpmLossAct>0</Protection_PpmLossAct>
+  <Protection_HallFailOnOff>0</Protection_HallFailOnOff>
+  <Protection_PtMaxAngle>220</Protection_PtMaxAngle>
+  <Protection_PtMiddle>2048</Protection_PtMiddle>
+  <DrivingBasic_PulseCentralTime>1500</DrivingBasic_PulseCentralTime>
+  <DrivingBasic_PulseHigherTime>2100</DrivingBasic_PulseHigherTime>
+  <DrivingBasic_PulseHigherAng>2360</DrivingBasic_PulseHigherAng>
+  <DrivingBasic_PulseLowerTime>900</DrivingBasic_PulseLowerTime>
+  <DrivingBasic_PulseLowerAng>2180</DrivingBasic_PulseLowerAng>
+  <DrivingBasic_DeadBand>1</DrivingBasic_DeadBand>
+  <DrivingBasic_MotDrvLogic>1</DrivingBasic_MotDrvLogic>
+  <DrivingBasic_PtDrvLogic>1</DrivingBasic_PtDrvLogic>
+  <DrivingAdvance_Kp>155</DrivingAdvance_Kp>
+  <DrivingAdvance_Ki>0</DrivingAdvance_Ki>
+  <DrivingAdvance_Kd>120</DrivingAdvance_Kd>
+  <DrivingAdvance_LoopSamplingTime>3</DrivingAdvance_LoopSamplingTime>
+  <DrivingAdvance_MaxPwmDutyViSat>0</DrivingAdvance_MaxPwmDutyViSat>
+  <DrivingAdvance_SleepMinPwmDutyVdl>0</DrivingAdvance_SleepMinPwmDutyVdl>
+  <DrivingAdvance_SleepContTime>0</DrivingAdvance_SleepContTime>
+  <DrivingAdvance_WakeupMaxPwmDutyVdh>0</DrivingAdvance_WakeupMaxPwmDutyVdh>
+  <DrivingAdvance_WakeupEmaxDegree>0</DrivingAdvance_WakeupEmaxDegree>
+  <DrivingAdvance_PosiDiv>1100</DrivingAdvance_PosiDiv>
+  <DrivingAdvance_SpdKpGain>270</DrivingAdvance_SpdKpGain>
+  <DrivingAdvance_MotorFreeErr>27</DrivingAdvance_MotorFreeErr>
+  <DrivingAdvance_MotorFreeTime>50</DrivingAdvance_MotorFreeTime>
+  <DrivingAdvance_SpdKdGain>1</DrivingAdvance_SpdKdGain>
+  <DrivingAdvance_SpdDiv>1</DrivingAdvance_SpdDiv>
+  <DrivingAdvance_InitialSpeed>45</DrivingAdvance_InitialSpeed>
+  <DrivingAdvance_InitialTimeOut>0</DrivingAdvance_InitialTimeOut>
+  <Simulation_Mode>1</Simulation_Mode>
+  <Simulation_RepTime>1</Simulation_RepTime>
+  <Simulation_Freq>70</Simulation_Freq>
+  <Sim_SequStartAng>1500</Sim_SequStartAng>
+  <Sim_SequEndAng>1500</Sim_SequEndAng>
+  <Sim_SequStep>1</Sim_SequStep>
+  <Sim_SequHoldTime>0</Sim_SequHoldTime>
+  <Sim_RandomCmdOn>31</Sim_RandomCmdOn>
+  <Sim_RandomCmd1_Angle>2100</Sim_RandomCmd1_Angle>
+  <Sim_RandomCmd1_HoldTime>15</Sim_RandomCmd1_HoldTime>
+  <Sim_RandomCmd2_Angle>0</Sim_RandomCmd2_Angle>
+  <Sim_RandomCmd2_HoldTime>10</Sim_RandomCmd2_HoldTime>
+  <Sim_RandomCmd3_Angle>0</Sim_RandomCmd3_Angle>
+  <Sim_RandomCmd3_HoldTime>10</Sim_RandomCmd3_HoldTime>
+  <Sim_RandomCmd4_Angle>0</Sim_RandomCmd4_Angle>
+  <Sim_RandomCmd4_HoldTime>10</Sim_RandomCmd4_HoldTime>
+  <Sim_RandomCmd5_Angle>0</Sim_RandomCmd5_Angle>
+  <Sim_RandomCmd5_HoldTime>10</Sim_RandomCmd5_HoldTime>
+  <Sim_RandomCmd6_Angle>0</Sim_RandomCmd6_Angle>
+  <Sim_RandomCmd6_HoldTime>1</Sim_RandomCmd6_HoldTime>
+  <Sim_RandomCmd7_Angle>0</Sim_RandomCmd7_Angle>
+  <Sim_RandomCmd7_HoldTime>1</Sim_RandomCmd7_HoldTime>
+  <Sim_RandomCmd8_Angle>0</Sim_RandomCmd8_Angle>
+  <Sim_RandomCmd8_HoldTime>1</Sim_RandomCmd8_HoldTime>
+  <Sim_RandomCmd9_Angle>0</Sim_RandomCmd9_Angle>
+  <Sim_RandomCmd9_HoldTime>1</Sim_RandomCmd9_HoldTime>
+  <Sim_RandomCmd10_Angle>0</Sim_RandomCmd10_Angle>
+  <Sim_RandomCmd10_HoldTime>1</Sim_RandomCmd10_HoldTime>
+</ESC_Config>
