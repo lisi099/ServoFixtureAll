@@ -25,11 +25,11 @@ void SelItemOfList(u8 index, char* s);
 //--------------------------------------------
 int is_version_taiwan(const uint8_t* data)
 {
-    if(data[96] != '8')
+    if(data[96] != '7')
     {
         return 0;
     }
-    if(data[97] > '5' || data[97] < '0')
+    if(data[97] > '8' || data[97] < '0')
     {
         return 0;
     }
