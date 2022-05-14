@@ -83,13 +83,13 @@ void Servo_Write_Memory_CallBack(u8 key)
             buf_2[1] = servoDataStru.work_p12 / 1 % 10;
             data_version -= (buf_2[0] * 10 + buf_2[1]);
             data_version += (num + 1);
-            LCD_Write_Str(0, 0, (char*)"<Writting>...");
+            LCD_Write_Str(0, 0, (char*)"<Downloading>...");
             save_servo_data_in_flash(num + USER_OUT_SPACE, data_version);
         }
         else
         {
             data_version = (num + 1);
-            LCD_Write_Str(0, 0, (char*)"<Writting>...");
+            LCD_Write_Str(0, 0, (char*)"<Downloading>...");
             save_servo_data_in_flash(num + USER_OUT_SPACE, data_version);
         }
         rt_thread_delay(RT_TICK_PER_SECOND);
@@ -306,7 +306,7 @@ void Servo_Read_Memory_CallBack(u8 key)
 		
 		if(find_version(distribtor) != 100){
         Lcd_Clr_Scr();
-        LCD_Write_Str(0, 0, (char*)"<Reading>...");
+        LCD_Write_Str(0, 0, (char*)"<Uploading>...");
         read_servo_data_in_flash(num + USER_OUT_SPACE);
         rt_thread_delay(RT_TICK_PER_SECOND);
 
@@ -322,7 +322,7 @@ void Servo_Read_Memory_CallBack(u8 key)
 		}
 		else{
 				Lcd_Clr_Scr();
-        LCD_Write_Str(0, 0, (char*)"<Reading>...");
+        LCD_Write_Str(0, 0, (char*)"<Uploading>...");
 				rt_thread_delay(RT_TICK_PER_SECOND);
 				if(keep(S_FAILED) == F_RETURN)
         {

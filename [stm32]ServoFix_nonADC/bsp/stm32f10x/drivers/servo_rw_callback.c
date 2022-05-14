@@ -51,7 +51,7 @@ uint8_t servo_write_callback(void)
 //	if(0)
     {
         Lcd_Clr_Scr();
-        LCD_Write_Str(0, 0, (char*)"<Writting>...");
+        LCD_Write_Str(0, 0, (char*)"<Downloading>...");
         keep(S_FAILED);
         SetMainPage(&Data_Save_Page);
         ShowPage_Num(pPage, 0);
@@ -59,7 +59,7 @@ uint8_t servo_write_callback(void)
     else
     {
         Lcd_Clr_Scr();
-        LCD_Write_Str(0, 0, (char*)"<Writting>...");
+        LCD_Write_Str(0, 0, (char*)"<Downloading>...");
         Copy_Data_To_Stru();
         menu_combine_prom_work_parm();
         result = menu_combine_verify_work_parm();
@@ -92,7 +92,7 @@ uint8_t servo_read_callback(void)
     uint8_t result = 0;
 
     Lcd_Clr_Scr();
-    LCD_Write_Str(0, 0, (char*)"<Reading>...");
+    LCD_Write_Str(0, 0, (char*)"<Uploading>...");
 	
     if(menu_combine_fb_work_parm())
     {

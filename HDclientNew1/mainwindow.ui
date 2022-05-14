@@ -1002,7 +1002,7 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="maximum">
-       <number>10</number>
+       <number>3</number>
       </property>
      </widget>
      <widget class="QSpinBox" name="spinBox_6">
@@ -1545,7 +1545,6 @@ color: rgb(0, 0, 0);</string>
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <zorder>pushButton_Default</zorder>
    </widget>
    <widget class="QPushButton" name="pushButton_save">
     <property name="geometry">
@@ -1733,26 +1732,6 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>10</x>
       <y>370</y>
-      <width>91</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>微软雅黑</family>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Upload Data</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_writeData">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>370</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -1766,6 +1745,26 @@ p, li { white-space: pre-wrap; }
     </property>
     <property name="text">
      <string>Download Data</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_writeData">
+    <property name="geometry">
+     <rect>
+      <x>118</x>
+      <y>370</y>
+      <width>91</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Upload Data</string>
     </property>
    </widget>
    <widget class="QListWidget" name="listWidget">

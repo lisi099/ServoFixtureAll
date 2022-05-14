@@ -40,7 +40,7 @@ const struct Servo_Data_Stru_ factory_para[] =
 
 const struct Servo_Tai_Data_ factory_tai_para[]=
 {
-    {100, 1100, 1, 270, 155, 120, 2048, 0, 0, 45, 0},
+    {100, 800, 1, 270, 155, 120, 2048, 0, 0, 45, 0},
     {95, 1100, 1, 130, 175, 35, 2048, 0, 0, 45, 0},
 };
 
