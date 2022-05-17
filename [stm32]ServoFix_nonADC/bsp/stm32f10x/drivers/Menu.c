@@ -33,7 +33,13 @@ int is_version_taiwan(const uint8_t* data)
     {
         return 0;
     }
-    return 1;
+		uint8_t distribtor = (data[96] - '0') * 10 + (data[97] - '0');
+		
+		if(find_version(distribtor) == 100)
+    {
+        return 1;
+    }
+    return 0;
 }
 
 int find_version(int num)
