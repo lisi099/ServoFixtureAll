@@ -59,8 +59,8 @@ const struct Servo_Tai_Data_ factory_tai_para[]=
 //                         "PGC-A40", "PGC-A50", "PGB-S15", "PGB-S25", "PGB-S35", "PGB-S50",
 //						 "PGB-B7S"
 //                        };
-char *servo_version[] = {"CLS-712", "CLS-D1X", "CLS-W35", "CLS-W45", "CLS-D1S", "CLS-T45", "CLS-T55", "PGC-M8."
-						"BLS-815", "BLS-922", "BLS-927", "BLS-T65", "BLS-T75"
+char *servo_version[] = {"CLS-712", "CLS-D1X", "CLS-W35", "CLS-W45", "CLS-D1S", "CLS-T45", "CLS-T55", "PGC-M8.", 
+													"BLS-815", "BLS-922", "BLS-927", "BLS-T65", "BLS-T75"
 };
 //int servo_version_num[] = {40, 41, 1, 2, 3, 4, 5, 6, 7, 10, 11, 80, 81, 82, 83, 84};
 						
